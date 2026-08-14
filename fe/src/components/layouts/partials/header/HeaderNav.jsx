@@ -22,8 +22,8 @@ function HeaderNav() {
   const navLinkClass = (path) =>
     `text-[1rem] font-medium transition ${
       location.pathname === path
-        ? "text-black font-semibold underline underline-offset-4 underline-emerald-600"
-        : "text-gray-700 hover:text-black hover:underline hover:underline-offset-4 hover:underline-emerald-600 "
+        ? "text-black font-semibold underline underline-offset-4 underline-(--primary)"
+        : "text-gray-700 hover:text-black hover:underline hover:underline-offset-4 hover:underline-(--primary) "
     }`;
 
   const isFiturActive = fiturItems.some(
@@ -48,8 +48,8 @@ function HeaderNav() {
           onClick={() => setFiturOpen(!fiturOpen)}
           className={`flex cursor-pointer items-center gap-1 text-[1rem] font-medium transition ${
             isFiturActive
-              ? "underline-emerald-600 font-semibold text-black underline underline-offset-4"
-              : "hover:underline-emerald-600 text-gray-700 hover:text-black hover:underline hover:underline-offset-4"
+              ? "underline-(--primary) font-semibold text-black underline underline-offset-4"
+              : "hover:underline-(--primary) text-gray-700 hover:text-black hover:underline hover:underline-offset-4"
           }`}
         >
           Fitur

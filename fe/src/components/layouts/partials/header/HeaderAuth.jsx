@@ -29,7 +29,7 @@ function HeaderAuth({ isAuthenticated, user, onLogout }) {
       <div className="hidden items-center md:flex">
         <Link
           to="/login"
-          className="cursor-pointer rounded-lg bg-gray-900 px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-black"
+          className="cursor-pointer rounded-lg bg-(--primary) px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-(--primary-dark)"
         >
           Bergabung
         </Link>

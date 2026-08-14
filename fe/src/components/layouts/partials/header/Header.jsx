@@ -23,19 +23,41 @@ function Header({ isAuthenticated, user, onLogout }) {
     };
   }, []);
 
+  // Gaya "floating pill" hanya dipakai di landing page. Halaman lain tetap
+  // memakai header putih penuh seperti sebelumnya.
+  const floating = isLandingPage && !menuOpen;
+
   return (
     <nav
-      className={`fixed top-0 right-0 left-0 z-999 flex h-24 justify-center px-4 py-2 shadow-sm md:px-6 ${
-        menuOpen || !isLandingPage
-          ? "bg-white shadow-md"
-          : scrolled
-            ? "bg-transparent shadow-md backdrop-blur-sm"
-            : "bg-transparent backdrop-blur-sm"
+      className={`fixed top-0 right-0 left-0 z-999 flex justify-center px-4 transition-all duration-300 md:px-6 ${
+        floating
+          ? scrolled
+            ? "py-3"
+            : "py-5"
+          : "h-24 bg-white py-2 shadow-md"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
-        <HeaderLogo />
-        <HeaderNav />
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
+        <div
+          className={
+            floating
+              ? "rounded-2xl bg-white/95 px-4 py-1.5 shadow-lg ring-1 ring-black/5 backdrop-blur"
+              : ""
+          }
+        >
+          <HeaderLogo />
+        </div>
+
+        <div
+          className={
+            floating
+              ? "hidden rounded-full bg-white/95 px-8 py-3 shadow-lg ring-1 ring-black/5 backdrop-blur md:block"
+              : ""
+          }
+        >
+          <HeaderNav />
+        </div>
+
         <HeaderAuth
           isAuthenticated={isAuthenticated}
           user={user}
