@@ -58,6 +58,9 @@ class Config:
     CLOUDINARY_API_KEY = get_env('CLOUDINARY_API_KEY')
     CLOUDINARY_API_SECRET = get_env('CLOUDINARY_API_SECRET')
 
+    # Gemini AI (Chatbot)
+    GEMINI_API_KEY = get_env('GEMINI_API_KEY')
+
     # Rate Limiting
     RATELIMIT_DEFAULT = "10000/day;1000/hour;100/minute"
     RATELIMIT_STORAGE_URI = "memory://"

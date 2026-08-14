@@ -3,4 +3,5 @@ export const fiturItems = [
   { label: "Aset", path: "/aset" },
   { label: "Barang Bekas", path: "/barang-bekas" },
   { label: "Laporan", path: "/laporan" },
+  { label: "Papan Peringkat", path: "/papan-peringkat" },
 ];

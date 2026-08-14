@@ -39,6 +39,7 @@ import ArtikelPage from "./pages/public/ArtikelPage";
 import ArticleDetailPage from "./pages/public/DetailArticle";
 import BuatArtikelPage from "./pages/public/BuatArtikelPage";
 import AboutPage from "./pages/public/AboutPage";
+import LeaderboardPage from "./pages/public/LeaderboardPage";
 
 /* user pages */
 import UserDashboardPage from "./pages/user/UserDashboardPage";
@@ -51,6 +52,7 @@ import UserProfilePage from "./pages/user/UserProfilePage";
 
 /* admin pages */
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminAnalitikPage from "./pages/admin/AdminAnalitikPage";
 import AdminKolaboratorPage from "./pages/admin/AdminKolaboratorPage";
 import AdminAsetPage from "./pages/admin/AdminAsetPage";
 import AdminBarangBekasPage from "./pages/admin/AdminBarangBekasPage";
@@ -94,6 +96,7 @@ function App() {
         <Route path="kolaborator" element={<KolaboratorPage />} />
         <Route path="kolaborator/:id" element={<DetailKolaboratorPage />} />
         <Route path="tentang-kami" element={<AboutPage/>}/>
+        <Route path="papan-peringkat" element={<LeaderboardPage />} />
 
         <Route path="aset" element={<AsetPage />} />
         <Route path="aset/:id" element={<DetailAsetPage />} />
@@ -126,6 +129,7 @@ function App() {
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
+          <Route path="analitik" element={<AdminAnalitikPage />} />
           <Route path="kolaborator" element={<AdminKolaboratorPage />} />
           <Route path="aset" element={<AdminAsetPage />} />
           <Route path="barang-bekas" element={<AdminBarangBekasPage />} />

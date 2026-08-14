@@ -15,3 +15,9 @@ def admin_stats():
 def user_stats():
     stats = DashboardService.get_user_stats(request.current_user.id)
     return success_response(data=stats, message="Statistik user berhasil diambil")
+
+
+@admin_required
+def admin_analitik_wilayah():
+    stats = DashboardService.get_laporan_per_wilayah()
+    return success_response(data=stats, message="Analitik per wilayah berhasil diambil")

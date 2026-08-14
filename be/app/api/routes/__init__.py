@@ -10,6 +10,8 @@ from app.api.routes.marketplace_route import marketplace_bp
 from app.api.routes.dashboard_route import dashboard_bp
 from app.api.routes.peta_route import peta_bp
 from app.api.routes.artikel_route import artikel_bp
+from app.api.routes.leaderboard_route import leaderboard_bp
+from app.api.routes.chatbot_route import chatbot_bp
 
 def register_routes(app: Flask) -> None:
     app.register_blueprint(auth_bp)
@@ -23,3 +25,5 @@ def register_routes(app: Flask) -> None:
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(peta_bp)
     app.register_blueprint(artikel_bp)
+    app.register_blueprint(leaderboard_bp)
+    app.register_blueprint(chatbot_bp)

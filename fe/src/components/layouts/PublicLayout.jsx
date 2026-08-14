@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router";
 import { useAuth } from "../../contexts/AuthContext";
 import Header from "./partials/header/Header";
 import Footer from "./partials/Footer";
+import ChatbotWidget from "../common/ChatbotWidget";
 
 function PublicLayout() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -19,6 +20,7 @@ function PublicLayout() {
       </main>
 
       {pagesWithoutFooter.includes(location.pathname) ? null : <Footer />}
+      <ChatbotWidget />
     </div>
   );
 }

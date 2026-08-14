@@ -9,10 +9,12 @@ import {
   LuBuilding2,
   LuArchive,
   LuFileText,
+  LuChartColumn,
 } from "react-icons/lu";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin", icon: LuLayoutDashboard },
+  { label: "Analitik", path: "/admin/analitik", icon: LuChartColumn },
   { label: "Kolaborator", path: "/admin/kolaborator", icon: LuFileUser },
   { label: "Aset", path: "/admin/aset", icon: LuBuilding2 },
   { label: "Barang Bekas", path: "/admin/barang-bekas", icon: LuArchive },
