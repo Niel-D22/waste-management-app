@@ -13,6 +13,12 @@ const SidebarPeta = ({
   userLocation,
   isOpen,
   onClose,
+  // isOpen = buka/tutup drawer di MOBILE. isPanelOpen = buka/tutup kartu
+  // mengambang di DESKTOP. Dipisah karena keduanya pola yang berbeda: mobile
+  // pakai drawer penuh dengan overlay gelap, desktop pakai kartu yang menggeser
+  // keluar tanpa menghalangi peta.
+  isPanelOpen = true,
+  onTogglePanel,
 }) => {
   // Extract unique subitems dynamically from all available locations
   const extractSubItems = React.useCallback(
@@ -190,14 +196,54 @@ const SidebarPeta = ({
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-500 w-80 shrink-0 flex-col border-r border-gray-200 bg-white shadow-[4px_0_24px_rgb(0,0,0,0.02)] transition-transform duration-300 md:static md:z-10 md:flex md:translate-x-0 ${
+        // Mulai md, sidebar TIDAK lagi menempel rata ke tepi sebagai kolom
+        // (md:static + border-r). Dia jadi kartu mengambang di atas peta:
+        // absolute + jarak dari tepi + sudut membulat, seperti di mockup.
+        // md:top-24 memberi ruang untuk navbar mengambang di halaman ini.
+        // Konsekuensinya sidebar keluar dari aliran flex, jadi kanvas peta
+        // otomatis melebar penuh ke belakangnya — itu memang yang diinginkan.
+        //
+        // left-[max(1.5rem,calc(50%-40rem))] menyejajarkan tepi kiri kartu ini
+        // dengan tepi kiri logo di navbar, bukan menempel ke tepi layar.
+        // Navbar memakai container mx-auto max-w-7xl (= 80rem), jadi tepi
+        // kirinya persis di 50% - 40rem. Di layar sempit, saat nilai itu jadi
+        // lebih kecil dari 1.5rem, max() mengembalikannya ke jarak aman 1.5rem.
+        className={`fixed inset-y-0 left-0 z-500 w-80 shrink-0 flex-col border-r border-gray-200 bg-white shadow-[4px_0_24px_rgb(0,0,0,0.02)] transition-all duration-300 md:absolute md:inset-y-auto md:top-24 md:bottom-6 md:left-[max(1.5rem,calc(50%-40rem))] md:z-400 md:flex md:w-84 md:overflow-hidden md:rounded-3xl md:border md:border-gray-100 md:bg-white/85 md:shadow-[0_12px_40px_rgb(0,0,0,0.10)] md:backdrop-blur-xl ${
           isOpen
             ? "flex translate-x-0"
             : "hidden -translate-x-full pt-16 md:flex md:pt-0"
+        } ${
+          // Saat ditutup di desktop, panel digeser keluar layar DAN dimatikan
+          // pointer-events-nya. Tanpa pointer-events-none, kartu yang sudah tak
+          // terlihat masih menangkap klik di tepi kiri peta.
+          isPanelOpen
+            ? "md:translate-x-0 md:opacity-100"
+            : "md:pointer-events-none md:translate-x-[-120%] md:opacity-0"
         }`}
       >
         {/* Header & Filter */}
-        <div className="relative shrink-0 border-b border-gray-100 p-6 pt-30! md:pt-10!">
+        <div className="relative shrink-0 border-b border-gray-100 p-6 pt-30! md:pt-6!">
+          {/* Tombol tutup panel (desktop) */}
+          <button
+            onClick={onTogglePanel}
+            aria-label="Sembunyikan panel"
+            className="absolute top-5 right-5 hidden rounded-full p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 md:block"
+          >
+            <svg
+              className="size-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
           {/* Tombol Close Mobile */}
           <button
             onClick={onClose}
@@ -272,7 +318,13 @@ const SidebarPeta = ({
             </svg>
           </button>
           <div
-            className={`scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-200 flex flex-col gap-2 overflow-y-auto pr-2 transition-all duration-300 ${isFilterExpanded ? "h-56 opacity-100" : "h-0 overflow-hidden opacity-0"}`}
+            // max-h-64, BUKAN h-56. Dulu tingginya dipatok mati, jadi blok
+            // filter selalu memakan 224px walau isinya cuma 4 baris — dan
+            // 224px itu diambil dari jatah daftar lokasi di bawahnya, yang
+            // akhirnya cuma kebagian ruang setinggi satu kartu.
+            // Dengan max-h, blok ini hanya setinggi isinya dan baru ikut
+            // menggulung kalau sub-filter dibuka banyak.
+            className={`scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-200 flex flex-col gap-2 overflow-y-auto pr-2 transition-all duration-300 ${isFilterExpanded ? "max-h-64 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
           >
             {FILTER_DEFINITIONS.map((cat) => {
               const isCatActive = filters.includes(cat.id);
@@ -412,7 +464,15 @@ const SidebarPeta = ({
           </button>
 
           <div
-            className={`scrollbar-hide flex flex-col gap-3 overflow-y-auto transition-all duration-300 ${isResultExpanded ? "h-full opacity-100" : "h-0 overflow-hidden opacity-0"}`}
+            // flex-1 min-h-0, BUKAN h-full. Di dalam kolom flex, h-100% dihitung
+            // dari tinggi induk TANPA memperhitungkan tombol header di atasnya,
+            // jadi area gulungnya meluber lalu terpotong — itu sebabnya jendela
+            // scroll-nya cuma setinggi beberapa piksel dan nyaris tak bisa
+            // dipakai. min-h-0 wajib ikut: tanpa itu, flex item menolak menyusut
+            // lebih kecil dari isinya dan overflow-y-auto tidak pernah aktif.
+            // Scrollbar-nya juga dibuat terlihat (dulu scrollbar-hide) supaya
+            // pengguna tahu daftarnya masih bisa digulung.
+            className={`scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 flex flex-col gap-3 overflow-y-auto pr-1 transition-opacity duration-300 ${isResultExpanded ? "min-h-0 flex-1 opacity-100" : "h-0 overflow-hidden opacity-0"}`}
           >
             {displayLocations.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center px-4 py-16 text-center">

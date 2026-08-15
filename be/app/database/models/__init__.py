@@ -13,6 +13,7 @@ from app.database.models.laporan_sampah_ilegal import (
     LaporanSampahIlegal, Karakteristik, BentukTimbulan, StatusLaporan
 )
 from app.database.models.tindak_lanjut_laporan import TindakLanjutLaporan
+from app.database.models.saran import Saran
 from app.database.models.marketplace_daur_ulang import (
     MarketplaceDaurUlang, KondisiBarang, StatusKetersediaan
 )
@@ -30,6 +31,7 @@ __all__ = [
     'Aset', 'StatusVerifikasiAset',
     'LaporanSampahIlegal', 'Karakteristik', 'BentukTimbulan', 'StatusLaporan',
     'TindakLanjutLaporan',
+    'Saran',
     'MarketplaceDaurUlang', 'KondisiBarang', 'StatusKetersediaan',
     'Artikel', 'StatusPublikasi',
     'ArtikelLike',

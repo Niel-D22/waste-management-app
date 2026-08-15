@@ -8,7 +8,13 @@ import { useLocation } from "react-router-dom";
 function Header({ isAuthenticated, user, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const isLandingPage = location.pathname === "/";
+
+  // Halaman yang kontennya memenuhi layar sampai ke balik navbar (landing:
+  // ilustrasi hero, peta: kanvas peta) memakai navbar mengambang. Halaman lain
+  // tetap bar putih penuh, karena kontennya dimulai tepat di bawah navbar dan
+  // navbar mengambang di situ malah menabrak isi halaman.
+  const FLOATING_NAV_PAGES = ["/", "/peta"];
+  const isLandingPage = FLOATING_NAV_PAGES.includes(location.pathname);
 
   const [scrolled, setScrolled] = useState(false);
 
@@ -37,23 +43,30 @@ function Header({ isAuthenticated, user, onLogout }) {
           : "h-24 bg-white py-2 shadow-md"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
+      <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
         <div
           className={
             floating
-              ? "rounded-2xl bg-white/95 px-4 py-1.5 shadow-lg ring-1 ring-black/5 backdrop-blur"
+              ? "rounded-full bg-white/95 px-5 py-2 shadow-lg ring-1 ring-black/5 backdrop-blur"
               : ""
           }
         >
           <HeaderLogo />
         </div>
 
+        {/* Mulai lg, nav dikeluarkan dari aliran flex dan dikunci ke sumbu
+            tengah. justify-between hanya MEMBAGI RATA sisa ruang, tidak
+            menengahkan — karena kartu logo jauh lebih lebar dari tombol
+            "Bergabung", nav-nya jadi terdorong ke kanan dan tidak sejajar
+            dengan teks hero yang memang di tengah.
+            Baru diaktifkan di lg (bukan md) supaya di lebar 768-1024px nav
+            tetap ikut flex dan tidak berpotensi menabrak logo/tombol. */}
         <div
-          className={
+          className={`lg:absolute lg:left-1/2 lg:-translate-x-1/2 ${
             floating
               ? "hidden rounded-full bg-white/95 px-8 py-3 shadow-lg ring-1 ring-black/5 backdrop-blur md:block"
               : ""
-          }
+          }`}
         >
           <HeaderNav />
         </div>

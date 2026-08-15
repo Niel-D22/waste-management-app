@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useSpring, useTransform } from "motion/react";
 
 // Ikon-ikon di bawah di-reuse persis dari FloatingIcons.jsx (circle fill +
 // path "d" sama persis, tidak diubah) supaya identitas visualnya konsisten
@@ -30,7 +30,10 @@ const ICONS = [
   },
   {
     id: "chart",
-    color: "#FFDB6F",
+    // Dulu #FFDB6F + noBaseCircle: glyph kuning pucat tanpa lingkaran, berdiri
+    // langsung di atas latar biru muda — praktis tak terlihat. Sekarang diberi
+    // lingkaran amber seperti ikon lain, glyph-nya putih.
+    color: "#E09112",
     cx: 520.1,
     cy: 169.1,
     paths: [
@@ -38,7 +41,6 @@ const ICONS = [
       "M540.1 188.1H500.1C499.57 188.1 499.061 187.889 498.686 187.514C498.311 187.139 498.1 186.63 498.1 186.1C498.1 185.57 498.311 185.061 498.686 184.686C499.061 184.311 499.57 184.1 500.1 184.1H540.1C540.63 184.1 541.139 184.311 541.514 184.686C541.889 185.061 542.1 185.57 542.1 186.1C542.1 186.63 541.889 187.139 541.514 187.514C541.139 187.889 540.63 188.1 540.1 188.1ZM525.433 173.433C525.171 173.435 524.91 173.383 524.668 173.283C524.425 173.182 524.205 173.034 524.02 172.847L517.433 166.26L510.847 172.847C510.468 173.2 509.966 173.392 509.448 173.383C508.93 173.374 508.436 173.164 508.069 172.798C507.703 172.431 507.493 171.937 507.484 171.419C507.474 170.901 507.667 170.399 508.02 170.02L516.02 162.02C516.395 161.645 516.903 161.435 517.433 161.435C517.963 161.435 518.472 161.645 518.847 162.02L525.433 168.607L534.687 159.353C535.066 159 535.567 158.808 536.085 158.817C536.604 158.826 537.098 159.036 537.464 159.402C537.831 159.769 538.041 160.263 538.05 160.781C538.059 161.299 537.867 161.801 537.513 162.18L526.847 172.847C526.662 173.034 526.442 173.182 526.199 173.283C525.957 173.383 525.696 173.435 525.433 173.433Z",
       "M537.433 171.007C536.905 171 536.4 170.787 536.027 170.413C535.653 170.04 535.44 169.535 535.433 169.007V161.433H528.1C527.57 161.433 527.061 161.223 526.686 160.848C526.311 160.472 526.1 159.964 526.1 159.433C526.1 158.903 526.311 158.394 526.686 158.019C527.061 157.644 527.57 157.433 528.1 157.433H537.433C537.962 157.44 538.466 157.653 538.84 158.027C539.214 158.4 539.427 158.905 539.433 159.433V169.007C539.427 169.535 539.214 170.04 538.84 170.413C538.466 170.787 537.962 171 537.433 171.007Z",
     ],
-    noBaseCircle: true,
   },
   {
     id: "recycle",
@@ -89,26 +91,35 @@ const ICONS = [
   },
 ];
 
-// Posisi tersebar (titik awal, jauh dari tengah) → posisi konvergen (arc di
-// atas judul). Nilai dalam vw/vh supaya proporsional di berbagai ukuran layar.
+// Posisi awal di luar layar → posisi akhir yang MENGELILINGI teks, bukan
+// berkumpul rapat di atasnya. Nilai dalam vw/vh supaya proporsional di berbagai
+// ukuran layar. Kotak tengah (kira-kira x -22..22, y -12..12) sengaja dikosongi
+// karena di situ judul dan paragrafnya berada.
+// Ukurannya sengaja beda-beda (64-88px) supaya susunannya punya irama dan tidak
+// terlihat seperti grid yang kaku.
 const LAYOUT = [
-  { scatter: { x: -38, y: -30 }, target: { x: -26, y: -14 } },
-  { scatter: { x: 32, y: -34 }, target: { x: -16, y: -20 } },
-  { scatter: { x: -30, y: 28 }, target: { x: -6, y: -16 } },
-  { scatter: { x: 40, y: 22 }, target: { x: 4, y: -16 } },
-  { scatter: { x: -10, y: -40 }, target: { x: 14, y: -20 } },
-  { scatter: { x: 12, y: 38 }, target: { x: 24, y: -14 } },
-  { scatter: { x: -42, y: 4 }, target: { x: -20, y: -2 } },
-  { scatter: { x: 44, y: -4 }, target: { x: 20, y: -2 } },
+  { scatter: { x: -66, y: -48 }, target: { x: -36, y: -26 }, size: 100 },
+  { scatter: { x: -32, y: -62 }, target: { x: -17, y: -35 }, size: 88 },
+  { scatter: { x: 24, y: -60 }, target: { x: 13, y: -33 }, size: 116 },
+  { scatter: { x: 64, y: -42 }, target: { x: 35, y: -22 }, size: 92 },
+  { scatter: { x: -72, y: 14 }, target: { x: -40, y: 7 }, size: 96 },
+  { scatter: { x: 74, y: 18 }, target: { x: 40, y: 10 }, size: 106 },
+  { scatter: { x: -46, y: 56 }, target: { x: -24, y: 30 }, size: 92 },
+  { scatter: { x: 40, y: 58 }, target: { x: 21, y: 32 }, size: 112 },
 ];
 
-function IconBadge({ icon, layout, scrollYProgress, index }) {
-  const start = index * 0.02;
-  const keyframePoints = [start, 0.32 + start, 0.55, 0.78];
-  const x = useTransform(scrollYProgress, [start, 0.35 + start], [`${layout.scatter.x}vw`, `${layout.target.x}vw`]);
-  const y = useTransform(scrollYProgress, [start, 0.35 + start], [`${layout.scatter.y}vh`, `${layout.target.y}vh`]);
-  const scale = useTransform(scrollYProgress, keyframePoints, [0.4, 1, 1, 0.6]);
-  const opacity = useTransform(scrollYProgress, keyframePoints, [0, 1, 1, 0]);
+function IconBadge({ icon, layout, progress, index }) {
+  // Tiap ikon berangkat sedikit lebih lambat dari ikon sebelumnya supaya
+  // masuknya berurutan, bukan serempak.
+  const start = index * 0.035;
+  const settle = start + 0.42;
+
+  const x = useTransform(progress, [start, settle], [`${layout.scatter.x}vw`, `${layout.target.x}vw`]);
+  const y = useTransform(progress, [start, settle], [`${layout.scatter.y}vh`, `${layout.target.y}vh`]);
+  // Sengaja TIDAK ada keyframe yang mengembalikan nilai ini ke 0. Begitu ikon
+  // sampai di tempatnya, dia menetap sampai section-nya lewat.
+  const scale = useTransform(progress, [start, settle], [0.45, 1]);
+  const opacity = useTransform(progress, [start, start + 0.14], [0, 1]);
 
   const viewBoxMin = { x: icon.cx - 45, y: icon.cy - 45 };
 
@@ -117,17 +128,58 @@ function IconBadge({ icon, layout, scrollYProgress, index }) {
       className="pointer-events-none absolute top-1/2 left-1/2 hidden sm:block"
       style={{ x, y, scale, opacity, translateX: "-50%", translateY: "-50%" }}
     >
-      <svg
-        width="72"
-        height="72"
-        viewBox={`${viewBoxMin.x} ${viewBoxMin.y} 90 90`}
-        className="drop-shadow-lg"
+      {/* Lapisan terpisah untuk ambang-ambing halus. Tidak bisa digabung ke
+          motion.div di atas karena keduanya sama-sama menulis transform —
+          yang satu dikendalikan scroll, yang satu berjalan sendiri. */}
+      {/* Gerak menganggur setelah ikon menetap. Sumbu X dan Y sengaja diberi
+          durasi yang BERBEDA dan tidak kelipatan satu sama lain, sehingga
+          keduanya tidak pernah kembali ke titik awal bersamaan — lintasannya
+          jadi terasa mengambang acak, bukan berayun mekanis bolak-balik.
+          Arah hanyutan mendatar dibalik untuk ikon berindeks ganjil supaya
+          seluruh kelompok tidak bergerak serempak ke satu sisi. */}
+      <motion.div
+        animate={{
+          y: [0, -10, 0],
+          x: index % 2 === 0 ? [0, 9, 0] : [0, -9, 0],
+        }}
+        transition={{
+          y: {
+            duration: 3.4 + index * 0.45,
+            repeat: Infinity,
+            ease: "easeInOut",
+          },
+          x: {
+            duration: 5.7 + index * 0.63,
+            repeat: Infinity,
+            ease: "easeInOut",
+          },
+        }}
       >
-        {!icon.noBaseCircle && <circle cx={icon.cx} cy={icon.cy} r="45" fill={icon.color} />}
-        {icon.paths.map((d, i) => (
-          <path key={i} d={d} fill={icon.noBaseCircle ? icon.color : "white"} />
-        ))}
-      </svg>
+        <svg
+          width={layout.size}
+          height={layout.size}
+          viewBox={`${viewBoxMin.x} ${viewBoxMin.y} 90 90`}
+          className="drop-shadow-[0_10px_24px_rgba(30,31,120,0.16)]"
+        >
+          {!icon.noBaseCircle && <circle cx={icon.cx} cy={icon.cy} r="45" fill={icon.color} />}
+          {icon.paths.map((d, i) => (
+            <path key={i} d={d} fill={icon.noBaseCircle ? icon.color : "white"} />
+          ))}
+        </svg>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Satu baris teks yang naik sendiri mengikuti scroll. Dipisah jadi komponen
+// karena tiap baris butuh rentang scroll-nya sendiri, dan useTransform adalah
+// hook — tidak boleh dipanggil di dalam perulangan pada satu komponen.
+function RevealLine({ progress, from, to, className, children }) {
+  const opacity = useTransform(progress, [from, to], [0, 1]);
+  const y = useTransform(progress, [from, to], [36, 0]);
+  return (
+    <motion.div style={{ opacity, y }} className={className}>
+      {children}
     </motion.div>
   );
 }
@@ -139,34 +191,85 @@ function IconRevealSection() {
     offset: ["start start", "end end"],
   });
 
-  const textOpacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
-  const textY = useTransform(scrollYProgress, [0.55, 0.75], [24, 0]);
+  // scrollYProgress mengikuti roda scroll persis apa adanya, jadi geraknya ikut
+  // tersendat kalau scroll-nya tersendat. Dilewatkan spring dulu supaya ada
+  // sedikit inersia dan hasilnya mengalir. Semua animasi di bawah membaca nilai
+  // yang sudah dihaluskan ini, bukan yang mentah.
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 26,
+    restDelta: 0.0005,
+  });
+
+  // Tiap baris punya rentang scroll sendiri, dan rentangnya sengaja BERTUMPUK
+  // sebagian (0.06-0.22, 0.13-0.29, 0.21-0.37) — bukan berurutan terpisah.
+  // Kalau terpisah, tiap baris berhenti dulu baru baris berikutnya mulai, dan
+  // itulah yang terbaca sebagai patah-patah. Dengan bertumpuk, gerakannya
+  // menyambung jadi satu gelombang naik.
+  // Tidak ada satu pun yang dikembalikan ke 0 di akhir: teksnya menetap sampai
+  // section-nya lewat.
+  const LINES = [
+    [0.06, 0.22],
+    [0.13, 0.29],
+    [0.21, 0.37],
+  ];
 
   return (
-    <section ref={containerRef} className="relative h-[300vh]">
-      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-[#FAFAFA]">
+    // 150vh. Sebelumnya 300vh lalu 220vh — dua-duanya masih terlalu panjang:
+    // begitu semua ikon menetap tidak ada lagi yang berubah, jadi sisanya cuma
+    // layar diam yang harus di-scroll. Ini penyumbang terbesar rasa "kosong"
+    // setelah hero, karena letaknya persis setelah bagian paling ramai.
+    <section ref={containerRef} className="relative h-[150vh]">
+      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-(--surface-sky)">
+        {/* Ornamen latar. Diletakkan sebagai anak PERTAMA supaya tercat di
+            lapisan paling belakang tanpa perlu z-index — isi section setelahnya
+            otomatis menimpanya. pointer-events-none supaya tidak pernah mencuri
+            klik. Disembunyikan di bawah md: di layar sempit ruangnya sudah
+            sesak, ornamen di situ jadi mengganggu, bukan menghias. */}
+        <img
+          src="/images/ornamen/ornamen-awan.png"
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="pointer-events-none absolute -top-6 -left-16 hidden w-[34%] opacity-70 select-none md:block"
+        />
+        <img
+          src="/images/ornamen/ornamen-awan.png"
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="pointer-events-none absolute -right-20 bottom-4 hidden w-[28%] -scale-x-100 opacity-50 select-none md:block"
+        />
+
         {LAYOUT.map((layout, i) => (
           <IconBadge
             key={ICONS[i].id}
             icon={ICONS[i]}
             layout={layout}
-            scrollYProgress={scrollYProgress}
+            progress={progress}
             index={i}
           />
         ))}
 
-        <motion.div
-          style={{ opacity: textOpacity, y: textY }}
-          className="relative z-10 mx-auto max-w-2xl px-6 text-center"
-        >
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-5xl">
-            Satu platform, banyak cara jaga lingkungan
+        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
+          <h2 className="text-4xl leading-[1.1] font-bold tracking-tight text-slate-900 md:text-6xl lg:text-7xl">
+            <RevealLine progress={progress} from={LINES[0][0]} to={LINES[0][1]}>
+              Satu platform,
+            </RevealLine>
+            <RevealLine progress={progress} from={LINES[1][0]} to={LINES[1][1]}>
+              banyak cara jaga lingkungan
+            </RevealLine>
           </h2>
-          <p className="mt-4 text-lg text-gray-500">
+          <RevealLine
+            progress={progress}
+            from={LINES[2][0]}
+            to={LINES[2][1]}
+            className="mx-auto mt-6 max-w-2xl text-xl leading-8 text-slate-600 md:text-2xl md:leading-9"
+          >
             Kolaborator, aset pengelolaan sampah, laporan warga, hingga daur
             ulang — semua terhubung dalam satu ekosistem Torang Bersih.
-          </p>
-        </motion.div>
+          </RevealLine>
+        </div>
       </div>
     </section>
   );

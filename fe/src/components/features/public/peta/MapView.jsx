@@ -94,14 +94,24 @@ const MapView = ({
       >
         {/* Layer Control untuk Tema Peta */}
         <LayersControl position="bottomleft">
-          <LayersControl.BaseLayer checked name="Mode Peta (Bersih)">
+          <LayersControl.BaseLayer name="Mode Peta (Bersih)">
+            {/* Tile CARTO Voyager memang sengaja dibuat pucat supaya penanda di
+                atasnya menonjol. Karena penanda kita sudah punya outline putih
+                dan bayangan sendiri, kepucatan itu tidak dibutuhkan dan malah
+                bikin petanya terasa mati. Warnanya dihidupkan lewat CSS filter
+                di kelas .map-tiles-vivid (lihat index.css) — jauh lebih ringan
+                daripada mengganti penyedia tile atau menghosting style sendiri. */}
             <TileLayer
               maxZoom={20}
+              className="map-tiles-vivid"
               attribution="© CARTO"
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             />
           </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Mode Jalan (Detail)">
+          {/* Lapisan yang aktif saat halaman dibuka. Tidak diberi filter
+              .map-tiles-vivid seperti lapisan Voyager, karena tile ini memang
+              sudah pekat warnanya — menambah saturasi lagi malah menyilaukan. */}
+          <LayersControl.BaseLayer checked name="Mode Jalan (Detail)">
             <TileLayer
               maxZoom={21}
               attribution="© Google Maps"
@@ -117,7 +127,9 @@ const MapView = ({
           </LayersControl.BaseLayer>
         </LayersControl>
 
-        <ZoomControl position="bottomleft" />
+        {/* bottomright, bukan bottomleft: di kiri bawah tombol zoom tertimpa kartu
+            panel yang kini mengambang di sisi itu. */}
+        <ZoomControl position="bottomright" />
         <MapUpdater centerLocation={selectedLocation} />
 
         {/* Marker Lokasi User (GPS) */}
@@ -260,7 +272,7 @@ const MapView = ({
       </MapContainer>
 
       {/* Tombol Floating Lokasi Saya */}
-      <div className="absolute top-8 right-6 z-400 flex flex-col gap-2">
+      <div className="absolute top-28 right-6 z-400 flex flex-col gap-2">
         <button
           onClick={onGetLocation}
           disabled={isLocating}

@@ -27,9 +27,13 @@ function HeaderAuth({ isAuthenticated, user, onLogout }) {
   if (!isAuthenticated) {
     return (
       <div className="hidden items-center md:flex">
+        {/* rounded-full + padding tebal, bukan rounded-lg kecil: tombol ini
+            sebaris dengan pil nav dan kartu logo yang dua-duanya membulat.
+            Dengan px-7 py-3 tingginya jadi ~46px, sejajar dengan pil nav
+            (~48px), sehingga barisnya tidak lagi punya tiga tinggi berbeda. */}
         <Link
           to="/login"
-          className="cursor-pointer rounded-lg bg-(--primary) px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-(--primary-dark)"
+          className="cursor-pointer rounded-full bg-(--primary) px-7 py-3 text-[0.95rem] font-bold text-white shadow-lg transition hover:bg-(--primary-dark)"
         >
           Bergabung
         </Link>

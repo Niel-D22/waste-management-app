@@ -1,5 +1,5 @@
-import Artikel from "../../components/features/public/landing/artikel/Artikel";
-import Fitur from "../../components/features/public/landing/fitur/Fitur";
+import FiturSlider from "../../components/features/public/landing/FiturSlider";
+import AjakanPenutup from "../../components/features/public/landing/AjakanPenutup";
 import Hero from "../../components/features/public/landing/Hero";
 import IconRevealSection from "../../components/features/public/landing/IconRevealSection";
 import Peta from "../../components/features/public/landing/Peta";
@@ -12,10 +12,10 @@ function LandingPage() {
     <div className="relative w-full overflow-x-clip bg-white">
       <Hero />
       <IconRevealSection />
-      <Fitur />
+      <FiturSlider />
       <Tujuan />
       <Peta />
-      <Artikel />
+      <AjakanPenutup />
     </div>
   );
 }

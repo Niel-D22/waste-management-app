@@ -16,26 +16,33 @@ const LEAF_MASK = "linear-gradient(to right, #000 72%, transparent 98%)";
 // Tiap karakter: posisi & ukuran dalam persen terhadap gambar background,
 // supaya selalu sejajar dengan scene di belakangnya di ukuran layar apa pun.
 // Nilai bottom WAJIB positif — kalau negatif, karakter berdiri di bawah tepi
-// bawah gambar background (melayang di luar scene). Angka 9-12% adalah garis
-// pasir tempat mereka berpijak; kakinya tetap tersamarkan karena lapisan daun
-// (z-30) ada di depan karakter (z-20).
+// bawah gambar background (melayang di luar scene). Angka 6-8% menaruh kakinya
+// cukup rendah sehingga tertutup rumpun daun (z-30, di depan karakter z-20),
+// sementara kepala dan badan atasnya tetap muncul di atas daun.
+// Posisi horizontalnya dipilih agar kakinya jatuh di area yang memang ada
+// tumpukannya: rumpun kiri menutupi 0-40%, rumpun kanan 60-100%. Bagian tengah
+// sengaja dibiarkan kosong dan diisi truk, bukan karakter.
+// Tambahan "+4px" ditulis sebagai calc(), bukan dengan menaikkan angka
+// persennya. Persen di sini relatif terhadap tinggi scene, jadi menaikkannya
+// akan menggeser karakter makin jauh di layar besar dan makin sedikit di layar
+// kecil. Yang diminta adalah dorongan tetap 4px, sama di semua ukuran layar.
 const CHARACTERS = [
   {
     id: "wanita",
     src: `${ASSET}/char-1-wanita.png`,
-    className: "bottom-[10%] left-[2%] w-[13%]",
+    className: "bottom-[calc(7%+14px)] left-[4%] w-[13%]",
     floatDuration: 4.2,
   },
   {
     id: "petugas",
     src: `${ASSET}/char-2-petugas.png`,
-    className: "bottom-[12%] left-[45%] w-[13%]",
+    className: "bottom-[calc(8%+14px)] left-[24%] w-[13%]",
     floatDuration: 3.6,
   },
   {
     id: "pria",
     src: `${ASSET}/char-3-pria.png`,
-    className: "bottom-[9%] left-[82%] w-[14%]",
+    className: "bottom-[calc(6%+14px)] left-[81%] w-[14%]",
     floatDuration: 4.8,
   },
 ];
@@ -59,35 +66,46 @@ const Hero = () => {
   // keluar dari balik gelombang putih yang menutupinya.
   const yLeaves = useTransform(scrollYProgress, [0, 1], [0, -25]);
   const yText = useTransform(scrollYProgress, [0, 1], [0, -110]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  // Mulai memudar di 0.2, bukan 0 — section-nya kini 140vh, jadi kalau memudar
+  // sejak scroll pertama teksnya sudah pucat padahal masih di tengah layar.
+  const textOpacity = useTransform(scrollYProgress, [0.2, 0.55], [1, 0]);
 
-  // Section sengaja LEBIH TINGGI dari satu layar (140vh). Layar pertama hanya
-  // berisi teks di atas langit; pantai, karakter, truk, dan rumpun daun berada
-  // di bawah lipatan dan baru naik masuk pandangan saat di-scroll — pola yang
-  // sama seperti referensi. Kalau dipaksa h-screen, semua isi harus muat
-  // sekaligus dan karakternya pasti bertabrakan dengan teks.
+  // Tinggi section TIDAK dipatok angka mati, karena tinggi gambar BG selalu
+  // mengikuti LEBAR layar (rasionya 3:2, jadi tingginya = 66,67vw) — bukan
+  // mengikuti tinggi layar. Waktu dipatok 140vh, di layar lebar-tapi-pendek
+  // (fullscreen 1920x1080) section jadi 1512px sementara gambarnya cuma 1280px,
+  // dan sisa 232px langit kosong itu mendorong seluruh scene turun jauh ke bawah
+  // lipatan. clamp() membuat section mengikuti tinggi gambar, dengan pagar:
+  //   - minimal 100vh  → tidak pernah lebih pendek dari satu layar
+  //   - maksimal 140vh → scroll-nya tidak pernah kepanjangan di layar sempit
+  // Hasilnya scene selalu duduk setinggi mungkin tanpa menyisakan langit kosong.
+  //
+  // Warna latarnya #BBDDFC, bukan putih: tinggi gambar BG selalu = lebar layar
+  // dibagi 1,5 (rasionya 3:2), jadi di layar yang lebar-tapi-pendek gambarnya
+  // TIDAK sampai menutupi 140vh dan menyisakan celah di atas. #BBDDFC diambil
+  // langsung dari baris piksel paling atas BG-Hero.png (diukur, bukan dikira),
+  // sehingga celah itu menyatu jadi langit dan tidak terlihat sebagai pita
+  // putih. Jangan diganti tanpa mengukur ulang kalau file BG-nya berubah.
   return (
     <section
       ref={sectionRef}
-      className="relative flex h-[140vh] w-full flex-col bg-white"
+      className="relative flex h-[clamp(100vh,66.67vw,140vh)] w-full flex-col bg-[#BBDDFC]"
     >
       {/* Teks di area langit kosong */}
       <motion.div
         style={{ y: yText, opacity: textOpacity }}
         className="relative z-30 mx-auto flex max-w-3xl flex-col items-center px-4 pt-32 text-center md:px-6 md:pt-36"
       >
-        <span className="flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 px-4 py-1.5 text-xs font-semibold text-gray-600 shadow-sm backdrop-blur md:text-sm">
-          <LuSprout size={15} className="text-(--primary)" />
-          Platform Lingkungan Sulawesi Utara
-        </span>
-
-        <h1 className="mt-5 text-4xl leading-[1.1] font-bold tracking-tight text-(--primary) sm:text-5xl md:text-6xl">
+        {/* Sengaja BUKAN text-(--primary). Navy #1e1f78 di atas langit biru
+            #BBDDFC itu biru-di-atas-biru: headline-nya menyatu dengan latar dan
+            hilang ketegasannya. Warna brand tetap hadir lewat tombol utama. */}
+        <h1 className="mt-5 text-4xl leading-[1.1] font-bold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
           Laporkan. Pantau.
           <br />
           Bergerak Bersama.
         </h1>
 
-        <p className="mt-4 max-w-lg text-base text-gray-500 md:text-lg">
+        <p className="mt-4 max-w-lg text-base text-slate-600 md:text-lg">
           Satu platform untuk menghubungkan warga, komunitas, dan pemerintah
           menjaga lingkungan dari sampah.
         </p>
@@ -131,20 +149,23 @@ const Hero = () => {
 
           {/* Truk sampah — diam di tempat, satu-satunya geraknya adalah
               parallax saat scroll.
-              bottom-[25%] menaruh rodanya di garis promenade/tanggul (bukan di
-              pasir — truk parkir di jalan), dan sudah memperhitungkan margin
-              transparan di sisi bawah file PNG-nya (~14% dari tinggi gambar).
-              Ukurannya lebih kecil dari karakter karena bidangnya lebih jauh.
-              left-[24%] dipilih supaya tidak menutupi pos timbang dan tempat
-              sampah yang ada di sisi kanan background. */}
+              File PNG-nya punya margin transparan ~14% dari tinggi gambar di
+              sisi bawah, jadi roda truk TIDAK menyentuh nilai bottom di sini —
+              posisi roda sebenarnya = bottom + ~1,7%. Perhitungan itu yang
+              menentukan angka 16%: rodanya jatuh di sekitar 18% tinggi scene,
+              yaitu hamparan pasir, bukan mengambang di atasnya.
+              left-[42%] dipilih karena di sisi kiri (x<30%) garis air menjorok
+              jauh ke kanan — truk di situ akan terlihat parkir di laut. Di
+              tengah, pasirnya paling lebar. Sekaligus mengisi celah antara
+              rumpun daun kiri dan kanan. */}
           <motion.div
             style={{ y: yTruck }}
-            className="absolute bottom-[25%] left-[24%] z-10 w-[15%]"
+            className="absolute bottom-[15%] left-[42%] z-10 w-[14%]"
           >
             <img
               src={`${ASSET}/Truck.png`}
               alt=""
-              className="w-full select-none drop-shadow-[0_8px_10px_rgba(30,31,120,0.12)]"
+              className="w-full drop-shadow-[0_8px_10px_rgba(30,31,120,0.12)] select-none"
               draggable={false}
             />
           </motion.div>
@@ -164,22 +185,25 @@ const Hero = () => {
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="w-full select-none drop-shadow-[0_10px_14px_rgba(30,31,120,0.14)]"
+                className="w-full drop-shadow-[0_10px_14px_rgba(30,31,120,0.14)] select-none"
                 draggable={false}
               />
             </motion.div>
           ))}
         </div>
 
-        {/* Gradasi ke putih di batas bawah hero. Tanpa ini, gambar background
-            terpotong lurus persis di garis section dan sambungannya ke konten
-            berikutnya (yang ber-background putih) terlihat seperti garis. */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[16vh] bg-linear-to-b from-transparent to-white" />
+        {/* Gradasi di batas bawah hero, menuju --surface-tint (BUKAN putih
+            murni). Tujuannya bukan sekadar menyamarkan potongan gambar, tapi
+            meneruskan nuansa langit ke section berikutnya. Kalau memudar ke
+            putih, warna hero terputus mendadak dan halaman terasa mati persis
+            setelah bagian paling menarik. Nilainya HARUS sama dengan latar
+            section tepat di bawah hero (IconRevealSection). */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[16vh] bg-linear-to-b from-transparent to-(--surface-sky)" />
       </div>
 
-      {/* Rumpun tanaman kiri & kanan, mengikuti referensi: bukan satu sabuk
-          penuh selebar layar, tapi dua rumpun yang membingkai sudut kiri dan
-          kanan sehingga bagian tengah tetap lega.
+      {/* Tumpukan sampah terkumpul di kiri & kanan, mengikuti referensi: bukan
+          satu sabuk penuh selebar layar, tapi dua rumpun yang membingkai sudut
+          kiri dan kanan sehingga bagian tengah tetap lega.
           Gambarnya dipakai UTUH dengan rasio aslinya — tidak ada object-cover,
           tidak ada crop — jadi siluet pucuknya yang naik-turun tetap terbaca
           dan tidak ada satu pun daun yang terpotong.
@@ -188,18 +212,26 @@ const Hero = () => {
           Rumpun kanan di-mirror lewat scaleX: -1 — karena mask ikut ter-flip
           bersama elemennya, arah leburnya otomatis jadi ke kiri, sekaligus
           bikin kiri dan kanan tidak kelihatan kembar.
-          bottom-[-5vh]: bentuk rumpunnya adalah gundukan (tinggi di tengah,
-          menipis di ujung), jadi alasnya perlu digeser turun sedikit melewati
-          batas section supaya titik terdalamnya lewat dari garis bawah. Tidak
-          ada lagi lapisan putih di depannya — dulu ada, tapi justru itu yang
-          memotong daun jadi dua dengan garis putih di tengah. */}
+          bottom-[-4vh]: diukur langsung dari file, bukan ditebak. Margin
+          transparan di sisi bawah gambar 11,2% di bagian tengah dan ~17% di
+          kedua ujungnya — bentuknya memang gundukan, jadi ujungnya duduk lebih
+          tinggi. Geseran turun ini membuat titik terdalamnya lewat dari garis
+          bawah section, sementara ujungnya tetap terlihat menapak. */}
       {[
-        { id: "kiri", side: "left-0", scaleX: 1 },
-        { id: "kanan", side: "right-0", scaleX: -1 },
+        // src dipisah per sisi supaya kiri dan kanan bisa memakai gambar yang
+        // benar-benar berbeda, bukan gambar yang sama dicerminkan. Selama file
+        // variasi kedua belum ada, keduanya memakai gambar yang sama dan yang
+        // kanan dicerminkan agar tidak kelihatan kembar persis.
+        // bottom dipisah per tumpukan karena margin transparan di sisi bawah
+        // kedua file BERBEDA (diukur: 11,2% di Tumpukan.png, 5,2% di
+        // Tumpukan2.png pada bagian tengahnya). Kalau nilainya disamakan,
+        // tumpukan kedua duduk ~26px lebih dalam dan terlihat tenggelam.
+        { id: "kiri", src: "Tumpukan.png", side: "left-0", scaleX: 1, bottom: "bottom-[-4vh]" },
+        { id: "kanan", src: "Tumpukan2.png", side: "right-0", scaleX: -1, bottom: "bottom-[-2vh]" },
       ].map((cluster) => (
         <motion.img
           key={cluster.id}
-          src={`${ASSET}/fg-daun.png`}
+          src={`${ASSET}/${cluster.src}`}
           alt=""
           style={{
             y: yLeaves,
@@ -207,11 +239,10 @@ const Hero = () => {
             maskImage: LEAF_MASK,
             WebkitMaskImage: LEAF_MASK,
           }}
-          className={`pointer-events-none absolute bottom-[-8vh] z-30 w-[45%] select-none ${cluster.side}`}
+          className={`pointer-events-none absolute z-30 w-[40%] select-none ${cluster.bottom} ${cluster.side}`}
           draggable={false}
         />
       ))}
-
     </section>
   );
 };

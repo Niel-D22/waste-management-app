@@ -63,13 +63,13 @@ const Peta = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6 }}
-      className="flex w-full justify-center px-4 py-10 md:px-6 md:py-16"
+      className="flex w-full justify-center bg-(--surface-sky) px-4 py-10 md:px-6 md:py-16"
     >
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-10">
         {/* Header */}
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex items-center gap-2">
-            <HiOutlineLocationMarker className="text-3xl text-(--cyan)" />
+            <HiOutlineLocationMarker className="text-3xl text-(--accent)" />
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
               Jangkauan Kami
             </h2>

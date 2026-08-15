@@ -13,7 +13,7 @@ const ArtikelHeadline = ({
   return (
     <div className="flex w-full flex-col gap-4">
       {/* Gambar Utama */}
-      <div className="overflow-hidden rounded-2xl shadow-[0px_2px_15px_2px_rgba(0,0,0,0.1)]">
+      <div className="overflow-hidden rounded-xl">
         <img
           src={image}
           alt={title}

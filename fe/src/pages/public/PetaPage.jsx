@@ -33,6 +33,11 @@ const PetaPage = () => {
   // State untuk toggle filter/sidebar di mobile
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  // Panel desktop bisa disembunyikan. Default-nya terbuka supaya pengunjung
+  // baru langsung tahu ada filter & daftar lokasi — kalau default tertutup,
+  // fiturnya jadi tersembunyi dan peta terasa kosong saat pertama dibuka.
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+
   // Fetch data dari API
   useEffect(() => {
     const fetchMarkers = async () => {
@@ -130,7 +135,11 @@ const PetaPage = () => {
   };
 
   return (
-    <div className="flex h-dvh w-full flex-col overflow-hidden bg-white pt-20 selection:bg-(--gray-shine) selection:text-(--primary)">
+    // pt-20 dihapus: navbar di halaman ini sekarang mengambang, jadi peta
+    // sengaja dibiarkan penuh sampai ke balik navbar seperti di mockup.
+    // Jarak aman terhadap navbar diatur oleh sidebar (md:top-24), bukan oleh
+    // padding di sini.
+    <div className="flex h-dvh w-full flex-col overflow-hidden bg-white selection:bg-(--gray-shine) selection:text-(--primary)">
       <div className="relative flex flex-1 overflow-hidden">
         {/* Loading Overlay */}
         {loading && (
@@ -161,7 +170,39 @@ const PetaPage = () => {
           userLocation={userLocation}
           isOpen={isMobileSidebarOpen}
           onClose={() => setIsMobileSidebarOpen(false)}
+          isPanelOpen={isPanelOpen}
+          onTogglePanel={() => setIsPanelOpen((v) => !v)}
         />
+
+        {/* Tombol pemanggil panel (desktop). Muncul hanya saat panel tersembunyi.
+            Ditaruh di tengah bawah — sejajar dengan tombol versi mobile — bukan
+            di kiri atas, supaya tidak berebut sudut dengan logo navbar.
+            Sengaja membawa jumlah lokasi, supaya dalam keadaan tertutup pun
+            pengguna tetap tahu ada berapa titik yang lolos filter. */}
+        {!isPanelOpen && (
+          <button
+            onClick={() => setIsPanelOpen(true)}
+            className="absolute bottom-6 left-1/2 z-400 hidden -translate-x-1/2 items-center gap-2.5 rounded-full border border-gray-100 bg-white/90 py-3 pr-5 pl-4 text-sm font-bold text-gray-800 shadow-[0_8px_28px_rgb(0,0,0,0.12)] backdrop-blur-xl transition hover:bg-white md:flex"
+          >
+            <svg
+              className="size-4 text-(--primary)"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+              />
+            </svg>
+            Filter &amp; Daftar
+            <span className="rounded-full bg-(--primary)/10 px-2 py-0.5 text-xs font-extrabold text-(--primary)">
+              {filteredLocations.length}
+            </span>
+          </button>
+        )}
 
         {/* Komponen Kanan: Peta Interaktif */}
         <MapView

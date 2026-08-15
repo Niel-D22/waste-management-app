@@ -16,6 +16,24 @@
   /* Neutrals — dark */
   --dark: #0f0f0f;
   --dark-soft: #16161c;
+
+  /* Tiga nada latar untuk landing page, dipakai berselang-seling supaya batas
+     antar bagian terbaca tanpa perlu garis pemisah.
+     Kedua warna bernuansa itu TIDAK dikira-kira — keduanya disampel langsung
+     dari piksel BG-Hero.png:
+       --surface-sky  = warna langit di bagian bawah gambar hero
+       --surface-sand = warna hamparan pasir di gambar hero
+     Karena berasal dari gambar yang sama, seluruh halaman terbaca sebagai satu
+     keluarga warna, bukan tempelan. Hindari memakai abu netral (gray-50/100)
+     sebagai latar section: di antara nada bernuansa ini, abu terlihat kotor. */
+  --surface: #ffffff;
+  --surface-sky: #e5f1fd;
+  /* Satu tingkat lebih pekat dari --surface-sky, disampel dari bagian tengah
+     langit di BG-Hero.png. Dipakai khusus untuk band penutup di atas footer,
+     supaya band itu terbaca sebagai bagian tersendiri tanpa keluar dari
+     keluarga warna yang sama. */
+  --surface-sky-deep: #d1e8fe;
+  --surface-sand: #fcefde;
   --dark-text: #2c2c2c;
 
   /* Neutrals — gray */
@@ -109,4 +127,31 @@ button {
 }
 .leaflet-popup-tip-container {
   display: none !important;
+}
+
+/* Menghidupkan warna basemap CARTO Voyager.
+   Voyager sengaja dirancang pucat & rendah kontras supaya penanda di atasnya
+   menonjol. Penanda kita sudah punya outline putih + bayangan sendiri, jadi
+   kepucatan itu tidak diperlukan dan bikin petanya terasa mati.
+   saturate menaikkan kepekatan warna (air jadi biru, taman jadi hijau),
+   contrast sedikit menegaskan garis jalan, brightness diturunkan tipis supaya
+   kenaikan saturasi tidak membuat area terang jadi menyilaukan.
+   Cara ini dipilih daripada mengganti penyedia tile karena tidak menambah
+   dependensi, tidak butuh API key, dan geometri petanya tetap sama. */
+.map-tiles-vivid {
+  filter: saturate(1.45) contrast(1.06) brightness(0.99);
+}
+
+/* Mencegah halaman tersentak ke samping saat berpindah rute.
+   Beranda cukup panjang sehingga memunculkan scrollbar, sedangkan /peta memakai
+   h-dvh + overflow-hidden sehingga tidak. Saat scrollbar hilang, lebar viewport
+   bertambah ~15px dan SELURUH isi halaman bergeser ke kanan — terbaca sebagai
+   guncangan tepat di detik perpindahan.
+   scrollbar-gutter: stable membuat browser selalu menyisakan ruang selebar
+   scrollbar, ada isinya atau tidak, sehingga lebar viewport tidak pernah
+   berubah antar halaman.
+   Konsekuensinya halaman yang tidak bisa digulung pun kehilangan ~15px lebar.
+   Itu harga yang jauh lebih murah daripada guncangan di setiap perpindahan. */
+html {
+  scrollbar-gutter: stable;
 }

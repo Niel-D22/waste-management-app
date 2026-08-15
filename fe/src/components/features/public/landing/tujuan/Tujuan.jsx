@@ -24,8 +24,28 @@ const Tujuan = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6 }}
-      className="flex w-full justify-center px-4 pt-5 pb-25 md:px-6 md:pt-40 md:pb-75"
+      className="relative flex w-full justify-center overflow-x-clip bg-(--surface-sky) px-4 pt-5 pb-25 md:px-6 md:pt-40 md:pb-75"
     >
+        {/* Ornamen latar. Diletakkan sebagai anak PERTAMA supaya tercat di
+            lapisan paling belakang tanpa perlu z-index — isi section setelahnya
+            otomatis menimpanya. pointer-events-none supaya tidak pernah mencuri
+            klik. Disembunyikan di bawah md: di layar sempit ruangnya sudah
+            sesak, ornamen di situ jadi mengganggu, bukan menghias. */}
+      <img
+        src="/images/ornamen/ornamen-daun.png"
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute -bottom-8 -left-10 hidden w-[22%] opacity-60 select-none md:block"
+      />
+      <img
+        src="/images/ornamen/ornamen-ombak.png"
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute top-24 -right-12 hidden w-[24%] opacity-45 select-none md:block"
+      />
+
       <div className="mx-auto flex w-full max-w-6xl">
         <div className="flex w-full flex-col items-center justify-between gap-12 md:flex-row md:gap-30">
           <div className="flex w-full flex-col gap-5">
