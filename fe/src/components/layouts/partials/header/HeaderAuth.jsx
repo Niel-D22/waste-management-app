@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { LuUser, LuSettings, LuLogOut } from "react-icons/lu";
+import { LuUser, LuSettings, LuLogOut, LuChevronDown } from "react-icons/lu";
 
-function HeaderAuth({ isAuthenticated, user, onLogout }) {
+function HeaderAuth({ isAuthenticated, user, onLogout, floating = false }) {
   const [avatarOpen, setAvatarOpen] = useState(false);
   const avatarRef = useRef(null);
   const navigate = useNavigate();
@@ -46,7 +46,11 @@ function HeaderAuth({ isAuthenticated, user, onLogout }) {
       <div className="relative" ref={avatarRef}>
         <button
           onClick={() => setAvatarOpen(!avatarOpen)}
-          className="flex cursor-pointer items-center gap-2 rounded-full transition hover:ring-1 hover:ring-emerald-200"
+          className={`flex cursor-pointer items-center gap-2.5 rounded-full transition ${
+            floating
+              ? "bg-white/95 py-1.5 pr-4 pl-1.5 shadow-lg ring-1 ring-black/5 backdrop-blur hover:bg-white"
+              : "hover:ring-1 hover:ring-emerald-200"
+          }`}
         >
           {user?.avatar_url ? (
             <img
@@ -56,9 +60,25 @@ function HeaderAuth({ isAuthenticated, user, onLogout }) {
               className="h-9 w-9 rounded-full border-2 border-gray-200 object-cover"
             />
           ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gray-400 bg-gray-900 text-sm font-bold text-white">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gray-400 bg-(--primary) text-sm font-bold text-white">
               {user?.username?.charAt(0).toUpperCase() || "?"}
             </div>
+          )}
+
+          {/* Nama hanya ditampilkan di mode mengambang. Di header putih penuh,
+              ruangnya lebih sempit dan avatar saja sudah cukup. */}
+          {floating && (
+            <>
+              <span className="max-w-[9rem] truncate text-sm font-bold text-gray-800">
+                {user?.username || user?.full_name || "Akun"}
+              </span>
+              <LuChevronDown
+                size={15}
+                className={`shrink-0 text-gray-400 transition-transform duration-200 ${
+                  avatarOpen ? "rotate-180" : ""
+                }`}
+              />
+            </>
           )}
         </button>
 

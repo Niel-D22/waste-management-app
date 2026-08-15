@@ -76,7 +76,7 @@ const Artikel = () => {
           klik. Disembunyikan di bawah md: di layar sempit ruangnya sudah
           sesak, ornamen di situ jadi mengganggu, bukan menghias. */}
       <img
-        src="/images/ornamen/ornamen-awan.png"
+        src="/images/ornamen/ornamen-awan.webp"
         alt=""
         aria-hidden="true"
         draggable={false}

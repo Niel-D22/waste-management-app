@@ -31,7 +31,7 @@ function HeaderNav() {
   );
 
   return (
-    <div className="hidden items-center gap-10 md:flex">
+    <div className="hidden items-center gap-12 md:flex">
       <Link to="/" className={navLinkClass("/")}>
         Beranda
       </Link>

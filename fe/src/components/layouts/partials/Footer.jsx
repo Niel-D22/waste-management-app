@@ -84,7 +84,7 @@ function Footer() {
             object-cover dipakai supaya rasio aslinya (2,46:1) tidak perlu persis
             sama dengan tinggi kartu yang berubah-ubah mengikuti isi. */}
         <img
-          src="/images/Hero%20asset/bgFooter.png"
+          src="/images/Hero%20asset/bgFooter.webp"
           alt=""
           aria-hidden="true"
           draggable={false}
@@ -100,7 +100,7 @@ function Footer() {
             <div className="flex flex-col gap-5">
               <div className="flex items-center gap-2">
                 <img
-                  src="/images/logo-fill.png"
+                  src="/images/logo-fill.webp"
                   alt="logo"
                   className="h-12.5 w-12.5"
                 />

@@ -53,7 +53,7 @@ function HeroLaporanCard() {
   if (!laporan) return null;
 
   const status = STATUS_META[laporan.status_laporan] || STATUS_META.menunggu;
-  const photo = laporan.foto_bukti_urls?.[0] || "/images/placeholder.png";
+  const photo = laporan.foto_bukti_urls?.[0] || "/images/placeholder.webp";
   const title = laporan.jenis_sampah?.nama
     ? `Sampah ${laporan.jenis_sampah.nama} — ${laporan.kabupaten_kota || "Sulawesi Utara"}`
     : laporan.alamat_lokasi || "Laporan Sampah";

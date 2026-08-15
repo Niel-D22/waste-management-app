@@ -39,29 +39,32 @@ function AjakanPenutup() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6 }}
-        // Padding bawah dibuat sangat besar (pb-56/72) karena strip objek di
-        // bawah menempati ruang itu. Kalau kurang, teks dan tombol tertimpa
-        // tumpukan botol dan tempat sampahnya.
-        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-28 pb-56 text-center md:pt-36 md:pb-72"
+        // Padding bawah ditulis dalam vw, bukan rem. Strip objek di bawah
+        // berrasio 3:1 dan selebar layar, jadi TINGGINYA ikut lebar layar
+        // (=lebar/3), bukan tetap. Dengan pb dalam rem, di layar sempit dia
+        // menyisakan celah kosong besar dan di layar lebar malah menimpa
+        // tombolnya. Angka vw membuat ruang yang disisakan selalu sebanding
+        // dengan tinggi strip yang sebenarnya.
+        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 pt-20 pb-[46vw] text-center sm:px-6 sm:pt-28 md:pt-36 md:pb-[26vw]"
       >
-        <h2 className="text-4xl leading-[1.15] font-bold tracking-tight text-slate-900 md:text-6xl">
+        <h2 className="font-display text-[clamp(1.9rem,6vw,3.75rem)] leading-[1.15] font-extrabold tracking-tight text-slate-900">
           {/* Satu kata disorot dalam kotak membulat, mengikuti pola referensi:
               mata langsung menangkap kata kerjanya lebih dulu, baru sisanya. */}
-          <span className="mr-2 inline-block -rotate-2 rounded-2xl bg-(--primary) px-5 py-1 text-white shadow-lg">
+          <span className="mr-1.5 inline-block -rotate-2 rounded-xl bg-(--primary) px-3 py-0.5 text-white shadow-lg sm:mr-2 sm:rounded-2xl sm:px-5 sm:py-1">
             Bergerak
           </span>{" "}
           untuk Sulawesi Utara
         </h2>
 
-        <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-600 md:text-xl md:leading-9">
-          Setiap laporan yang dikirim, setiap barang yang didaur ulang, setiap
-          komunitas yang bergabung — semuanya menumpuk jadi perubahan yang bisa
+        <p className="mt-6 max-w-2xl text-[clamp(1rem,3.2vw,1.25rem)] leading-relaxed text-slate-600">
+          Setiap laporan yang dikirim, setiap barang yang didaur ulang, dan
+          setiap komunitas yang bergabung menumpuk jadi perubahan yang bisa
           dilihat langsung di peta.
         </p>
 
         <Link
           to="/login"
-          className="mt-9 flex items-center gap-2 rounded-full bg-(--primary) px-9 py-4 text-base font-bold text-white shadow-xl transition hover:bg-(--primary-dark)"
+          className="mt-8 flex items-center gap-2 rounded-full bg-(--primary) px-7 py-3.5 text-sm font-bold text-white shadow-xl transition hover:bg-(--primary-dark) sm:px-9 sm:py-4 sm:text-base"
         >
           Bergabung Sekarang
           <LuArrowRight size={18} />
@@ -74,7 +77,7 @@ function AjakanPenutup() {
           Gambarnya berrasio 3:1 dengan 46% bagian atas kosong, jadi w-full
           sudah menghasilkan tinggi yang pas tanpa perlu di-crop. */}
       <img
-        src="/images/ornamen/fg-transisi.png"
+        src="/images/ornamen/fg-transisi.webp"
         alt=""
         aria-hidden="true"
         draggable={false}

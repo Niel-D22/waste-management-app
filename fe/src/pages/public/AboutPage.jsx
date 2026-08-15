@@ -92,7 +92,7 @@ export default function AboutPage() {
           className="group flex w-full items-center justify-center pt-6 pb-4 transition hover:scale-105 sm:pt-10 sm:pb-6"
         >
           <motion.img
-            src="/images/logo-fill.png"
+            src="/images/logo-fill.webp"
             alt="Logo Torang Bersih"
             className="w-24 max-w-[130px] transition duration-300 group-hover:scale-110 group-hover:drop-shadow-xl sm:w-40 sm:max-w-[180px]"
             initial={{ scale: 0.85, opacity: 0 }}
@@ -364,7 +364,7 @@ export default function AboutPage() {
           >
             <div className="xs:-bottom-4 xs:-right-4 xs:left-8 xs:top-8 xs:rounded-tr-[80px] xs:rounded-bl-[80px] absolute top-4 -right-2 -bottom-2 left-4 rounded-tr-[60px] rounded-bl-[60px] bg-gray-100 sm:top-14 sm:-right-8 sm:-bottom-8 sm:left-14 sm:rounded-tr-[110px] sm:rounded-bl-[110px]"></div>
             <motion.img
-              src="/images/Scan.png"
+              src="/images/Scan.webp"
               alt="User Torang Bersih"
               className="xs:rounded-2xl relative z-10 w-full rounded-xl object-cover shadow-lg transition duration-300 group-hover:scale-105 group-hover:shadow-green-200"
               style={{ aspectRatio: "4/5" }}

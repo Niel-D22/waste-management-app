@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Font khusus JUDUL. Raleway (font badan teks) tetap dipakai untuk paragraf,
+   tapi tidak cocok untuk judul besar: huruf-hurufnya sempit dengan x-height
+   kecil, jadi di bobot 900 sekalipun dia terbaca anggun, bukan tegas.
+   Plus Jakarta Sans kebalikannya — geometris, x-height besar, tebal huruf
+   rata — jenis yang terasa menghantam di ukuran besar.
+   Nilai tambah: typeface ini dibuat atas pesanan Pemprov DKI Jakarta, jadi
+   pemakaiannya punya alasan yang bisa diceritakan ke juri, bukan sekadar
+   selera. */
+@theme {
+  --font-display: "Plus Jakarta Sans", "Raleway", sans-serif;
+}
+
 /* ===== Brand Color Palette ===== */
 :root {
   /* Primary — indigo/dark blue */

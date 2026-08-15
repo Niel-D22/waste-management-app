@@ -15,7 +15,7 @@ const FITUR = [
     body: "Komunitas, organisasi lingkungan, bank sampah, dan instansi daerah di Sulawesi Utara terdaftar di satu tempat. Lihat siapa yang aktif di wilayahmu, apa yang mereka kerjakan, dan hubungi langsung kalau mau ikut turun tangan.",
     cta: "Lihat Kolaborator",
     link: "/kolaborator",
-    image: "/images/Fitur2/fitur-1-kolaborator.png",
+    image: "/images/Fitur2/fitur-1-kolaborator.webp",
   },
   {
     id: "aset",
@@ -24,16 +24,16 @@ const FITUR = [
     body: "Bank sampah, TPS, dan pengepul terdekat lengkap dengan lokasi, jam buka, dan jenis sampah yang mereka terima. Tidak perlu lagi menebak-nebak harus membawa botol plastik atau minyak jelantah ke mana.",
     cta: "Jelajahi Aset",
     link: "/aset",
-    image: "/images/Fitur2/fitur-2-aset.png",
+    image: "/images/Fitur2/fitur-2-aset.webp",
   },
   {
     id: "laporan",
     label: "Laporan Sampah Ilegal",
     title: "Laporkan titik sampah liar",
-    body: "Foto tumpukan sampah liar yang kamu temukan, lokasinya terisi otomatis dari GPS, lalu kirim. Laporanmu diverifikasi, ditindak petugas, dan kamu bisa memantau sendiri statusnya sampai selesai — lengkap dengan foto bukti penanganan.",
+    body: "Foto tumpukan sampah liar yang kamu temukan, lokasinya terisi otomatis dari GPS, lalu kirim. Laporanmu diverifikasi, ditindak petugas, dan kamu bisa memantau sendiri statusnya sampai selesai, lengkap dengan foto bukti penanganan.",
     cta: "Buat Laporan",
     link: "/laporan",
-    image: "/images/Fitur2/fitur-3-laporan.png",
+    image: "/images/Fitur2/fitur-3-laporan.webp",
   },
   {
     id: "daur-ulang",
@@ -42,7 +42,7 @@ const FITUR = [
     body: "Punya kardus, botol, atau perabot bekas yang masih layak? Tandai lokasimu dan biarkan pengepul atau orang yang membutuhkan menjemputnya. Barang yang tadinya jadi sampah berpindah tangan, bukan berakhir di TPA.",
     cta: "Lihat Barang Daur Ulang",
     link: "/barang-bekas",
-    image: "/images/Fitur2/fitur-4-daur-ulang.png",
+    image: "/images/Fitur2/fitur-4-daur-ulang.webp",
   },
 ];
 
@@ -102,17 +102,17 @@ function FiturSlider() {
   const transition = { duration: 0.35, ease: [0.22, 1, 0.36, 1] };
 
   return (
-    <section className="w-full bg-(--surface-sky) px-4 py-16 md:px-10 md:py-24">
+    <section className="w-full bg-(--surface-sky) px-3 py-12 sm:px-4 md:px-10 md:py-24">
       <div
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onFocusCapture={() => setPaused(true)}
         onBlurCapture={() => setPaused(false)}
-        className="mx-auto w-full max-w-7xl overflow-hidden rounded-3xl bg-(--surface) px-6 py-12 md:px-14 md:py-16"
+        className="mx-auto w-full max-w-7xl overflow-hidden rounded-3xl bg-(--surface) px-4 py-7 sm:px-8 sm:py-10 md:px-14 md:py-16"
       >
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Ilustrasi */}
-          <div className="order-2 lg:order-1">
+          <div>
             <AnimatePresence mode="wait" custom={direction} initial={false}>
               <motion.div
                 key={item.id}
@@ -122,7 +122,7 @@ function FiturSlider() {
                 animate="center"
                 exit="exit"
                 transition={transition}
-                className="flex aspect-square w-full items-center justify-center"
+                className="flex aspect-[5/4] w-full items-center justify-center sm:aspect-square"
               >
                 <img
                   src={item.image}
@@ -148,14 +148,14 @@ function FiturSlider() {
           </div>
 
           {/* Teks */}
-          <div className="order-1 flex flex-col lg:order-2">
-            <h2 className="text-3xl leading-tight font-bold tracking-tight text-slate-900 md:text-5xl">
+          <div className="flex flex-col">
+            <h2 className="font-display text-[clamp(1.75rem,5.2vw,3rem)] leading-tight font-extrabold tracking-tight text-slate-900">
               Apa yang bisa kamu lakukan di sini
             </h2>
 
             {/* Tinggi minimum dikunci supaya tombol panah dan indikator di bawah
                 tidak melompat-lompat saat panjang teks tiap fitur berbeda. */}
-            <div className="mt-8 min-h-[20rem] md:min-h-[17rem]">
+            <div className="mt-5 min-h-[14rem] sm:min-h-[15rem] md:min-h-[17rem]">
               <AnimatePresence mode="wait" custom={direction} initial={false}>
                 <motion.div
                   key={item.id}
@@ -170,10 +170,10 @@ function FiturSlider() {
                     {item.label}
                   </span>
                   <div className="mt-2 h-1 w-12 rounded-full bg-(--accent)" />
-                  <h3 className="mt-4 text-2xl font-bold text-(--primary) md:text-3xl">
+                  <h3 className="mt-4 text-[clamp(1.25rem,4vw,1.875rem)] font-bold text-(--primary)">
                     {item.title}
                   </h3>
-                  <p className="mt-4 text-base leading-7 text-slate-600">
+                  <p className="mt-4 text-[clamp(0.95rem,3vw,1.0625rem)] leading-relaxed text-slate-600">
                     {item.body}
                   </p>
                   {/* Tiap slide membawa tautannya sendiri. Ini keuntungan format
@@ -213,14 +213,14 @@ function FiturSlider() {
                 <button
                   onClick={() => paginate(-1)}
                   aria-label="Fitur sebelumnya"
-                  className="flex size-12 cursor-pointer items-center justify-center rounded-full bg-white text-(--primary) shadow-md transition hover:bg-(--primary) hover:text-white"
+                  className="flex size-11 cursor-pointer items-center justify-center rounded-full bg-white text-(--primary) shadow-md transition hover:bg-(--primary) hover:text-white sm:size-12"
                 >
                   <LuArrowLeft size={20} />
                 </button>
                 <button
                   onClick={() => paginate(1)}
                   aria-label="Fitur berikutnya"
-                  className="flex size-12 cursor-pointer items-center justify-center rounded-full bg-(--primary) text-white shadow-md transition hover:bg-(--primary-dark)"
+                  className="flex size-11 cursor-pointer items-center justify-center rounded-full bg-(--primary) text-white shadow-md transition hover:bg-(--primary-dark) sm:size-12"
                 >
                   <LuArrowRight size={20} />
                 </button>

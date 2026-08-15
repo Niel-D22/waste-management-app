@@ -162,7 +162,7 @@ const RegisterKolaborator = () => {
             ))}
           </div>
           <img
-            src="/images/DaftarKolabolatorVektor.png"
+            src="/images/DaftarKolabolatorVektor.webp"
             alt="Ornamen"
             className="pointer-events-none absolute bottom-0 left-0 w-full object-cover opacity-80 hidden md:block"
           />

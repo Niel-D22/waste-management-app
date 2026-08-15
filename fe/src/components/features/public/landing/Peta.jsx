@@ -63,18 +63,18 @@ const Peta = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6 }}
-      className="flex w-full justify-center bg-(--surface-sky) px-4 py-10 md:px-6 md:py-16"
+      className="flex w-full justify-center bg-(--surface-sky) px-4 py-14 md:px-6 md:py-16"
     >
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-10">
         {/* Header */}
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex items-center gap-2">
             <HiOutlineLocationMarker className="text-3xl text-(--accent)" />
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
+            <h2 className="font-display text-[clamp(1.75rem,5.2vw,3rem)] leading-tight font-extrabold tracking-tight text-slate-900">
               Jangkauan Kami
             </h2>
           </div>
-          <p className="max-w-2xl text-lg leading-relaxed font-medium text-gray-500">
+          <p className="max-w-2xl text-[clamp(0.95rem,3.2vw,1.125rem)] leading-relaxed font-medium text-slate-600">
             Memantau dan mengelola persampahan di seluruh wilayah Sulawesi
             Utara, dari kota hingga kabupaten.
           </p>

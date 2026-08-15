@@ -194,7 +194,7 @@ const BuatLaporanPage = () => {
 
           {/* Vektor dekorasi — Disembunyikan di Mobile */}
           <img
-            src="/images/DaftarKolabolatorVektor.png"
+            src="/images/DaftarKolabolatorVektor.webp"
             alt=""
             className="pointer-events-none absolute bottom-0 left-0 hidden w-full object-cover opacity-80 md:block"
           />

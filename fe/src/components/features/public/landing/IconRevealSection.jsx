@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { motion, useScroll, useSpring, useTransform } from "motion/react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 
 // Ikon-ikon di bawah di-reuse persis dari FloatingIcons.jsx (circle fill +
 // path "d" sama persis, tidak diubah) supaya identitas visualnya konsisten
@@ -95,181 +95,286 @@ const ICONS = [
 // berkumpul rapat di atasnya. Nilai dalam vw/vh supaya proporsional di berbagai
 // ukuran layar. Kotak tengah (kira-kira x -22..22, y -12..12) sengaja dikosongi
 // karena di situ judul dan paragrafnya berada.
-// Ukurannya sengaja beda-beda (64-88px) supaya susunannya punya irama dan tidak
-// terlihat seperti grid yang kaku.
+// Ukurannya sengaja beda-beda supaya susunannya punya irama dan tidak terlihat
+// seperti grid yang kaku.
+//
+// Titik BERANGKATNYA tidak ditulis lagi. Dulu tiap ikon punya koordinat
+// "scatter" di luar layar dan terbang masuk. Sekarang semuanya muncul dari
+// TENGAH — dari balik teks — lalu memuai ke posisinya masing-masing.
+// Titik berangkat dihitung dari target dikali FAKTOR_MUNCUL, bukan nol persis:
+// kalau semuanya berangkat dari satu piksel yang sama, kedelapan ikon menumpuk
+// jadi satu gumpalan. Dengan dikali, tiap ikon sudah berada di ARAHNYA sendiri
+// sejak awal, jadi terbaca memancar keluar dari teks.
+const FAKTOR_MUNCUL = 0.07;
+
 const LAYOUT = [
-  { scatter: { x: -66, y: -48 }, target: { x: -36, y: -26 }, size: 100 },
-  { scatter: { x: -32, y: -62 }, target: { x: -17, y: -35 }, size: 88 },
-  { scatter: { x: 24, y: -60 }, target: { x: 13, y: -33 }, size: 116 },
-  { scatter: { x: 64, y: -42 }, target: { x: 35, y: -22 }, size: 92 },
-  { scatter: { x: -72, y: 14 }, target: { x: -40, y: 7 }, size: 96 },
-  { scatter: { x: 74, y: 18 }, target: { x: 40, y: 10 }, size: 106 },
-  { scatter: { x: -46, y: 56 }, target: { x: -24, y: 30 }, size: 92 },
-  { scatter: { x: 40, y: 58 }, target: { x: 21, y: 32 }, size: 112 },
+  { target: { x: -36, y: -26 }, size: 100 },
+  { target: { x: -17, y: -35 }, size: 88 },
+  { target: { x: 13, y: -33 }, size: 116 },
+  { target: { x: 35, y: -22 }, size: 92 },
+  { target: { x: -40, y: 7 }, size: 96 },
+  { target: { x: 40, y: 10 }, size: 106 },
+  { target: { x: -24, y: 30 }, size: 92 },
+  { target: { x: 21, y: 32 }, size: 112 },
 ];
 
-function IconBadge({ icon, layout, progress, index }) {
-  // Tiap ikon berangkat sedikit lebih lambat dari ikon sebelumnya supaya
-  // masuknya berurutan, bukan serempak.
-  const start = index * 0.035;
-  const settle = start + 0.42;
 
-  const x = useTransform(progress, [start, settle], [`${layout.scatter.x}vw`, `${layout.target.x}vw`]);
-  const y = useTransform(progress, [start, settle], [`${layout.scatter.y}vh`, `${layout.target.y}vh`]);
-  // Sengaja TIDAK ada keyframe yang mengembalikan nilai ini ke 0. Begitu ikon
-  // sampai di tempatnya, dia menetap sampai section-nya lewat.
-  const scale = useTransform(progress, [start, settle], [0.45, 1]);
-  const opacity = useTransform(progress, [start, start + 0.14], [0, 1]);
+// Urutan langkah. Ikon lebih dulu, baru teks baris demi baris.
+const LANGKAH_IKON = 1;
+const LANGKAH_BARIS = [2, 3, 4];
+const TOTAL_LANGKAH = 4;
 
+// Jeda minimum antar langkah. Satu ayunan trackpad menghasilkan puluhan event
+// wheel beruntun; tanpa jeda ini, satu sentakan jari akan melahap keempat
+// langkah sekaligus. Inilah yang membuat "sepanjang apa pun gulungannya, tetap
+// satu baris".
+const JEDA_ANTAR_LANGKAH = 620;
+
+function IconBadge({ icon, layout, index, aktif }) {
   const viewBoxMin = { x: icon.cx - 45, y: icon.cy - 45 };
 
   return (
     <motion.div
-      className="pointer-events-none absolute top-1/2 left-1/2 hidden sm:block"
-      style={{ x, y, scale, opacity, translateX: "-50%", translateY: "-50%" }}
+      className="pointer-events-auto absolute top-1/2 left-1/2"
+      style={{ translateX: "-50%", translateY: "-50%" }}
+      initial={false}
+      animate={{
+        // Titik berangkatnya dihitung dari targetnya sendiri dikali faktor
+        // kecil, bukan nol persis: kalau kedelapan ikon berangkat dari satu
+        // piksel yang sama mereka menumpuk jadi gumpalan. Dengan dikali, tiap
+        // ikon sudah berada di ARAHNYA sendiri sejak awal, jadi terbaca
+        // memancar keluar dari teks.
+        x: `${aktif ? layout.target.x : layout.target.x * FAKTOR_MUNCUL}vw`,
+        y: `${aktif ? layout.target.y : layout.target.y * FAKTOR_MUNCUL}vh`,
+        scale: aktif ? 1 : 0.2,
+        opacity: aktif ? 1 : 0,
+      }}
+      transition={{
+        // Sengaja lambat (1,6 detik) dengan kurva yang melambat panjang di
+        // ujung. Ikon yang memancar cepat terbaca seperti ledakan; yang lambat
+        // terbaca seperti sesuatu yang mekar.
+        // Ditambah jeda berurutan 0,14 detik per ikon, ikon terakhir baru
+        // selesai sekitar 2,6 detik setelah yang pertama berangkat — jadi
+        // memancarnya betul-betul terasa satu per satu.
+        duration: 1.6,
+        delay: aktif ? index * 0.14 : 0,
+        ease: [0.16, 1, 0.3, 1],
+      }}
     >
-      {/* Lapisan terpisah untuk ambang-ambing halus. Tidak bisa digabung ke
-          motion.div di atas karena keduanya sama-sama menulis transform —
-          yang satu dikendalikan scroll, yang satu berjalan sendiri. */}
-      {/* Gerak menganggur setelah ikon menetap. Sumbu X dan Y sengaja diberi
-          durasi yang BERBEDA dan tidak kelipatan satu sama lain, sehingga
-          keduanya tidak pernah kembali ke titik awal bersamaan — lintasannya
-          jadi terasa mengambang acak, bukan berayun mekanis bolak-balik.
-          Arah hanyutan mendatar dibalik untuk ikon berindeks ganjil supaya
-          seluruh kelompok tidak bergerak serempak ke satu sisi. */}
       <motion.div
-        animate={{
-          y: [0, -10, 0],
-          x: index % 2 === 0 ? [0, 9, 0] : [0, -9, 0],
-        }}
-        transition={{
-          y: {
-            duration: 3.4 + index * 0.45,
-            repeat: Infinity,
-            ease: "easeInOut",
-          },
-          x: {
-            duration: 5.7 + index * 0.63,
-            repeat: Infinity,
-            ease: "easeInOut",
-          },
-        }}
+        whileHover={{ scale: 1.2, rotate: index % 2 === 0 ? 9 : -9 }}
+        transition={{ type: "spring", stiffness: 320, damping: 16 }}
+        className="cursor-pointer"
       >
-        <svg
-          width={layout.size}
-          height={layout.size}
-          viewBox={`${viewBoxMin.x} ${viewBoxMin.y} 90 90`}
-          className="drop-shadow-[0_10px_24px_rgba(30,31,120,0.16)]"
+        {/* Gerak menganggur setelah ikon menetap. Sumbu X dan Y diberi durasi
+            yang BERBEDA dan bukan kelipatan satu sama lain, sehingga keduanya
+            tidak pernah kembali ke titik awal bersamaan — lintasannya terasa
+            mengambang acak, bukan berayun mekanis bolak-balik. */}
+        <motion.div
+          animate={{
+            y: [0, -17, 0],
+            x: index % 2 === 0 ? [0, 30, 0] : [0, -30, 0],
+          }}
+          transition={{
+            y: {
+              duration: 2.6 + index * 0.28,
+              repeat: Infinity,
+              ease: "easeInOut",
+            },
+            x: {
+              duration: 4.1 + index * 0.37,
+              repeat: Infinity,
+              ease: "easeInOut",
+            },
+          }}
         >
-          {!icon.noBaseCircle && <circle cx={icon.cx} cy={icon.cy} r="45" fill={icon.color} />}
-          {icon.paths.map((d, i) => (
-            <path key={i} d={d} fill={icon.noBaseCircle ? icon.color : "white"} />
-          ))}
-        </svg>
+          <svg
+            width={layout.size}
+            height={layout.size}
+            viewBox={`${viewBoxMin.x} ${viewBoxMin.y} 90 90`}
+            className="scale-[0.42] drop-shadow-[0_10px_24px_rgba(30,31,120,0.16)] sm:scale-[0.62] lg:scale-100"
+          >
+            {!icon.noBaseCircle && (
+              <circle cx={icon.cx} cy={icon.cy} r="45" fill={icon.color} />
+            )}
+            {icon.paths.map((d, i) => (
+              <path
+                key={i}
+                d={d}
+                fill={icon.noBaseCircle ? icon.color : "white"}
+              />
+            ))}
+          </svg>
+        </motion.div>
       </motion.div>
     </motion.div>
   );
 }
 
-// Satu baris teks yang naik sendiri mengikuti scroll. Dipisah jadi komponen
-// karena tiap baris butuh rentang scroll-nya sendiri, dan useTransform adalah
-// hook — tidak boleh dipanggil di dalam perulangan pada satu komponen.
-function RevealLine({ progress, from, to, className, children }) {
-  const opacity = useTransform(progress, [from, to], [0, 1]);
-  const y = useTransform(progress, [from, to], [36, 0]);
+function RevealLine({ aktif, className, children }) {
   return (
-    <motion.div style={{ opacity, y }} className={className}>
+    <motion.div
+      initial={false}
+      animate={{ opacity: aktif ? 1 : 0, y: aktif ? 0 : 44 }}
+      transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+      className={className}
+    >
       {children}
     </motion.div>
   );
 }
 
 function IconRevealSection() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+  const sectionRef = useRef(null);
+  const [langkah, setLangkah] = useState(0);
 
-  // scrollYProgress mengikuti roda scroll persis apa adanya, jadi geraknya ikut
-  // tersendat kalau scroll-nya tersendat. Dilewatkan spring dulu supaya ada
-  // sedikit inersia dan hasilnya mengalir. Semua animasi di bawah membaca nilai
-  // yang sudah dihaluskan ini, bukan yang mentah.
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 26,
-    restDelta: 0.0005,
-  });
+  // Disimpan juga di ref supaya penangan wheel tidak perlu didaftarkan ulang
+  // tiap kali langkahnya berubah. Mendaftar ulang listener non-passive di
+  // tengah gulungan bisa membuat satu event terlewat.
+  const langkahRef = useRef(0);
+  // Hanya pernah naik, tidak pernah turun. Ini yang menjamin apa yang sudah
+  // muncul tidak pernah hilang lagi.
+  const setLangkahAman = (nilai) => {
+    const batas = Math.min(TOTAL_LANGKAH, Math.max(langkahRef.current, nilai));
+    langkahRef.current = batas;
+    setLangkah(batas);
+  };
 
-  // Tiap baris punya rentang scroll sendiri, dan rentangnya sengaja BERTUMPUK
-  // sebagian (0.06-0.22, 0.13-0.29, 0.21-0.37) — bukan berurutan terpisah.
-  // Kalau terpisah, tiap baris berhenti dulu baru baris berikutnya mulai, dan
-  // itulah yang terbaca sebagai patah-patah. Dengan bertumpuk, gerakannya
-  // menyambung jadi satu gelombang naik.
-  // Tidak ada satu pun yang dikembalikan ke 0 di akhir: teksnya menetap sampai
-  // section-nya lewat.
-  const LINES = [
-    [0.06, 0.22],
-    [0.13, 0.29],
-    [0.21, 0.37],
-  ];
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    let mendingin = false;
+    let sentuhTerakhirY = 0;
+
+    // Bagian ini mengambil alih gulungan halaman, jadi syaratnya dibuat ketat:
+    // hanya aktif kalau section benar-benar sedang memenuhi layar. Di luar itu
+    // gulungan dikembalikan sepenuhnya ke pengguna.
+    const sedangMemenuhiLayar = () => {
+      const r = el.getBoundingClientRect();
+      return r.top <= 80 && r.bottom >= window.innerHeight - 80;
+    };
+
+    const maju = (turun) => {
+      // Menggulung ke ATAS tidak pernah ditahan dan tidak pernah memundurkan
+      // langkah. Dua alasannya:
+      // 1. Apa yang sudah muncul tetap muncul — pengguna tidak melihat ikon
+      //    dan teks lenyap satu per satu saat dia naik.
+      // 2. Menghilangkan jebakan. Kalau ke atas juga ditahan, pengguna harus
+      //    empat kali menggulung ke atas hanya untuk keluar dari section ini.
+      if (!turun) return false;
+
+      const s = langkahRef.current;
+      // Semua langkah selesai: gulungan dikembalikan sepenuhnya, dan karena
+      // langkahnya tidak pernah direset, melewati section ini lagi tidak akan
+      // menguncinya untuk kedua kali.
+      if (s >= TOTAL_LANGKAH) return false;
+
+      if (!mendingin) {
+        mendingin = true;
+        setLangkahAman(s + 1);
+        setTimeout(() => {
+          mendingin = false;
+        }, JEDA_ANTAR_LANGKAH);
+      }
+      return true;
+    };
+
+    const onWheel = (e) => {
+      if (!sedangMemenuhiLayar()) return;
+      if (maju(e.deltaY > 0)) e.preventDefault();
+    };
+
+    const onTouchStart = (e) => {
+      sentuhTerakhirY = e.touches[0].clientY;
+    };
+
+    const onTouchMove = (e) => {
+      if (!sedangMemenuhiLayar()) return;
+      const selisih = sentuhTerakhirY - e.touches[0].clientY;
+      // Ambang 12px supaya sentuhan kecil yang tidak disengaja tidak dihitung
+      // sebagai satu langkah.
+      if (Math.abs(selisih) < 12) return;
+      sentuhTerakhirY = e.touches[0].clientY;
+      if (maju(selisih > 0)) e.preventDefault();
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+  }, []);
 
   return (
-    // 150vh. Sebelumnya 300vh lalu 220vh — dua-duanya masih terlalu panjang:
-    // begitu semua ikon menetap tidak ada lagi yang berubah, jadi sisanya cuma
-    // layar diam yang harus di-scroll. Ini penyumbang terbesar rasa "kosong"
-    // setelah hero, karena letaknya persis setelah bagian paling ramai.
-    <section ref={containerRef} className="relative h-[150vh]">
-      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-(--surface-sky)">
-        {/* Ornamen latar. Diletakkan sebagai anak PERTAMA supaya tercat di
-            lapisan paling belakang tanpa perlu z-index — isi section setelahnya
-            otomatis menimpanya. pointer-events-none supaya tidak pernah mencuri
-            klik. Disembunyikan di bawah md: di layar sempit ruangnya sudah
-            sesak, ornamen di situ jadi mengganggu, bukan menghias. */}
-        <img
-          src="/images/ornamen/ornamen-awan.png"
-          alt=""
-          aria-hidden="true"
-          draggable={false}
-          className="pointer-events-none absolute -top-6 -left-16 hidden w-[34%] opacity-70 select-none md:block"
-        />
-        <img
-          src="/images/ornamen/ornamen-awan.png"
-          alt=""
-          aria-hidden="true"
-          draggable={false}
-          className="pointer-events-none absolute -right-20 bottom-4 hidden w-[28%] -scale-x-100 opacity-50 select-none md:block"
-        />
+    // Tepat setinggi layar. Panjang tambahan tidak diperlukan lagi karena
+    // langkahnya tidak lagi dipetakan dari jarak gulungan — satu gerakan
+    // gulung sama dengan satu langkah, sejauh apa pun jarinya bergerak.
+    <section
+      ref={sectionRef}
+      className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-(--surface-sky)"
+    >
+      {/* Ornamen latar. Anak PERTAMA supaya tercat paling belakang tanpa perlu
+          z-index. Disembunyikan di bawah md: di layar sempit ruangnya sesak. */}
+      <img
+        src="/images/ornamen/ornamen-awan.webp"
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute -top-6 -left-16 hidden w-[34%] opacity-70 select-none md:block"
+      />
+      <img
+        src="/images/ornamen/ornamen-awan.webp"
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute -right-20 bottom-4 hidden w-[28%] -scale-x-100 opacity-50 select-none md:block"
+      />
 
+      <div className="pointer-events-none absolute inset-0">
         {LAYOUT.map((layout, i) => (
           <IconBadge
             key={ICONS[i].id}
             icon={ICONS[i]}
             layout={layout}
-            progress={progress}
             index={i}
+            aktif={langkah >= LANGKAH_IKON}
           />
         ))}
+      </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-4xl leading-[1.1] font-bold tracking-tight text-slate-900 md:text-6xl lg:text-7xl">
-            <RevealLine progress={progress} from={LINES[0][0]} to={LINES[0][1]}>
-              Satu platform,
-            </RevealLine>
-            <RevealLine progress={progress} from={LINES[1][0]} to={LINES[1][1]}>
-              banyak cara jaga lingkungan
-            </RevealLine>
-          </h2>
-          <RevealLine
-            progress={progress}
-            from={LINES[2][0]}
-            to={LINES[2][1]}
-            className="mx-auto mt-6 max-w-2xl text-xl leading-8 text-slate-600 md:text-2xl md:leading-9"
-          >
-            Kolaborator, aset pengelolaan sampah, laporan warga, hingga daur
-            ulang — semua terhubung dalam satu ekosistem Torang Bersih.
+      {/* Ketiga baris memakai SATU ukuran font yang sama. leading-[0.92]
+          membuat barisnya nyaris bersentuhan sehingga terbaca sebagai satu blok
+          padat, bukan tiga kalimat yang berjauhan. */}
+      <div className="relative z-10 mx-auto max-w-4xl px-5 text-center sm:px-6">
+        <h2 className="font-display text-[clamp(2.1rem,6.5vw,5rem)] leading-[0.92] font-extrabold tracking-tight text-slate-900">
+          <RevealLine aktif={langkah >= LANGKAH_BARIS[0]}>
+            Satu platform,
           </RevealLine>
-        </div>
+          <RevealLine aktif={langkah >= LANGKAH_BARIS[1]}>
+            banyak cara
+          </RevealLine>
+          <RevealLine aktif={langkah >= LANGKAH_BARIS[2]}>
+            jaga lingkungan
+          </RevealLine>
+        </h2>
+      </div>
+
+      {/* Penanda kemajuan. Saat gulungan diambil alih, pengguna kehilangan
+          satu-satunya petunjuk bahwa halaman masih merespons — titik-titik ini
+          menggantikannya, sekaligus memberi tahu tinggal berapa langkah lagi. */}
+      <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-2">
+        {Array.from({ length: TOTAL_LANGKAH }).map((_, i) => (
+          <span
+            key={i}
+            className={`h-1.5 rounded-full transition-all duration-500 ${
+              langkah > i ? "w-7 bg-(--primary)" : "w-1.5 bg-(--primary)/25"
+            }`}
+          />
+        ))}
       </div>
     </section>
   );
