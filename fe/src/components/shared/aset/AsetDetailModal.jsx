@@ -18,7 +18,7 @@ function AsetDetailModal({ data, onClose, footerActions }) {
             <h2 className="text-lg font-bold text-gray-900">Detail Aset</h2>
             <StatusBadge status={data.status_verifikasi} />
           </div>
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
           >

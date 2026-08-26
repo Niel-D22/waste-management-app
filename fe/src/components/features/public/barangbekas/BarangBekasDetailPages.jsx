@@ -118,7 +118,7 @@ const BarangBekasDetailPage = () => {
                 </div>
               )}
               <img
-                src={fotos[activeImageIndex] || "/placeholder.jpg"}
+                src={fotos[activeImageIndex] || "/images/placeholder.webp"}
                 alt={product.nama_barang}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />

@@ -1,439 +1,444 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { ChevronDown, Map, Recycle, BookOpen, ArrowRight } from "lucide-react";
+import { Link } from "react-router";
+import { ArrowRight } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { pramuat, saatMendekat } from "../../utils/pramuatRute";
 
-import { motion, AnimatePresence } from "framer-motion";
+/* ────────────────────────────────────────────────────────────────────────
+   Halaman Tentang Kami.
 
-const AccordionItem = ({ title, content, isOpen, onClick }) => (
-  <motion.div
-    className="mb-4 overflow-hidden rounded-xl bg-[#1e1f78] text-white shadow-md transition duration-200 hover:shadow-blue-400/20"
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.35 }}
-  >
-    <button
-      onClick={onClick}
-      className="flex w-full items-center justify-between px-3 py-4 text-left text-sm font-bold transition hover:bg-[#232486] focus:outline-none sm:px-6 sm:py-5 sm:text-base"
-    >
-      <span>{title}</span>
-      <ChevronDown
-        className={`h-5 w-5 transition-transform duration-300${isOpen ? " rotate-180" : ""}`}
+   Susunannya mengikuti mockup yang disetujui: band pembuka → cerita →
+   tiga pilar → tim → ajakan. Lima bagian, satu grid kartu saja.
+
+   Dua bagian sengaja TIDAK ada di sini:
+   - "Empat pihak, satu meja" — itu grid kartu ketiga yang bentuknya sama
+     persis dengan dua lainnya. Deretan grid seragam adalah pola yang paling
+     cepat membuat halaman terbaca sebagai hasil generate, dan isinya sudah
+     tersirat di paragraf "Kenapa platform ini ada".
+   - "Pertanyaan Umum" — pertanyaan seperti itu lebih tepat dijawab chatbot
+     atau halaman bantuan sendiri; di sini ia hanya memanjangkan halaman.
+
+   Aturan radius di seluruh berkas ini: 12px untuk kartu dan tombol, 16px
+   untuk blok besar. Tidak ada 24px, tidak ada bulat penuh kecuali avatar.
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* ── Ilustrasi pilar ──────────────────────────────────────────────────────
+   SVG sebaris, bukan berkas gambar. Bentuknya sederhana, warnanya diambil
+   langsung dari token proyek sehingga tidak mungkin meleset dari palet, dan
+   tidak menambah satu byte pun unduhan. Ukurannya mengikuti lebar induk. */
+
+function IlustrasiPeta() {
+  return (
+    <svg viewBox="0 0 200 150" role="img" aria-label="Peta dengan tiga penanda lokasi" className="h-auto w-full max-w-44">
+      <path d="M20 46 L68 30 L132 50 L182 34 L182 108 L132 124 L68 104 L20 120 Z" fill="var(--surface-sky-deep)" />
+      <path d="M68 30 L68 104 M132 50 L132 124" stroke="#a7c9ec" strokeWidth="3" />
+      <path d="M24 78 C60 66 92 92 128 76 S172 66 178 72" stroke="#8fbbe6" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M92 42 c0-11 9-20 20-20 s20 9 20 20 c0 15-20 34-20 34 s-20-19-20-34 z" fill="var(--primary)" />
+      <circle cx="112" cy="42" r="7" fill="#fff" />
+      <path d="M44 78 c0-8 6-14 14-14 s14 6 14 14 c0 11-14 24-14 24 s-14-13-14-24 z" fill="var(--cyan)" />
+      <circle cx="58" cy="78" r="5" fill="#fff" />
+      <path d="M146 84 c0-8 6-14 14-14 s14 6 14 14 c0 11-14 24-14 24 s-14-13-14-24 z" fill="var(--cyan)" />
+      <circle cx="160" cy="84" r="5" fill="#fff" />
+    </svg>
+  );
+}
+
+function IlustrasiSirkular() {
+  return (
+    <svg viewBox="0 0 200 150" role="img" aria-label="Botol, kaleng, dan koran di dalam lingkaran daur ulang" className="h-auto w-full max-w-44">
+      <path d="M100 24 a52 52 0 0 1 45 26" stroke="var(--cyan)" strokeWidth="11" fill="none" strokeLinecap="round" />
+      <path d="M145 50 l-16 3 l7 -15 z" fill="var(--cyan)" />
+      <path d="M145 100 a52 52 0 0 1 -45 26" stroke="#8DC63F" strokeWidth="11" fill="none" strokeLinecap="round" />
+      <path d="M100 126 l14 -9 l-2 16 z" fill="#8DC63F" />
+      <path d="M55 100 a52 52 0 0 1 0 -50" stroke="var(--primary)" strokeWidth="11" fill="none" strokeLinecap="round" />
+      <path d="M55 50 l2 16 l-14 -9 z" fill="var(--primary)" />
+      <rect x="84" y="60" width="16" height="34" rx="4" fill="var(--surface-sky-deep)" />
+      <rect x="88" y="53" width="8" height="8" rx="2" fill="#a7c9ec" />
+      <rect x="104" y="68" width="18" height="26" rx="3" fill="var(--surface-sand)" />
+      <path d="M104 76 h18" stroke="#e3c9a4" strokeWidth="3" />
+    </svg>
+  );
+}
+
+function IlustrasiEdukasi() {
+  return (
+    <svg viewBox="0 0 200 150" role="img" aria-label="Buku terbuka dengan tiga tempat sampah terpilah" className="h-auto w-full max-w-44">
+      <path d="M28 108 L98 96 L98 44 L28 56 Z" fill="var(--surface-sky)" />
+      <path d="M172 108 L102 96 L102 44 L172 56 Z" fill="var(--surface-sky-deep)" />
+      <path d="M98 44 L102 44 L102 96 L98 96 Z" fill="#a7c9ec" />
+      <rect x="52" y="52" width="22" height="34" rx="4" fill="var(--primary)" />
+      <rect x="55" y="46" width="16" height="6" rx="2" fill="var(--primary)" />
+      <path d="M58 62 h10 M58 70 h10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
+      <rect x="89" y="50" width="22" height="34" rx="4" fill="#8DC63F" />
+      <rect x="92" y="44" width="16" height="6" rx="2" fill="#8DC63F" />
+      <path d="M96 66 c0-5 4-8 8-8" stroke="#fff" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      <rect x="126" y="52" width="22" height="34" rx="4" fill="var(--cyan)" />
+      <rect x="129" y="46" width="16" height="6" rx="2" fill="var(--cyan)" />
+      <circle cx="137" cy="67" r="5" fill="none" stroke="#fff" strokeWidth="2.5" />
+      <path d="M148 30 c8-6 16-4 18 2 c-6 6-14 6-18-2 z" fill="#8DC63F" />
+    </svg>
+  );
+}
+
+const PILAR = [
+  {
+    Ilustrasi: IlustrasiPeta,
+    judul: "Pemantauan",
+    isi: "Titik tumpukan sampah liar dilaporkan warga, dipetakan, lalu tindak lanjutnya bisa diikuti sampai selesai.",
+  },
+  {
+    Ilustrasi: IlustrasiSirkular,
+    judul: "Sirkular",
+    isi: "Barang bekas yang masih bernilai dipertemukan dengan Bank Sampah dan pengepul, bukan berakhir di TPA.",
+  },
+  {
+    Ilustrasi: IlustrasiEdukasi,
+    judul: "Edukasi",
+    isi: "Panduan memilah dan artikel yang membuat kebiasaan baik lebih mudah dimulai dan diteruskan.",
+  },
+];
+
+/* ── Tim ──────────────────────────────────────────────────────────────────
+   `foto` dibiarkan null sampai foto asli tersedia. Selama null, yang tampil
+   penampung abu-abu — bukan ilustrasi karakter. Ini disengaja: begitu foto
+   asli masuk, cukup isi path-nya di sini dan tidak ada satu pun kelas yang
+   perlu diubah.
+
+   Ganti nama dan peran di bawah dengan pembagian tim yang sebenarnya. */
+const TIM = [
+  {
+    nama: "Nama Anggota 1",
+    peran: "Frontend & UI/UX",
+    ringkas: "Merancang tampilan, peta interaktif, dan alur laporan warga.",
+    foto: null,
+  },
+  {
+    nama: "Nama Anggota 2",
+    peran: "Backend & Basis Data",
+    ringkas: "Membangun API, struktur data, dan pengamanan akun pengguna.",
+    foto: null,
+  },
+  {
+    nama: "Nama Anggota 3",
+    peran: "Riset & Proposal",
+    ringkas: "Menyusun proposal, data pendukung, dan materi edukasi.",
+    foto: null,
+  },
+];
+
+function FotoAnggota({ foto, nama }) {
+  if (foto) {
+    return (
+      <img
+        src={foto}
+        alt={`Foto ${nama}`}
+        loading="lazy"
+        width="160"
+        height="160"
+        className="size-32 rounded-full object-cover ring-4 ring-white sm:size-36"
       />
-    </button>
-
-    <AnimatePresence initial={false}>
-      {isOpen && (
-        <motion.div
-          key="content"
-          initial="collapsed"
-          animate="open"
-          exit="collapsed"
-          variants={{
-            open: { height: "auto", opacity: 1 },
-            collapsed: { height: 0, opacity: 0 },
-          }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="overflow-hidden"
-        >
-          <div className="border-t border-white/10 px-3 pt-3 pb-4 text-xs leading-relaxed text-blue-100 sm:px-6 sm:pb-5 sm:text-sm">
-            {content}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </motion.div>
-);
-
-export default function AboutPage() {
-  const [openAccordion, setOpenAccordion] = useState(0);
-
-  const faqs = [
-    {
-      title: "Apakah Torang Bersih menerima dan menjemput sampah langsung?",
-      content:
-        "Torang Bersih adalah platform digital penghubung. Kami tidak memiliki armada penjemputan sendiri, melainkan menghubungkan Anda langsung dengan pengepul atau Bank Sampah terdekat di kota Manado yang telah terdaftar di ekosistem kami melalui fitur Lapak Daur Ulang.",
-    },
-    {
-      title: "Bagaimana cara Bank Sampah atau Komunitas bergabung?",
-      content:
-        "Bank Sampah atau komunitas peduli lingkungan dapat mendaftar dengan membuat akun dan mengajukan verifikasi sebagai 'Kolaborator'. Setelah diverifikasi oleh tim admin, titik lokasi Anda akan muncul di Super Map dan Anda bisa menerima pasokan barang bekas dari warga.",
-    },
-  ];
-
-  const staggerParent = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { staggerChildren: 0.13 },
-    },
-  };
-
-  const fadeItem = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
-  };
+    );
+  }
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={staggerParent}
-      className="flex min-h-screen flex-col bg-white pt-24 text-gray-800 sm:pt-28"
+    // aria-hidden karena penampung ini tidak menyampaikan informasi apa pun —
+    // nama orangnya sudah tertulis sebagai teks tepat di bawahnya.
+    <div
+      aria-hidden="true"
+      className="flex size-32 items-center justify-center rounded-full bg-white ring-4 ring-white sm:size-36"
     >
-      <motion.div
-        variants={fadeItem}
-        className="mx-auto flex w-full max-w-[97vw] flex-col items-center px-2 sm:px-4 md:max-w-7xl md:px-8"
-      >
-        {/* Slot Logo */}
-        <motion.div
-          variants={fadeItem}
-          className="group flex w-full items-center justify-center pt-6 pb-4 transition hover:scale-105 sm:pt-10 sm:pb-6"
-        >
-          <motion.img
-            src="/images/logo-fill.webp"
-            alt="Logo Torang Bersih"
-            className="w-24 max-w-[130px] transition duration-300 group-hover:scale-110 group-hover:drop-shadow-xl sm:w-40 sm:max-w-[180px]"
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.18,
-              type: "spring",
-              stiffness: 110,
-            }}
-          />
-        </motion.div>
+      <svg viewBox="0 0 64 64" className="size-16 text-(--primary)/25">
+        <circle cx="32" cy="23" r="12" fill="currentColor" />
+        <path d="M8 60 a24 22 0 0 1 48 0 z" fill="currentColor" />
+      </svg>
+    </div>
+  );
+}
 
-        {/* HEADER */}
-        <motion.div
-          variants={fadeItem}
-          className="mb-8 flex w-full flex-col items-center gap-1 text-center sm:mb-12"
-        >
+export default function AboutPage() {
+  const kurangiGerakan = useReducedMotion();
+
+  // Satu pola animasi dipakai di seluruh halaman: memudar naik sedikit, sekali
+  // saja. Versi lama memakai spring dari samping (x: -60 / x: +80) di hampir
+  // tiap blok — di halaman yang tujuannya DIBACA, tiap paragraf yang melesat
+  // masuk membuat mata terus mengejar, bukan terasa hidup.
+  const munculKeAtas = kurangiGerakan
+    ? {}
+    : {
+        initial: { opacity: 0, y: 24 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, amount: 0.25 },
+        transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-(--surface) text-(--dark-text)">
+      {/* ═══════════════ 1. PEMBUKA ═══════════════
+          Satu kalimat, satu tombol, dan tidak ada yang lain. Statistik, kartu,
+          dan ikon sengaja ditahan sampai bagian berikutnya — itu yang membuat
+          bagian pembuka terasa lapang, bukan penambahan hiasan.
+
+          Ruang atasnya lebih longgar dari halaman biasa karena navbar di sini
+          MENGAMBANG di atas band (lihat FLOATING_NAV_PAGES di Header.jsx),
+          bukan mendorong isi ke bawah. Kartu logo mengambang itu tingginya
+          ~92px di layar lebar; pt-44 (176px) menyisakan jarak yang jelas. */}
+      {/* min-h mengikuti LEBAR layar, bukan tinggi: ilustrasi latarnya berasio
+          1,70, jadi tingginya selalu = lebar layar dibagi 1,70 (58,8vw). Dengan
+          min-h-[59vw] band selalu cukup tinggi untuk memuat gambarnya utuh,
+          sehingga puncak menara jembatan tidak pernah terpotong di lebar mana
+          pun. Pola yang sama dipakai hero halaman depan. */}
+      <section className="relative isolate min-h-[59vw] overflow-hidden bg-[#ABD7FD] pt-32 pb-16 sm:pt-36 sm:pb-20 lg:pt-44">
+        <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
           <motion.p
-            className="xs:text-xs mb-1 text-[11px] font-semibold tracking-widest text-gray-500 uppercase sm:text-sm"
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.2 }}
-          >
-            <span className="font-bold text-[#1e1f78]">Torang Bersih</span>
-            <span className="mx-1 font-thin text-gray-300">/</span>
-            <span className="text-gray-800">Tentang Kami</span>
-          </motion.p>
-          <motion.h1
-            className="xs:text-2xl mb-3 text-xl font-extrabold tracking-tight text-gray-900 sm:mb-4 sm:text-3xl md:text-4xl"
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.27 }}
+            {...munculKeAtas}
+            // Navy PENUH, bukan --cyan dan bukan navy 75%.
+            // Diukur di atas ilustrasi latarnya: cyan hanya mencapai 1,5:1, dan
+            // navy 75% turun ke 3,60:1 di titik tergelap (siluet gunung
+            // #70A9D4) — dua-duanya gagal AA. Navy penuh memberi 5,46:1 di titik
+            // terburuk, sehingga TIDAK perlu lapisan peredam di atas gambar dan
+            // ilustrasinya tetap terlihat utuh.
+            // Urutan bacanya tetap jelas karena dibedakan ukuran, huruf kapital,
+            // dan jarak antarhuruf — bukan oleh warna.
+            className="text-[0.8rem] font-bold tracking-[0.18em] text-(--primary) uppercase"
           >
             Tentang Torang Bersih
-          </motion.h1>
-          <motion.p
-            className="xs:text-base max-w-[90vw] text-sm text-gray-600 sm:max-w-2xl sm:text-lg"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.37 }}
-          >
-            Kami hadir untuk merajut kolaborasi demi Manado yang lebih bersih
-            dan berkelanjutan.
-            <br className="hidden sm:inline" />
           </motion.p>
-        </motion.div>
 
-        {/* Gap antar section */}
-        <div className="xs:h-8 h-5 sm:h-12"></div>
-
-        {/* ─── SECTION 1: GAMBAR KIRI, TEKS KANAN ─── */}
-        <motion.div
-          variants={fadeItem}
-          className="xs:gap-14 mb-16 grid w-full grid-cols-1 items-center gap-10 md:mb-20 md:gap-20 lg:grid-cols-[minmax(0,360px)_1fr] lg:gap-24 xl:grid-cols-[minmax(0,460px)_1fr] xl:gap-36"
-        >
-          <motion.div
-            className="xs:max-w-[320px] group relative mx-auto w-full max-w-[95vw] sm:max-w-[420px] md:max-w-[460px] lg:mx-0"
-            initial={{ opacity: 0, x: -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
-            transition={{ duration: 0.7, type: "spring", stiffness: 80 }}
-            style={{ minWidth: 0 }}
+          <motion.h1
+            {...munculKeAtas}
+            transition={{ ...munculKeAtas.transition, delay: 0.08 }}
+            // clamp(), bukan tumpukan breakpoint. Ukurannya berubah mulus
+            // mengikuti lebar layar, bukan melompat di tiga titik.
+            className="font-display mt-5 text-[clamp(1.9rem,5.6vw,3.4rem)] leading-[1.12] font-extrabold tracking-tight text-balance text-(--primary)"
           >
-            <div className="xs:-left-4 xs:-top-4 xs:bottom-12 xs:right-8 xs:rounded-tl-[80px] xs:rounded-br-[80px] absolute -top-2 right-4 bottom-8 -left-2 rounded-tl-[60px] rounded-br-[60px] bg-blue-50/80 sm:-top-8 sm:right-14 sm:bottom-14 sm:-left-8 sm:rounded-tl-[110px] sm:rounded-br-[110px]"></div>
-            <motion.img
-              src="/images/tpa.jpg"
-              alt="Tpa Sumompow Over capacity"
-              className="xs:rounded-2xl relative z-10 w-full rounded-xl object-cover shadow-lg transition duration-300 group-hover:scale-105 group-hover:shadow-blue-200"
-              style={{ aspectRatio: "4/5" }}
-              initial={{ scale: 0.93, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true, amount: 0.65 }}
-              transition={{ duration: 0.7, type: "spring", stiffness: 100 }}
-            />
-          </motion.div>
-          <motion.div
-            className="xs:space-y-5 xs:text-[16px] flex h-full flex-col justify-center space-y-4 text-[15px] leading-relaxed text-gray-600 sm:space-y-6 sm:text-[18px] lg:justify-start lg:pr-2 lg:pl-2 xl:pl-10"
-            initial={{ opacity: 0, x: 80 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.65 }}
-            transition={{ duration: 0.65, type: "spring", stiffness: 70 }}
-            style={{ minWidth: 0 }}
-          >
-            <div className="space-y-4 sm:space-y-6 xl:space-y-7">
-              <p className="max-w-3xl">
-                <strong>Torang Bersih</strong> adalah inisiatif ekosistem
-                digital hiperlokal yang dikembangkan oleh tim{" "}
-                <strong>Lasalle Vibers</strong> dari Universitas Katolik De La
-                Salle Manado untuk ajang kompetisi PROXOCORIS 2026. Mengambil
-                kata <span className="whitespace-nowrap">"Torang"</span> yang
-                berarti "Kita", platform ini lahir dari kesadaran bahwa krisis
-                sampah di Sulawesi Utara tidak dapat diselesaikan oleh satu
-                instansi saja.
-              </p>
-              <p className="max-w-3xl">
-                Kami mengambil peran aktif untuk senantiasa menyebarkan
-                kesadaran akan pentingnya kolaborasi antara warga penghasil
-                sampah, Bank Sampah sebagai pendorong ekonomi sirkular, dan
-                pemerintah sebagai pembuat kebijakan.
-              </p>
-              <p className="max-w-3xl">
-                Mengusung visi sebagai <em>one-stop-solution platform</em>,
-                Torang Bersih menjadi payung informasi mengenai pemantauan titik
-                tumpukan sampah liar, bursa barang bekas daur ulang, serta wadah
-                berkumpulnya para individu, aktivis lingkungan, dan semua pihak
-                yang peduli pada kelestarian lingkungan hidup di Sulawesi Utara.
-              </p>
-            </div>
-          </motion.div>
-        </motion.div>
+            Sampah bukan urusan satu instansi. Ini urusan torang samua.
+          </motion.h1>
 
-        {/* Gap antar section */}
-        <div className="xs:h-8 h-5 sm:h-12"></div>
-
-        {/* == BANNER ANIMATED (Layout Diperbaiki agar tidak gepeng) == */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.7 }}
-          transition={{ duration: 0.7, type: "spring", stiffness: 80 }}
-          className="xs:px-6 xs:py-8 xs:gap-8 mx-auto mb-8 flex w-full max-w-[97vw] flex-col items-center justify-between gap-6 rounded-xl border border-blue-200 bg-linear-to-r from-[#1e1f78]/90 to-[#3f48cc] px-5 py-6 shadow sm:mb-14 sm:rounded-2xl sm:px-10 sm:py-10 md:max-w-7xl lg:flex-row"
-        >
-          <motion.div
-            className="flex-1 text-center lg:text-left"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+          <motion.p
+            {...munculKeAtas}
+            transition={{ ...munculKeAtas.transition, delay: 0.16 }}
+            // Solid, bukan /75 — alasannya sama seperti label di atas: di titik
+            // tergelap ilustrasi latarnya, 75% hanya mencapai 3,55:1.
+            className="mt-6 max-w-xl text-[clamp(0.95rem,1.6vw,1.1rem)] leading-8 text-pretty text-(--dark-text)"
           >
-            {/* Judul dinaikkan ke atas paragraf agar rapi */}
-            <span className="xs:text-2xl mb-2 block text-xl font-bold text-white drop-shadow sm:mb-3 sm:text-3xl">
-              Ingin bergabung?
-            </span>
-            <p className="xs:text-sm mx-auto max-w-full text-xs leading-relaxed font-medium text-white/90 sm:text-base md:text-lg lg:mx-0 lg:max-w-2xl">
-              <span className="block sm:inline">
-                Jadi bagian perubahan lingkungan di Manado. Torang Bersih
-                membuka kolaborasi dari semua kalangan, baik warga, komunitas,
-                maupun pelaku usaha!
-              </span>
-              <span className="hidden sm:inline">
-                {" "}
-                Gabung sebagai anggota, relawan, Bank Sampah, atau sekadar
-                menebar aksi inspirasi—semua bisa berkontribusi dari perangkat
-                apapun.{" "}
-              </span>
-            </p>
-          </motion.div>
+            Satu tempat untuk warga, komunitas, dan pemerintah Sulawesi Utara
+            bekerja pada masalah yang sama.
+          </motion.p>
+
           <motion.div
-            className="xs:gap-4 mt-2 flex w-full shrink-0 flex-col justify-center gap-3 sm:w-auto sm:flex-row lg:mt-0"
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
-            transition={{ duration: 0.5, delay: 0.18 }}
+            {...munculKeAtas}
+            transition={{ ...munculKeAtas.transition, delay: 0.24 }}
+            className="mt-9"
           >
             <Link
+              to="/peta"
+              className="inline-flex items-center gap-2 rounded-xl bg-(--primary) px-8 py-4 font-bold text-white shadow-lg transition hover:bg-(--primary-dark) motion-reduce:transition-none"
+            >
+              Lihat Peta Sampah
+              <ArrowRight aria-hidden="true" className="size-[1.1em]" />
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* Ilustrasi Teluk Manado dengan Jembatan Ir. Soekarno — LATAR band,
+            bukan strip di bawah teks. Teks duduk di atasnya.
+
+            Latar section memakai #ABD7FD, bukan token --surface-sky: angka itu
+            DIUKUR dari baris piksel paling atas berkas ini (rata-rata seluruh
+            baris, rentang kecerahan hanya 11/765, jadi praktis seragam). Di
+            layar sempit gambarnya lebih pendek dari band, dan sisa ruang di
+            atasnya terisi warna yang sama persis — terbaca sebagai langit
+            tambahan, bukan pita. Kalau berkasnya diganti, ukur ulang.
+
+            Berkasnya dipotong di sumber pada baris 120..1024 dari keluaran AI.
+            Bukan 270 seperti percobaan sebelumnya: potongan itu membuang hampir
+            seluruh langit, dan begitu gambarnya dijadikan latar, teksnya tidak
+            punya tempat berpijak selain menimpa jembatan. Menyisakan langit di
+            atas justru yang membuat komposisinya bekerja.
+
+            TANPA object-cover: rasionya 1,70 dan min-h band juga 59vw, jadi
+            gambarnya selalu muat utuh tanpa perlu dipotong lagi.
+
+            width/height dicantumkan supaya peramban menyisakan ruangnya sejak
+            awal dan halaman tidak tersentak saat gambarnya selesai dimuat.
+
+            Di bawah sm gambarnya dilebarkan 150% dan digeser ke tengah: pada
+            lebar 390px, gambar seukuran layar hanya setinggi 230px dan
+            jembatannya mengecil sampai tidak terbaca. */}
+        <img
+          src="/images/Tentang%20Kami/Jembatan.webp"
+          alt="Ilustrasi Jembatan Ir. Soekarno membentang di Teluk Manado dengan Gunung Manado Tua di kejauhan"
+          width="1536"
+          height="904"
+          draggable={false}
+          className="pointer-events-none absolute bottom-0 left-1/2 -z-10 h-auto w-[150%] max-w-none -translate-x-1/2 select-none sm:w-full"
+        />
+      </section>
+
+      {/* ═══════════════ 2. CERITA ═══════════════
+          Asimetris dan rata kiri, bukan kolom seimbang rata tengah. Ini bagian
+          yang dibaca, bukan dipindai. */}
+      <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-24">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-16">
+          <motion.div
+            {...munculKeAtas}
+            className="relative mx-auto w-full max-w-md lg:mx-0"
+          >
+            {/* Blok warna yang bergeser di belakang foto. Memberi kedalaman
+                tanpa bayangan — pendekatan yang sama dipakai di seluruh situs. */}
+            <div
+              aria-hidden="true"
+              className="absolute -top-4 -left-4 h-full w-full rounded-2xl bg-(--surface-sky-deep)"
+            />
+            <img
+              src="/images/tpa.webp"
+              alt="TPA Sumompow di Manado dalam kondisi melebihi kapasitas"
+              loading="lazy"
+              className="relative w-full rounded-2xl object-cover"
+              style={{ aspectRatio: "4 / 5" }}
+            />
+          </motion.div>
+
+          <motion.div {...munculKeAtas} className="flex flex-col gap-5">
+            <h2 className="font-display text-[clamp(1.35rem,3vw,2rem)] leading-tight font-extrabold text-(--primary)">
+              Kenapa platform ini ada
+            </h2>
+            <p className="max-w-[62ch] text-[0.98rem] leading-8 text-(--dark-text)/80">
+              <strong className="text-(--primary)">Torang Bersih</strong> lahir
+              dari satu kenyataan sederhana: TPA Sumompow sudah melebihi
+              kapasitas, sementara warga, Bank Sampah, dan pemerintah bekerja
+              sendiri-sendiri tanpa saling melihat.
+            </p>
+            <p className="max-w-[62ch] text-[0.98rem] leading-8 text-(--dark-text)/80">
+              Platform ini dikembangkan tim{" "}
+              <strong className="text-(--primary)">Lasalle Vibers</strong> dari
+              Universitas Katolik De La Salle Manado untuk ajang kompetisi
+              Infinitera 2.0. Kata <em>&ldquo;Torang&rdquo;</em> berarti
+              &ldquo;Kita&rdquo; — nama itu dipilih karena krisis sampah di
+              Sulawesi Utara memang tidak dapat diselesaikan satu instansi saja.
+            </p>
+            <p className="max-w-[62ch] text-[0.98rem] leading-8 text-(--dark-text)/80">
+              Torang Bersih menjadi payung informasi untuk pemantauan titik
+              tumpukan sampah liar, bursa barang bekas daur ulang, serta wadah
+              berkumpulnya individu, aktivis lingkungan, dan semua pihak yang
+              peduli pada kelestarian lingkungan hidup di Sulawesi Utara.
+            </p>
+            <p className="font-display text-lg font-extrabold text-(--cyan)">
+              #TorangBisaTorangBersih
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ 3. TIGA PILAR ═══════════════ */}
+      <section className="bg-(--surface-sky) py-16 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl px-6">
+          <motion.h2
+            {...munculKeAtas}
+            className="font-display max-w-[20ch] text-[clamp(1.35rem,3vw,2rem)] leading-tight font-extrabold text-(--primary)"
+          >
+            Tiga hal yang kami kerjakan
+          </motion.h2>
+
+          <div className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
+            {PILAR.map(({ Ilustrasi, judul, isi }, i) => (
+              <motion.article
+                key={judul}
+                {...munculKeAtas}
+                transition={{ ...munculKeAtas.transition, delay: i * 0.08 }}
+                // Garis tipis di atas, bukan kotak kartu. Tiga kartu seragam
+                // berjajar adalah pola yang paling cepat membuat halaman
+                // terbaca sebagai hasil generate; garis atas memberi struktur
+                // tanpa membingkai.
+                className="flex flex-col gap-4 border-t-2 border-(--primary) pt-6"
+              >
+                <Ilustrasi />
+                <h3 className="font-display text-lg font-extrabold text-(--primary)">
+                  {judul}
+                </h3>
+                <p className="max-w-[34ch] text-sm leading-7 text-(--dark-text)/70">
+                  {isi}
+                </p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ 4. TIM ═══════════════ */}
+      <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-24">
+        <motion.h2
+          {...munculKeAtas}
+          className="font-display max-w-[22ch] text-[clamp(1.35rem,3vw,2rem)] leading-tight font-extrabold text-(--primary)"
+        >
+          Tiga orang di balik Torang Bersih
+        </motion.h2>
+        <motion.p
+          {...munculKeAtas}
+          className="mt-4 max-w-[58ch] text-[0.98rem] leading-8 text-(--dark-text)/75"
+        >
+          Tim <strong className="text-(--primary)">Lasalle Vibers</strong> —
+          mahasiswa Universitas Katolik De La Salle Manado. Platform ini
+          dikerjakan untuk Infinitera 2.0, tetapi masalah yang dituju ada di kota
+          kami sendiri.
+        </motion.p>
+
+        <ul className="mt-12 grid gap-5 md:grid-cols-3">
+          {TIM.map(({ nama, peran, ringkas, foto }, i) => (
+            <motion.li
+              key={nama}
+              {...munculKeAtas}
+              transition={{ ...munculKeAtas.transition, delay: i * 0.08 }}
+              className="flex flex-col items-center gap-1 rounded-xl bg-(--surface-sky) px-6 pt-9 pb-7 text-center"
+            >
+              <FotoAnggota foto={foto} nama={nama} />
+              <p className="mt-6 text-[0.72rem] font-bold tracking-[0.14em] text-(--cyan) uppercase">
+                {peran}
+              </p>
+              <h3 className="font-display mt-1 text-lg font-extrabold text-(--primary)">
+                {nama}
+              </h3>
+              <p className="mt-2 max-w-[32ch] text-sm leading-7 text-(--dark-text)/70">
+                {ringkas}
+              </p>
+            </motion.li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ═══════════════ 5. AJAKAN ═══════════════ */}
+      <section className="px-6 pb-20 sm:pb-28">
+        <motion.div
+          {...munculKeAtas}
+          className="mx-auto flex max-w-6xl flex-col gap-7 rounded-2xl bg-(--primary) px-7 py-12 sm:px-12 lg:flex-row lg:items-center lg:justify-between lg:gap-12"
+        >
+          <div className="flex flex-col gap-3">
+            <h2 className="font-display text-[clamp(1.35rem,3vw,2rem)] leading-tight font-extrabold text-white">
+              Ingin ikut?
+            </h2>
+            <p className="max-w-[52ch] text-[0.95rem] leading-7 text-white/75">
+              Warga, komunitas, Bank Sampah, maupun pelaku usaha — semua bisa
+              masuk ke ekosistem yang sama.
+            </p>
+          </div>
+
+          <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row">
+            <Link
               to="/register"
-              className="xs:px-6 xs:text-sm inline-flex min-w-[140px] items-center justify-center rounded-lg bg-[#1e1f78] px-4 py-3 text-center text-xs font-bold text-white shadow-lg transition hover:brightness-95 sm:px-7 sm:py-3.5 sm:text-base"
+          {...saatMendekat(pramuat.daftar)}
+              className="inline-flex items-center justify-center rounded-xl bg-white px-7 py-3.5 font-bold text-(--primary) transition hover:bg-(--gray-shine) motion-reduce:transition-none"
             >
               Daftar Sekarang
             </Link>
             <Link
               to="/artikel"
-              className="xs:px-6 xs:text-sm inline-flex min-w-[140px] items-center justify-center rounded-lg border border-white bg-transparent px-4 py-3 text-center text-xs font-bold text-white transition hover:bg-white/20 sm:px-7 sm:py-3.5 sm:text-base"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/25 px-7 py-3.5 font-bold text-white transition hover:border-white/50 hover:bg-white/10 motion-reduce:transition-none"
             >
-              Pelajari Edukasi <ArrowRight className="ml-2 h-4 w-4" />
+              Pelajari Edukasi
+              <ArrowRight aria-hidden="true" className="size-[1.1em]" />
             </Link>
-          </motion.div>
-        </motion.div>
-
-        <div className="xs:h-8 h-5 sm:h-12"></div>
-
-        <motion.div
-          variants={fadeItem}
-          className="xs:gap-14 mb-6 grid w-full grid-cols-1 items-center gap-10 md:mb-10 md:gap-20 lg:grid-cols-[1fr_minmax(0,360px)] lg:gap-24 xl:grid-cols-[1fr_minmax(0,460px)] xl:gap-36"
-        >
-          <motion.div
-            className="order-2 lg:order-1"
-            initial={{ opacity: 0, x: -80 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
-            transition={{ duration: 0.68, delay: 0.07 }}
-          >
-            <h2 className="xs:mb-8 xs:text-3xl mb-5 text-2xl leading-tight font-extrabold text-gray-900 sm:text-4xl">
-              Platform Torang Bersih Memiliki 3 Pilar Utama
-            </h2>
-            <motion.div
-              className="xs:mb-10 xs:gap-6 mb-8 flex flex-wrap gap-4 sm:gap-10"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.6 }}
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: { staggerChildren: 0.14 },
-                },
-              }}
-            >
-              <motion.div
-                className="xs:gap-3 group flex items-center gap-2 transition"
-                variants={fadeItem}
-              >
-                <div className="xs:h-12 xs:w-12 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-[#1e1f78] transition duration-300 group-hover:scale-110 group-hover:bg-blue-200">
-                  <Map className="xs:h-5 xs:w-5 h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                </div>
-                <span className="xs:text-base text-sm font-bold text-gray-900 transition group-hover:text-blue-800">
-                  Pemantauan
-                </span>
-              </motion.div>
-              <motion.div
-                className="xs:gap-3 group flex items-center gap-2 transition"
-                variants={fadeItem}
-              >
-                <div className="xs:h-12 xs:w-12 flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700 transition-all duration-300 group-hover:scale-110 group-hover:bg-amber-200">
-                  <Recycle className="xs:h-5 xs:w-5 h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                </div>
-                <span className="xs:text-base text-sm font-bold text-gray-900 transition group-hover:text-amber-800">
-                  Sirkular
-                </span>
-              </motion.div>
-              <motion.div
-                className="xs:gap-3 group flex items-center gap-2 transition"
-                variants={fadeItem}
-              >
-                <div className="xs:h-12 xs:w-12 flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-700 transition-all duration-300 group-hover:scale-110 group-hover:bg-green-200">
-                  <BookOpen className="xs:h-5 xs:w-5 h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                </div>
-                <span className="xs:text-base text-sm font-bold text-gray-900 transition group-hover:text-green-800">
-                  Edukasi
-                </span>
-              </motion.div>
-            </motion.div>
-            <motion.div
-              className="xs:space-y-4 xs:text-[15px] space-y-3 text-[13px] leading-relaxed text-gray-600 sm:text-[16px]"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.7 }}
-              transition={{ duration: 0.5, delay: 0.07 }}
-            >
-              <p>
-                Dengan Torang Bersih, kami percaya bahwa ada elemen-elemen yang
-                ingin kami sentuh dan itulah dasar keberhasilan untuk perubahan:
-              </p>
-              <ol className="xs:pl-5 list-decimal space-y-1 pl-4 font-medium text-gray-700">
-                <li>Warga Masyarakat</li>
-                <li>Pemerintah (Dinas Lingkungan Hidup)</li>
-                <li>Komunitas & Bank Sampah</li>
-                <li>Pengepul Barang Bekas</li>
-              </ol>
-              <p className="xs:pt-2 pt-1">
-                Torang Bersih sangat terbuka untuk peluang kolaborasi dengan
-                berbagai pihak demi mendukung upaya pelestarian alam dan
-                lingkungan hidup di Indonesia.
-              </p>
-              <p>
-                Kami percaya bahwa perjalanan panjang ke arah yang lebih baik
-                selalu diawali dengan satu langkah, #TorangBisaTorangBersih.
-              </p>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            className="xs:max-w-[320px] group relative order-1 mx-auto w-full max-w-[95vw] sm:max-w-[420px] md:max-w-[460px] lg:order-2 lg:mx-0 lg:ml-auto"
-            initial={{ opacity: 0, x: 90 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
-            transition={{ duration: 0.7 }}
-            style={{ minWidth: 0 }}
-          >
-            <div className="xs:-bottom-4 xs:-right-4 xs:left-8 xs:top-8 xs:rounded-tr-[80px] xs:rounded-bl-[80px] absolute top-4 -right-2 -bottom-2 left-4 rounded-tr-[60px] rounded-bl-[60px] bg-gray-100 sm:top-14 sm:-right-8 sm:-bottom-8 sm:left-14 sm:rounded-tr-[110px] sm:rounded-bl-[110px]"></div>
-            <motion.img
-              src="/images/Scan.webp"
-              alt="User Torang Bersih"
-              className="xs:rounded-2xl relative z-10 w-full rounded-xl object-cover shadow-lg transition duration-300 group-hover:scale-105 group-hover:shadow-green-200"
-              style={{ aspectRatio: "4/5" }}
-              initial={{ scale: 0.92, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true, amount: 0.65 }}
-              transition={{ duration: 0.7, type: "spring", stiffness: 100 }}
-            />
-          </motion.div>
-        </motion.div>
-
-        <section className="xs:max-w-2xl xs:px-4 xs:py-10 mx-auto mt-4 mb-16 flex w-full max-w-[97vw] flex-col items-center rounded-xl border border-gray-200 bg-white px-2 py-6 shadow sm:mt-8 sm:mb-24 sm:max-w-3xl sm:rounded-2xl sm:px-8 sm:py-12">
-          <h2 className="xs:text-2xl xs:mb-5 mb-4 text-center text-xl font-bold tracking-tight text-[#1e1f78] md:text-3xl">
-            Pertanyaan Umum
-          </h2>
-          <p className="xs:mb-8 xs:max-w-2xl xs:text-sm mb-6 max-w-full text-center text-xs font-medium text-gray-600 sm:text-base">
-            Temukan jawaban atas pertanyaan yang sering diberikan tentang Torang
-            Bersih.
-            <br />
-            Masih ada yang ingin ditanyakan?{" "}
-            <a
-              href="mailto:info@torangbersih.com"
-              className="font-semibold text-[#1e1f78] underline"
-            >
-              Hubungi kami!
-            </a>
-          </p>
-          <div className="xs:max-w-md mx-auto w-full max-w-[97vw] sm:max-w-xl">
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="xs:mb-3 mb-2 rounded-xl border border-gray-100 bg-[#f7f8fc] shadow-sm transition hover:border-blue-100"
-              >
-                <button
-                  onClick={() =>
-                    setOpenAccordion(openAccordion === index ? -1 : index)
-                  }
-                  className="xs:px-4 xs:py-4 xs:text-sm flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-xs font-semibold text-[#222364] transition hover:bg-blue-50 focus:outline-none sm:px-6"
-                >
-                  <span>{faq.title}</span>
-                  <ChevronDown
-                    className={`h-5 w-5 text-[#1e1f78] transition-transform duration-300${openAccordion === index ? " rotate-180" : ""}`}
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {openAccordion === index && (
-                    <motion.div
-                      key="content"
-                      initial="collapsed"
-                      animate="open"
-                      exit="collapsed"
-                      variants={{
-                        open: { height: "auto", opacity: 1 },
-                        collapsed: { height: 0, opacity: 0 },
-                      }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="xs:px-4 xs:pb-4 xs:text-sm border-t border-gray-100 px-3 pt-2 pb-3 text-xs leading-relaxed text-gray-700 sm:px-6">
-                        {faq.content}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
           </div>
-        </section>
-      </motion.div>
-    </motion.div>
+        </motion.div>
+      </section>
+    </div>
   );
 }

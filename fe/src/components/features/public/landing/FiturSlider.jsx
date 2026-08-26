@@ -213,14 +213,14 @@ function FiturSlider() {
                 <button
                   onClick={() => paginate(-1)}
                   aria-label="Fitur sebelumnya"
-                  className="flex size-11 cursor-pointer items-center justify-center rounded-full bg-white text-(--primary) shadow-md transition hover:bg-(--primary) hover:text-white sm:size-12"
+                  className="flex size-11 cursor-pointer items-center justify-center rounded-xl bg-white text-(--primary) shadow-md transition hover:bg-(--primary) hover:text-white sm:size-12"
                 >
                   <LuArrowLeft size={20} />
                 </button>
                 <button
                   onClick={() => paginate(1)}
                   aria-label="Fitur berikutnya"
-                  className="flex size-11 cursor-pointer items-center justify-center rounded-full bg-(--primary) text-white shadow-md transition hover:bg-(--primary-dark) sm:size-12"
+                  className="flex size-11 cursor-pointer items-center justify-center rounded-xl bg-(--primary) text-white shadow-md transition hover:bg-(--primary-dark) sm:size-12"
                 >
                   <LuArrowRight size={20} />
                 </button>

@@ -1,14 +1,8 @@
 import React from "react";
 import {
   RiCloseLine,
-  RiSendPlaneLine,
   RiEyeLine,
-  RiTimeLine,
-  RiFileTextLine,
-  RiThumbUpLine,
   RiChat1Line,
-  RiBookmarkLine,
-  RiShareForwardLine,
   RiAlertLine,
   RiHeartLine,
 } from "react-icons/ri";

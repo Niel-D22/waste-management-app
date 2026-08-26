@@ -45,7 +45,7 @@ def get_all(tipe):
     label = TIPE_LABELS.get(tipe, tipe)
 
     return success_response(
-        data=[item.to_dict() for item in items],
+        data=[item.to_dict(include_usage=True) for item in items],
         message=f"Daftar {label} berhasil diambil"
     )
 
@@ -66,7 +66,7 @@ def create(tipe):
 
     item = ReferensiService.create(model, data)
     return success_response(
-        data=item.to_dict(),
+        data=item.to_dict(include_usage=True),
         message=f"{label} berhasil ditambahkan",
         status_code=201
     )
@@ -92,7 +92,7 @@ def update(tipe, item_id):
 
     item = ReferensiService.update(model, item_id, update_data)
     return success_response(
-        data=item.to_dict(),
+        data=item.to_dict(include_usage=True),
         message=f"{label} berhasil diperbarui"
     )
 

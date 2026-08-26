@@ -1,5 +1,6 @@
 """Aset service - Business logic for aset"""
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
 
 from app.config.extensions import db
 from app.database.models import Aset, RefKategoriAset, StatusVerifikasiAset
@@ -17,7 +18,13 @@ class AsetService:
 
         nama = data['nama_aset'].strip()
         kota = (data.get('kabupaten_kota') or '').strip()
-        query = Aset.query.filter(
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = Aset.query.options(
+            joinedload(Aset.user),
+            joinedload(Aset.kategori_ref),
+        ).filter(
             Aset.id_user == user.id,
             db.func.lower(Aset.nama_aset) == nama.lower()
         )
@@ -71,7 +78,13 @@ class AsetService:
     @staticmethod
     def get_all(page=1, per_page=20, search=None, kategori_aset_id=None,
                 kabupaten_kota=None, status_aktif=None, status_verifikasi=None, sort_by='created_at', sort_order='desc'):
-        query = Aset.query
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = Aset.query.options(
+            joinedload(Aset.user),
+            joinedload(Aset.kategori_ref),
+        )
 
         if search:
             query = query.filter(
@@ -202,7 +215,13 @@ class AsetService:
     @staticmethod
     def get_my_aset(user_id, page=1, per_page=20, search=None, kategori_aset_id=None,
                 kabupaten_kota=None, status_aktif=None, status_verifikasi=None, sort_by='created_at', sort_order='desc'):
-        query = Aset.query.filter_by(id_user=user_id)
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = Aset.query.options(
+            joinedload(Aset.user),
+            joinedload(Aset.kategori_ref),
+        ).filter_by(id_user=user_id)
 
         if search:
             query = query.filter(

@@ -1,23 +1,29 @@
 /**
- * Mengubah PNG/JPG di public/images menjadi WebP.
+ * Mengubah PNG/JPG di assets-src/images menjadi WebP di public/images.
  *
  * Kenapa perlu: aset ilustrasi di landing page berupa PNG hasil generate AI,
  * ukurannya 0,9-1,8 MB per file. Isinya bentuk-bentuk datar dengan sedikit
  * warna — jenis gambar yang paling boros disimpan sebagai PNG dan paling
  * efisien sebagai WebP.
  *
- * File aslinya TIDAK dihapus. WebP ditulis berdampingan, jadi kalau hasilnya
- * mengecewakan tinggal kembalikan path di kode tanpa kehilangan apa pun.
+ * Kenapa sumbernya di LUAR public/: semua isi public/ disalin apa adanya ke
+ * hasil build. Selama PNG aslinya masih di sana, tiap penyebaran ikut
+ * mengunggah 29,5 MB berkas yang tidak pernah diminta peramban satu pun —
+ * hanya versi .webp-nya yang dirujuk kode. Menaruh berkas asli di assets-src/
+ * membuatnya tetap tersimpan dan bisa diproses ulang, tanpa ikut terkirim.
+ *
+ * Berkas aslinya TIDAK dihapus, hanya dibaca dari tempat lain.
  *
  * Jalankan: npm run optimize:images
  */
-import { readdir, stat, writeFile } from "node:fs/promises";
+import { readdir, stat, writeFile, mkdir } from "node:fs/promises";
 import { join, extname, basename, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const IMAGES_DIR = join(ROOT, "public", "images");
+const SRC_DIR = join(ROOT, "assets-src", "images");
+const OUT_DIR = join(ROOT, "public", "images");
 
 // Lebar maksimum. Tidak ada aset di halaman ini yang pernah ditampilkan lebih
 // lebar dari layar, jadi menyimpan lebih dari 1600px hanya membuang byte —
@@ -41,7 +47,7 @@ function kb(bytes) {
   return (bytes / 1024).toFixed(0).padStart(6);
 }
 
-const files = await collect(IMAGES_DIR);
+const files = await collect(SRC_DIR);
 let before = 0;
 let after = 0;
 
@@ -58,7 +64,11 @@ for (const file of files.sort()) {
     .webp({ quality: QUALITY })
     .toBuffer();
 
-  const target = join(dirname(file), `${basename(file, extname(file))}.webp`);
+  // Struktur folder di dalam assets-src/images dicerminkan persis ke
+  // public/images, supaya path yang dipakai di kode tidak perlu berubah.
+  const relatif = relative(SRC_DIR, file);
+  const target = join(OUT_DIR, dirname(relatif), `${basename(file, extname(file))}.webp`);
+  await mkdir(dirname(target), { recursive: true });
   await writeFile(target, buffer);
 
   before += original;
@@ -67,7 +77,7 @@ for (const file of files.sort()) {
   const saved = (100 * (1 - buffer.length / original)).toFixed(0);
   console.log(
     `${kb(original)} KB -> ${kb(buffer.length)} KB  (-${saved.padStart(2)}%)  ` +
-      `${relative(IMAGES_DIR, file).replace(/\\/g, "/")}  [${meta.width}x${meta.height}]`,
+      `${relative(SRC_DIR, file).replace(/\\/g, "/")}  [${meta.width}x${meta.height}]`,
   );
 }
 

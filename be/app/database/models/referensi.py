@@ -19,13 +19,29 @@ class RefJenisKolaborator(db.Model):
     def __repr__(self):
         return f'<RefJenisKolaborator {self.nama}>'
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_usage=False):
+        """Mengubah baris referensi menjadi dict.
+
+        `usage_count` TIDAK dihitung secara bawaan. Angka itu butuh satu query
+        COUNT tersendiri, dan to_dict() di sini ikut terpanggil setiap kali
+        sebuah kategori disematkan ke dalam artikel, aset, laporan, atau barang
+        daur ulang. Artinya daftar berisi 20 baris diam-diam menembakkan 20
+        query COUNT hanya untuk sebuah angka yang tidak pernah ditampilkan di
+        halaman-halaman itu.
+
+        Satu-satunya layar yang benar-benar memakainya adalah pengelolaan data
+        referensi di panel admin — di situ angka ini dipakai memperingatkan
+        admin sebelum menonaktifkan kategori yang masih terpakai. Layar itulah
+        yang meminta include_usage=True.
+        """
+        data = {
             'id': self.id,
             'nama': self.nama,
             'is_active': self.is_active,
-            'usage_count': self.kolaborator.count(),
         }
+        if include_usage:
+            data['usage_count'] = self.kolaborator.count()
+        return data
 
 
 class RefKategoriAset(db.Model):
@@ -42,13 +58,29 @@ class RefKategoriAset(db.Model):
     def __repr__(self):
         return f'<RefKategoriAset {self.nama}>'
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_usage=False):
+        """Mengubah baris referensi menjadi dict.
+
+        `usage_count` TIDAK dihitung secara bawaan. Angka itu butuh satu query
+        COUNT tersendiri, dan to_dict() di sini ikut terpanggil setiap kali
+        sebuah kategori disematkan ke dalam artikel, aset, laporan, atau barang
+        daur ulang. Artinya daftar berisi 20 baris diam-diam menembakkan 20
+        query COUNT hanya untuk sebuah angka yang tidak pernah ditampilkan di
+        halaman-halaman itu.
+
+        Satu-satunya layar yang benar-benar memakainya adalah pengelolaan data
+        referensi di panel admin — di situ angka ini dipakai memperingatkan
+        admin sebelum menonaktifkan kategori yang masih terpakai. Layar itulah
+        yang meminta include_usage=True.
+        """
+        data = {
             'id': self.id,
             'nama': self.nama,
             'is_active': self.is_active,
-            'usage_count': self.aset.count(),
         }
+        if include_usage:
+            data['usage_count'] = self.aset.count()
+        return data
 
 
 class RefJenisSampah(db.Model):
@@ -65,13 +97,29 @@ class RefJenisSampah(db.Model):
     def __repr__(self):
         return f'<RefJenisSampah {self.nama}>'
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_usage=False):
+        """Mengubah baris referensi menjadi dict.
+
+        `usage_count` TIDAK dihitung secara bawaan. Angka itu butuh satu query
+        COUNT tersendiri, dan to_dict() di sini ikut terpanggil setiap kali
+        sebuah kategori disematkan ke dalam artikel, aset, laporan, atau barang
+        daur ulang. Artinya daftar berisi 20 baris diam-diam menembakkan 20
+        query COUNT hanya untuk sebuah angka yang tidak pernah ditampilkan di
+        halaman-halaman itu.
+
+        Satu-satunya layar yang benar-benar memakainya adalah pengelolaan data
+        referensi di panel admin — di situ angka ini dipakai memperingatkan
+        admin sebelum menonaktifkan kategori yang masih terpakai. Layar itulah
+        yang meminta include_usage=True.
+        """
+        data = {
             'id': self.id,
             'nama': self.nama,
             'is_active': self.is_active,
-            'usage_count': self.laporan.count(),
         }
+        if include_usage:
+            data['usage_count'] = self.laporan.count()
+        return data
 
 
 class RefKategoriBarang(db.Model):
@@ -88,13 +136,29 @@ class RefKategoriBarang(db.Model):
     def __repr__(self):
         return f'<RefKategoriBarang {self.nama}>'
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_usage=False):
+        """Mengubah baris referensi menjadi dict.
+
+        `usage_count` TIDAK dihitung secara bawaan. Angka itu butuh satu query
+        COUNT tersendiri, dan to_dict() di sini ikut terpanggil setiap kali
+        sebuah kategori disematkan ke dalam artikel, aset, laporan, atau barang
+        daur ulang. Artinya daftar berisi 20 baris diam-diam menembakkan 20
+        query COUNT hanya untuk sebuah angka yang tidak pernah ditampilkan di
+        halaman-halaman itu.
+
+        Satu-satunya layar yang benar-benar memakainya adalah pengelolaan data
+        referensi di panel admin — di situ angka ini dipakai memperingatkan
+        admin sebelum menonaktifkan kategori yang masih terpakai. Layar itulah
+        yang meminta include_usage=True.
+        """
+        data = {
             'id': self.id,
             'nama': self.nama,
             'is_active': self.is_active,
-            'usage_count': self.marketplace_items.count(),
         }
+        if include_usage:
+            data['usage_count'] = self.marketplace_items.count()
+        return data
 
 
 class RefKategoriArtikel(db.Model):
@@ -111,10 +175,26 @@ class RefKategoriArtikel(db.Model):
     def __repr__(self):
         return f'<RefKategoriArtikel {self.nama}>'
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_usage=False):
+        """Mengubah baris referensi menjadi dict.
+
+        `usage_count` TIDAK dihitung secara bawaan. Angka itu butuh satu query
+        COUNT tersendiri, dan to_dict() di sini ikut terpanggil setiap kali
+        sebuah kategori disematkan ke dalam artikel, aset, laporan, atau barang
+        daur ulang. Artinya daftar berisi 20 baris diam-diam menembakkan 20
+        query COUNT hanya untuk sebuah angka yang tidak pernah ditampilkan di
+        halaman-halaman itu.
+
+        Satu-satunya layar yang benar-benar memakainya adalah pengelolaan data
+        referensi di panel admin — di situ angka ini dipakai memperingatkan
+        admin sebelum menonaktifkan kategori yang masih terpakai. Layar itulah
+        yang meminta include_usage=True.
+        """
+        data = {
             'id': self.id,
             'nama': self.nama,
             'is_active': self.is_active,
-            'usage_count': self.artikel.count(),
         }
+        if include_usage:
+            data['usage_count'] = self.artikel.count()
+        return data

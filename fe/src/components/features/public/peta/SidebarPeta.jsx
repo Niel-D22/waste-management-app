@@ -245,7 +245,7 @@ const SidebarPeta = ({
           </button>
 
           {/* Tombol Close Mobile */}
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             className="absolute top-4 right-4 rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:hidden"
           >

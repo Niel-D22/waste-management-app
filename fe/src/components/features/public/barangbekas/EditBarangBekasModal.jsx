@@ -225,7 +225,7 @@ const EditBarangBekasModal = ({ item, onClose, onSuccess }) => {
             ))}
           </div>
 
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             className="flex size-9 items-center justify-center rounded-xl border border-gray-200 transition-colors hover:bg-gray-50"
           >

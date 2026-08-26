@@ -78,11 +78,10 @@ export default function UserDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  // Diletakkan DI ATAS useEffect yang memanggilnya. Bukan sekadar soal
+  // gaya: kalau fungsinya dideklarasikan di bawah, efek di atas memakai
+  // nama yang saat itu belum terikat ke nilai terbaru.
+  async function fetchStats() {
     try {
       setIsLoading(true);
       const data = await getUserStats();
@@ -95,7 +94,11 @@ export default function UserDashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   // ── Loading ──
   if (isLoading) return <LoadingState />;

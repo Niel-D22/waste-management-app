@@ -167,3 +167,108 @@ button {
 html {
   scrollbar-gutter: stable;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   AKSESIBILITAS
+   Bagian ini bukan hiasan. Tiga hal di bawah menentukan apakah situs ini bisa
+   dipakai sama sekali oleh orang yang menavigasi dengan papan ketik, memakai
+   pembaca layar, atau tidak tahan pada gerakan di layar.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* 1. Cincin fokus papan ketik.
+   Banyak reset CSS (termasuk yang dibawa Tailwind) mematikan outline bawaan
+   peramban karena dianggap jelek. Akibatnya orang yang menavigasi dengan Tab
+   — pengguna pembaca layar, orang dengan keterbatasan motorik, siapa pun yang
+   tetikusnya rusak — kehilangan jejak posisinya dan tersesat total.
+   :focus-visible dipakai, BUKAN :focus, supaya cincinnya muncul saat ditekan
+   Tab tapi tidak muncul saat tombol diklik tetikus. Itu yang membuatnya bisa
+   dipasang di seluruh situs tanpa merusak tampilan.
+   Dua lapis warna (navy di dalam, putih di luar) supaya tetap terlihat baik di
+   atas latar terang maupun di atas navbar navy. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--primary, #1d1c78);
+  outline-offset: 2px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.85);
+}
+
+/* 2. Tautan lewati-ke-konten.
+   Tersembunyi sampai difokuskan. Tanpa ini, pengguna papan ketik harus
+   menekan Tab melewati seluruh isi navbar — belasan tautan — di SETIAP
+   halaman sebelum sampai ke isi yang sebenarnya. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100%;
+  z-index: 9999;
+  border-radius: 0.75rem;
+  background: var(--primary, #1d1c78);
+  padding: 0.85rem 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.25);
+  transition: top 0.18s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* 3. Menghormati "kurangi gerakan".
+   Situs ini penuh gerakan: latar hero yang bergeser mengikuti gulir, ikon yang
+   melayang, karakter yang melambai, halaman yang berpindah dengan transisi.
+   Bagi orang dengan gangguan vestibular, gerakan sebanyak itu memicu pusing
+   dan mual sungguhan — bukan sekadar tidak nyaman.
+   Sistem operasi sudah menyediakan saklarnya (Windows: Settings > Accessibility
+   > Visual effects > Animation effects; iOS/Android: Reduce Motion). Yang
+   kurang selama ini cuma situs yang mau mendengarkan.
+   Animasi tidak dimatikan menjadi 0s — durasi nol dapat memicu event
+   animationend berulang di sebagian peramban. Dipangkas ke 0,01ms: efeknya
+   sama-sama tak terlihat, tapi aman. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 4. Kelas untuk teks yang hanya dibacakan pembaca layar.
+   Dipakai memberi nama pada tombol berikon-saja dan mengumumkan perubahan
+   status. Teknik clip-path ini yang dipakai, bukan display:none atau
+   visibility:hidden — keduanya justru menyembunyikan teks dari pembaca layar
+   juga, yang persis kebalikan dari yang diinginkan. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Animasi masuk panel ilustrasi di halaman login/daftar.
+   Ditulis sebagai keyframe CSS, bukan lewat motion: panel itu memakai
+   transition-[width] untuk menggeser lebarnya saat berpindah ke pendaftaran,
+   dan membungkusnya dengan motion berarti dua sistem animasi memperebutkan
+   elemen yang sama. Keyframe ini hanya berjalan sekali saat panelnya terpasang,
+   lalu tidak pernah mengganggu geseran lebarnya lagi.
+   Durasinya otomatis dipangkas oleh aturan prefers-reduced-motion di atas. */
+@keyframes panelMasuk {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.panel-masuk {
+  animation: panelMasuk 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}

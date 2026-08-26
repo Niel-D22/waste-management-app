@@ -88,7 +88,7 @@ const FormTindakLanjut = ({ isOpen, onClose, laporanId }) => {
                 Laporan ID: {laporanId}
               </p>
             </div>
-            <button
+            <button aria-label="Tutup"
               onClick={onClose}
               className="flex size-7 items-center justify-center rounded-full bg-(--gray-shine) text-(--gray-muted) transition-colors hover:bg-red-50 hover:text-red-500"
             >

@@ -1,7 +1,6 @@
 // components/features/admin/artikel/AdminArtikelSearchBar.jsx
 import React, { useEffect } from "react";
 import {
-  RiSearchLine,
   RiArrowDownSLine,
   RiSettings4Line,
 } from "react-icons/ri";

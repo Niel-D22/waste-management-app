@@ -6,7 +6,6 @@ import { marketplaceAPI } from "../../services/api/routes/marketplace.route";
 import { referensiAPI } from "../../services/api/routes/referensi.route";
 import {
   KONDISI,
-  KONDISI_LABELS,
 } from "../../components/features/public/barangbekas/InputBarang/Constant";
 
 const BarangBekasPage = () => {

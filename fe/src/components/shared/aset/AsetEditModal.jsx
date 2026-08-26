@@ -158,7 +158,7 @@ function AsetEditModal({
       <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="text-lg font-bold text-gray-900">Edit Aset</h2>
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             disabled={submitting}
             className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"

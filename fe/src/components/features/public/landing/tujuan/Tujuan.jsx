@@ -1,6 +1,6 @@
 import React from "react";
 import TujuanItem from "./TujuanItem";
-// eslint-disable-next-line no-unused-vars
+ 
 import { motion } from "motion/react";
 
 const Tujuan = () => {

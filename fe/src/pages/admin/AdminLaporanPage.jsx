@@ -52,7 +52,7 @@ function AdminLaporanPage() {
     setError(null);
     try {
       const params = Object.fromEntries(
-        // eslint-disable-next-line no-unused-vars
+         
         Object.entries(query).filter(([_, v]) => v !== ""),
       );
       const res = await laporanAPI.getAll(params);

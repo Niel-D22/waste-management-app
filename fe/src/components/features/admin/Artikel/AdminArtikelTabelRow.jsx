@@ -92,7 +92,7 @@ const AdminArtikelTabelRow = ({ item, onView, onEdit, onDelete }) => {
 };
 
 // Sub-component untuk action button
-// eslint-disable-next-line no-unused-vars
+ 
 const ActionButton = ({ icon: Icon, title, onClick, variant = "primary" }) => {
   const variants = {
     primary: {

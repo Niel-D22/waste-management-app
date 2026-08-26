@@ -47,7 +47,36 @@ class Artikel(db.Model):
     def __repr__(self):
         return f'<Artikel {self.judul_artikel}>'
 
-    def to_dict(self, include_content=False, current_user_id=None):
+    def to_dict(self, include_content=False, current_user_id=None, statistik=None):
+        """Mengubah satu artikel menjadi dict siap kirim.
+
+        Parameter `statistik` adalah kunci performanya. Tanpa parameter itu,
+        setiap pemanggilan menembakkan tiga query tambahan ke basis data:
+        menghitung jumlah suka, menghitung jumlah komentar, dan memeriksa
+        apakah pengguna ini sudah menyukainya. Untuk daftar 20 artikel itu
+        berarti 60 query — masalah klasik N+1, dan penyebab daftar artikel
+        sempat butuh hampir lima detik.
+
+        Kalau pemanggilnya sudah menyiapkan angka-angka itu lebih dulu dalam
+        satu query agregat (lihat ArtikelService.kumpulkan_statistik), dict
+        siap pakai itu dioper ke sini dan tidak ada query tambahan sama sekali.
+
+        Dibiarkan opsional supaya pemanggil yang hanya butuh SATU artikel —
+        halaman detail, misalnya — tetap bisa memanggil tanpa persiapan apa pun
+        dan tetap benar.
+        """
+        if statistik is None:
+            jumlah_likes = self.likes.count()
+            jumlah_komentar = self.komentar.count()
+            is_liked = (
+                self.likes.filter_by(id_user=current_user_id).first() is not None
+                if current_user_id else False
+            )
+        else:
+            jumlah_likes = statistik['likes'].get(self.id, 0)
+            jumlah_komentar = statistik['komentar'].get(self.id, 0)
+            is_liked = self.id in statistik['disukai']
+
         data = {
             'id': self.id,
             'id_penulis': self.id_penulis,
@@ -59,20 +88,15 @@ class Artikel(db.Model):
             'foto_cover_url': self.foto_cover_url,
             'status_publikasi': self.status_publikasi.value if self.status_publikasi else None,
             'jumlah_views': self.jumlah_views,
-            'jumlah_likes': self.likes.count(),
-            'jumlah_komentar': self.komentar.count(),
+            'jumlah_likes': jumlah_likes,
+            'jumlah_komentar': jumlah_komentar,
             'tags': self.tags or [],
             'is_featured': self.is_featured,
             'waktu_publish': self.waktu_publish.isoformat() if self.waktu_publish else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
-        
-        # Check if current user liked this article
-        if current_user_id:
-            data['is_liked'] = self.likes.filter_by(id_user=current_user_id).first() is not None
-        else:
-            data['is_liked'] = False
+        data['is_liked'] = is_liked
 
         if include_content:
             data['konten_teks'] = self.konten_teks

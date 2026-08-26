@@ -43,7 +43,7 @@ export default function AdminArtikelViewModal({ isOpen, onClose, item, loading =
             <h2 className="text-xl font-bold text-gray-900">Detail Artikel</h2>
             <StatusBadge status={item.status_publikasi} />
           </div>
-          <button 
+          <button aria-label="Tutup" 
             onClick={onClose}
             className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >

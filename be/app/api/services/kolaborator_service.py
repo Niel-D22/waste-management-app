@@ -1,5 +1,6 @@
 """Kolaborator service - Business logic for kolaborator"""
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
 
 from app.config.extensions import db
 from app.database.models import Kolaborator, RefJenisKolaborator, StatusVerifikasiKolaborator
@@ -57,7 +58,13 @@ class KolaboratorService:
     @staticmethod
     def get_all(page=1, per_page=20, search=None, jenis_kolaborator_id=None,
                 kabupaten_kota=None,status_aktif=None, status_verifikasi=None, sort_by='created_at', sort_order='desc'):
-        query = Kolaborator.query
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = Kolaborator.query.options(
+            joinedload(Kolaborator.user),
+            joinedload(Kolaborator.jenis_ref),
+        )
 
         if search:
             query = query.filter(
@@ -181,7 +188,13 @@ class KolaboratorService:
     @staticmethod
     def get_my_kolaborator(user_id, page=1, per_page=20, search=None, jenis_kolaborator_id=None,
                 kabupaten_kota=None, status_aktif=None, status_verifikasi=None, sort_by='created_at', sort_order='desc'):
-        query = Kolaborator.query.filter_by(id_user=user_id)
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = Kolaborator.query.options(
+            joinedload(Kolaborator.user),
+            joinedload(Kolaborator.jenis_ref),
+        ).filter_by(id_user=user_id)
 
         if search:
             query = query.filter(

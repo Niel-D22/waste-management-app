@@ -12,7 +12,6 @@ import React from "react";
 import {
   RiEyeLine,
   RiDeleteBinLine,
-  RiImageLine,
   RiTimeLine,
   RiHeartLine,
   RiChat1Line,
@@ -36,7 +35,7 @@ export default function ArtikelCard({ art, onView, onDelete, onEdit }) {
   const coverSrc =
     (art.foto_cover_url && art.foto_cover_url.trim() !== "")
       ? art.foto_cover_url
-      : "/images/default-thumbnail.png";
+      : "/images/placeholder.webp";
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
@@ -52,7 +51,7 @@ export default function ArtikelCard({ art, onView, onDelete, onEdit }) {
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = "/images/default-thumbnail.png";
+            e.target.src = "/images/placeholder.webp";
           }}
         />
 

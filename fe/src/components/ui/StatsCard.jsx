@@ -1,7 +1,7 @@
 // components/features/admin/artikel/ui/StatsCard.jsx
 import React from "react";
 
-// eslint-disable-next-line no-unused-vars
+ 
 const StatsCard = ({ title, value, icon: Icon, colorVar, trend, subtitle }) => {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">

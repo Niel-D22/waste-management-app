@@ -70,7 +70,7 @@ function ShowcasePeta() {
 
           <Link
             to="/peta"
-            className="mt-9 flex w-fit items-center gap-2 rounded-full bg-(--primary) px-7 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-(--primary-dark) md:text-base"
+            className="mt-9 flex w-fit items-center gap-2 rounded-xl bg-(--primary) px-7 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-(--primary-dark) md:text-base"
           >
             Buka Peta Lengkap
             <LuArrowRight size={17} />

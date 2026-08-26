@@ -1,5 +1,6 @@
 """Marketplace service - Business logic for marketplace daur ulang"""
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
 
 from app.config.extensions import db
 from app.database.models import (
@@ -19,7 +20,13 @@ class MarketplaceService:
 
         nama = data['nama_barang'].strip()
         kota = (data.get('kabupaten_kota') or '').strip()
-        query = MarketplaceDaurUlang.query.filter(
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = MarketplaceDaurUlang.query.options(
+            joinedload(MarketplaceDaurUlang.penjual),
+            joinedload(MarketplaceDaurUlang.kategori_ref),
+        ).filter(
             MarketplaceDaurUlang.id_penjual == user.id,
             db.func.lower(MarketplaceDaurUlang.nama_barang) == nama.lower()
         )
@@ -74,7 +81,13 @@ class MarketplaceService:
     def get_all(page=1, per_page=20, search=None, kategori_barang_id=None,
                 kondisi=None, status_ketersediaan=None, kabupaten_kota=None,
                 sort_by='created_at', sort_order='desc'):
-        query = MarketplaceDaurUlang.query
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = MarketplaceDaurUlang.query.options(
+            joinedload(MarketplaceDaurUlang.penjual),
+            joinedload(MarketplaceDaurUlang.kategori_ref),
+        )
 
         if search:
             query = query.filter(
@@ -192,7 +205,13 @@ class MarketplaceService:
     @staticmethod
     def get_my_marketplace(user_id, page=1, per_page=20, search=None, kategori_barang_id=None,
                 kondisi=None, status_ketersediaan=None, kabupaten_kota=None, sort_by='created_at', sort_order='desc'):
-        query = MarketplaceDaurUlang.query.filter_by(id_penjual=user_id)
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = MarketplaceDaurUlang.query.options(
+            joinedload(MarketplaceDaurUlang.penjual),
+            joinedload(MarketplaceDaurUlang.kategori_ref),
+        ).filter_by(id_penjual=user_id)
 
         if search:
             query = query.filter(

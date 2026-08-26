@@ -142,7 +142,7 @@ export default function ReferensiModalManager({
               </p>
             </div>
           </div>
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             className="rounded-full p-2 font-bold text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >

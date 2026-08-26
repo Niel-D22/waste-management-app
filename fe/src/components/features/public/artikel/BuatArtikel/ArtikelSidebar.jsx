@@ -201,7 +201,7 @@ const ArtikelSidebar = ({
               alt="cover preview"
               className="h-36 w-full object-cover"
             />
-            <button
+            <button aria-label="Hapus foto sampul"
               onClick={handleRemoveFoto}
               className="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white transition hover:bg-red-600"
             >

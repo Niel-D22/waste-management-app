@@ -32,7 +32,7 @@ const AdminArtikelDeleteModal = ({ isOpen, onClose, onConfirm, title }) => {
           >
             <RiAlertLine size={24} />
           </div>
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
           >

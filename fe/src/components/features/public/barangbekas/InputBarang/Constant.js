@@ -1,5 +1,4 @@
 import {
-  RiRecycleLine,
   RiCamera2Line,
   RiStoreLine,
   RiPriceTag3Line,

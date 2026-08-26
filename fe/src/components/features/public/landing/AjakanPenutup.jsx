@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { motion } from "motion/react";
 import { LuArrowRight } from "react-icons/lu";
+import { pramuat, saatMendekat } from "../../../../utils/pramuatRute";
 
 // Band penutup di atas footer. Dua tugasnya:
 // 1. Menutup halaman dengan ajakan, bukan berhenti begitu saja di section peta.
@@ -64,7 +65,8 @@ function AjakanPenutup() {
 
         <Link
           to="/login"
-          className="mt-8 flex items-center gap-2 rounded-full bg-(--primary) px-7 py-3.5 text-sm font-bold text-white shadow-xl transition hover:bg-(--primary-dark) sm:px-9 sm:py-4 sm:text-base"
+          {...saatMendekat(pramuat.login)}
+          className="mt-8 flex items-center gap-2 rounded-xl bg-(--primary) px-7 py-3.5 text-sm font-bold text-white shadow-xl transition hover:bg-(--primary-dark) sm:px-9 sm:py-4 sm:text-base"
         >
           Bergabung Sekarang
           <LuArrowRight size={18} />

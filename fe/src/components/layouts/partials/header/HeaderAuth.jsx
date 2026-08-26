@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { LuUser, LuSettings, LuLogOut, LuChevronDown } from "react-icons/lu";
+import { pramuat, saatMendekat } from "../../../../utils/pramuatRute";
 
 function HeaderAuth({ isAuthenticated, user, onLogout, floating = false }) {
   const [avatarOpen, setAvatarOpen] = useState(false);
@@ -26,14 +27,14 @@ function HeaderAuth({ isAuthenticated, user, onLogout, floating = false }) {
 
   if (!isAuthenticated) {
     return (
-      <div className="hidden items-center md:flex">
-        {/* rounded-full + padding tebal, bukan rounded-lg kecil: tombol ini
-            sebaris dengan pil nav dan kartu logo yang dua-duanya membulat.
-            Dengan px-7 py-3 tingginya jadi ~46px, sejajar dengan pil nav
-            (~48px), sehingga barisnya tidak lagi punya tiga tinggi berbeda. */}
+      <div className="hidden items-center lg:flex">
+        {/* rounded-xl, bukan bulat penuh: sudut yang membulat sempurna di
+            elemen selebar ini terbaca sebagai gaya bawaan template. Radius
+            terukur dipakai konsisten di seluruh navbar dan tombol. */}
         <Link
           to="/login"
-          className="cursor-pointer rounded-full bg-(--primary) px-7 py-3 text-[0.95rem] font-bold text-white shadow-lg transition hover:bg-(--primary-dark)"
+          {...saatMendekat(pramuat.login)}
+          className="cursor-pointer rounded-xl bg-(--primary) px-7 py-3 text-[0.95rem] font-bold text-white shadow-lg transition hover:bg-(--primary-dark)"
         >
           Bergabung
         </Link>
@@ -42,11 +43,11 @@ function HeaderAuth({ isAuthenticated, user, onLogout, floating = false }) {
   }
 
   return (
-    <div className="hidden items-center md:flex">
+    <div className="hidden items-center lg:flex">
       <div className="relative" ref={avatarRef}>
         <button
           onClick={() => setAvatarOpen(!avatarOpen)}
-          className={`flex cursor-pointer items-center gap-2.5 rounded-full transition ${
+          className={`flex cursor-pointer items-center gap-2.5 rounded-xl transition ${
             floating
               ? "bg-white/95 py-1.5 pr-4 pl-1.5 shadow-lg ring-1 ring-black/5 backdrop-blur hover:bg-white"
               : "hover:ring-1 hover:ring-emerald-200"

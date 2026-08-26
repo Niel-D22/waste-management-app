@@ -2,6 +2,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
 
 from app.config.extensions import db
 from app.database.models import Artikel, StatusPublikasi, RefKategoriArtikel
@@ -11,7 +12,13 @@ from app.utils.exceptions import NotFoundError, ForbiddenError, BadRequestError
 class ArtikelService:
     @staticmethod
     def get_all(page=1, per_page=20, search=None, kategori_id=None, status_publikasi=None, tag=None, sort_by='created_at', sort_order='desc'):
-        query = Artikel.query
+        # joinedload menarik penulis dan kategori dalam SATU query gabungan
+        # bersama artikelnya. Tanpa ini, mengakses .penulis dan .kategori_ref
+        # saat menyusun jawaban memicu dua query terpisah untuk SETIAP artikel.
+        query = Artikel.query.options(
+            joinedload(Artikel.penulis),
+            joinedload(Artikel.kategori_ref),
+        )
 
         if search:
             query = query.filter(
@@ -48,6 +55,56 @@ class ArtikelService:
         items = query.offset((page - 1) * per_page).limit(per_page).all()
 
         return items, total
+
+    @staticmethod
+    def kumpulkan_statistik(items, current_user_id=None):
+        """Menghitung suka & komentar untuk SEKUMPULAN artikel sekaligus.
+
+        Menggantikan pola lama yang menghitung per artikel satu per satu.
+        Untuk 20 artikel, yang tadinya 40-60 query terpisah menjadi paling
+        banyak tiga query agregat — jumlahnya tetap tiga entah artikelnya 6
+        atau 200.
+
+        Hasilnya dict siap oper ke Artikel.to_dict(statistik=...).
+        """
+        kosong = {'likes': {}, 'komentar': {}, 'disukai': set()}
+        if not items:
+            return kosong
+
+        ids = [i.id for i in items]
+
+        likes = dict(
+            db.session.query(ArtikelLike.id_artikel, db.func.count(ArtikelLike.id))
+            .filter(ArtikelLike.id_artikel.in_(ids))
+            .group_by(ArtikelLike.id_artikel)
+            .all()
+        )
+
+        # Hanya komentar aktif yang dihitung, supaya angkanya cocok dengan
+        # yang benar-benar tampil di halaman detail.
+        komentar = dict(
+            db.session.query(ArtikelKomentar.id_artikel, db.func.count(ArtikelKomentar.id))
+            .filter(
+                ArtikelKomentar.id_artikel.in_(ids),
+                ArtikelKomentar.status_komentar == StatusKomentar.AKTIF,
+            )
+            .group_by(ArtikelKomentar.id_artikel)
+            .all()
+        )
+
+        disukai = set()
+        if current_user_id:
+            disukai = {
+                row[0]
+                for row in db.session.query(ArtikelLike.id_artikel)
+                .filter(
+                    ArtikelLike.id_artikel.in_(ids),
+                    ArtikelLike.id_user == current_user_id,
+                )
+                .all()
+            }
+
+        return {'likes': likes, 'komentar': komentar, 'disukai': disukai}
 
     @staticmethod
     def get_by_id(item_id, increment_view=False):
@@ -169,7 +226,10 @@ class ArtikelService:
 
     @staticmethod
     def get_my_artikel(user_id, page=1, per_page=20, search=None, sort_by='created_at', sort_order='desc'):
-        query = Artikel.query.filter_by(id_penulis=user_id)
+        query = Artikel.query.options(
+            joinedload(Artikel.penulis),
+            joinedload(Artikel.kategori_ref),
+        ).filter_by(id_penulis=user_id)
 
         if search:
             query = query.filter(

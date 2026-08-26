@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineLocationMarker } from "react-icons/hi";
-// eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
+ 
+import { motion } from "motion/react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 

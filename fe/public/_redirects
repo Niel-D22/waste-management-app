@@ -1,0 +1,10 @@
+# Situs ini satu halaman dengan perutean di sisi peramban. Tanpa baris ini,
+# membuka /peta langsung dari alamat (atau menekan muat ulang di sana) membuat
+# Netlify mencari berkas /peta yang memang tidak ada, lalu membalas 404.
+# Status 200 mengembalikan index.html tanpa mengubah alamatnya, sehingga
+# perutean React yang menentukan halaman mana yang tampil.
+#
+# Berkas ini sengaja berada di public/, bukan di akar proyek: isi public/
+# disalin ke dist/, dan dist/ itulah yang diseret ke Netlify. netlify.toml di
+# akar proyek TIDAK ikut terseret dan karenanya tidak berlaku.
+/*  /index.html  200

@@ -146,7 +146,7 @@ function KolaboratorEditModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="text-lg font-bold text-gray-900">Edit Kolaborator</h2>
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             disabled={submitting}
             className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"

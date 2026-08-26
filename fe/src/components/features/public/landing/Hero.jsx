@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Link } from "react-router";
 import { motion, useScroll, useTransform } from "motion/react";
-import { LuSprout, LuArrowRight } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 
 // Folder aset mengandung spasi ("Hero asset"), jadi path-nya di-encode
 // (%20) supaya aman di semua browser.
@@ -137,14 +137,14 @@ const Hero = () => {
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <Link
             to="/laporan/buat"
-            className="flex items-center gap-2 rounded-full bg-(--primary) px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-(--primary-dark) sm:px-7 md:text-base"
+            className="flex items-center gap-2 rounded-xl bg-(--primary) px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-(--primary-dark) sm:px-7 md:text-base"
           >
             Laporkan Sampah
             <LuArrowRight size={17} />
           </Link>
           <Link
             to="/peta"
-            className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-bold text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 sm:px-7 md:text-base"
+            className="rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-bold text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 sm:px-7 md:text-base"
           >
             Lihat Peta
           </Link>

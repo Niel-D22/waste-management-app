@@ -166,7 +166,7 @@ const ArtikelPage = () => {
     setError("");
     try {
       const params = Object.fromEntries(
-        // eslint-disable-next-line no-unused-vars
+         
         Object.entries(query).filter(([_, v]) => v !== ""),
       );
 
@@ -255,7 +255,7 @@ const ArtikelPage = () => {
                 {query.search && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
                     Pencarian: "{query.search}"
-                    <button
+                    <button aria-label="Hapus kata kunci pencarian"
                       onClick={clearSearch}
                       className="text-blue-500 hover:text-blue-900"
                     >
@@ -266,7 +266,7 @@ const ArtikelPage = () => {
                 {query.tag && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
                     Tag: #{query.tag}
-                    <button
+                    <button aria-label="Hapus filter tag"
                       onClick={clearTag}
                       className="text-gray-500 hover:text-gray-900"
                     >

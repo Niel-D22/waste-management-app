@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router";
 import {
   LuLayoutDashboard,
-  LuUsers,
   LuUserCog,
   LuFileUser,
   LuX,

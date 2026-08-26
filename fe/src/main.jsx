@@ -9,8 +9,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import AppToaster from "./components/common/AppToaster.jsx";
 import ScrollToTop from "./components/common/ScrollToTop.jsx";
+import { tutupLayarPembuka } from "./utils/layarPembuka";
 
-createRoot(document.getElementById("root")).render(
+const akar = createRoot(document.getElementById("root"));
+
+akar.render(
   <StrictMode>
     <ThemeProvider>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -25,3 +28,9 @@ createRoot(document.getElementById("root")).render(
     </ThemeProvider>
   </StrictMode>,
 );
+
+// Dipanggil setelah render, bukan sebelum: render() menjadwalkan pekerjaannya
+// lalu langsung kembali, jadi baris ini berjalan tepat saat React mulai
+// memasang pohon komponennya. Fungsinya sendiri yang menunggu sampai halaman
+// benar-benar siap dan tercat — lihat utils/layarPembuka.js.
+tutupLayarPembuka();

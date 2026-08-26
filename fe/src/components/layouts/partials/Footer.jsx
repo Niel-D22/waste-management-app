@@ -233,7 +233,7 @@ function Footer() {
                   <button
                     type="submit"
                     disabled={sending}
-                    className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-(--primary) shadow-lg transition hover:bg-(--gray-light) disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex cursor-pointer items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-(--primary) shadow-lg transition hover:bg-(--gray-light) disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {sending ? "Mengirim..." : "Kirim Masukan"}
                     {!sending && <LuSend size={15} />}

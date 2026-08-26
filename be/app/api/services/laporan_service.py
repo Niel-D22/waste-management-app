@@ -1,5 +1,6 @@
 """Laporan service - Business logic for laporan & tindak lanjut"""
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
 
 from app.config.extensions import db
 from app.database.models import (
@@ -39,7 +40,13 @@ class LaporanService:
     @staticmethod
     def get_all(page=1, per_page=20, search=None, status_laporan=None,
                 jenis_sampah_id=None, id_warga=None, sort_by='created_at', sort_order='desc'):
-        query = LaporanSampahIlegal.query
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = LaporanSampahIlegal.query.options(
+            joinedload(LaporanSampahIlegal.pelapor),
+            joinedload(LaporanSampahIlegal.jenis_sampah_ref),
+        )
 
         if search:
             query = query.filter(
@@ -185,7 +192,13 @@ class LaporanService:
     @staticmethod
     def get_my_laporan(user_id, page=1, per_page=20, search=None, status_laporan=None,
                 jenis_sampah_id=None, sort_by='created_at', sort_order='desc'):
-        query = LaporanSampahIlegal.query.filter_by(id_warga=user_id)
+        # joinedload menarik pemilik data dan baris referensinya dalam SATU
+        # query gabungan. Tanpa ini, menyusun jawaban memicu dua query
+        # tambahan untuk SETIAP baris — daftar 20 baris jadi 40 query.
+        query = LaporanSampahIlegal.query.options(
+            joinedload(LaporanSampahIlegal.pelapor),
+            joinedload(LaporanSampahIlegal.jenis_sampah_ref),
+        ).filter_by(id_warga=user_id)
 
         if search:
             query = query.filter(

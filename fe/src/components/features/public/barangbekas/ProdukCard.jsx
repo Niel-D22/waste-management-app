@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
         className="relative block aspect-square overflow-hidden bg-gray-100"
       >
         <img
-          src={product.foto_barang_urls?.[0] || "/placeholder.jpg"}
+          src={product.foto_barang_urls?.[0] || "/images/placeholder.webp"}
           alt={product.nama_barang}
           className={`h-full w-full object-cover transition-transform duration-500 ${
             product.status_ketersediaan === "terjual"

@@ -1,7 +1,6 @@
 // components/features/admin/artikel/AdminArtikelPage.jsx
 import React, { useState, useEffect } from "react";
-import { RiAddLine, RiDashboardLine } from "react-icons/ri";
-import AdminArtikelStats from "../../components/features/admin/Artikel/AdminArtikelStats";
+import { RiAddLine  } from "react-icons/ri";
 import AdminArtikelTable from "../../components/features/admin/Artikel/AdminArtikelTabel";
 import AdminArtikelDeleteModal from "../../components/features/admin/Artikel/AdminArtikelDeleteModal";
 
@@ -48,7 +47,7 @@ const AdminArtikelPage = () => {
     setLoading(true);
     try {
       const params = Object.fromEntries(
-        // eslint-disable-next-line no-unused-vars
+         
         Object.entries(query).filter(([_, v]) => v !== ""),
       );
       const res = await artikelAPI.getAll(params);

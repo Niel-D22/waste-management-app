@@ -1,0 +1,23 @@
+# Berkas di /assets/ namanya sudah mengandung sidik jari isi (index-Cr3anWJt.js).
+# Kalau isinya berubah, namanya ikut berubah — jadi berkas dengan nama yang sama
+# dijamin tidak pernah berubah dan aman disimpan peramban selamanya. Ini yang
+# membuat kunjungan kedua nyaris tanpa unduhan sama sekali.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Gambar tidak bersidik jari, jadi masa simpannya dibatasi sehari dengan
+# must-revalidate: cukup lama untuk menghemat kuota, cukup singkat supaya
+# penggantian aset terlihat keesokan harinya tanpa perlu hapus cache.
+/images/*
+  Cache-Control: public, max-age=86400, must-revalidate
+
+# index.html TIDAK boleh disimpan: ia yang memuat nama berkas /assets/ terbaru.
+# Kalau ikut tersimpan, pengguna bisa terjebak memuat versi lama selamanya.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Permissions-Policy: geolocation=(self), camera=(), microphone=()

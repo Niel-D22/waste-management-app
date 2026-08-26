@@ -3,7 +3,6 @@ import {
   RiCloseLine,
   RiSaveLine,
   RiImageLine,
-  RiPriceTag3Line,
   RiSettings4Line,
 } from "react-icons/ri";
 import ArtikelEditor from "../../public/artikel/BuatArtikel/ArtikelEditor";
@@ -124,7 +123,7 @@ export default function ArtikelEditModal({
               Sesuaikan konten dan data publikasi artikelmu.
             </p>
           </div>
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >

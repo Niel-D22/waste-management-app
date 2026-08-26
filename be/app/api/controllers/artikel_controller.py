@@ -33,9 +33,16 @@ def get_all():
     )
 
     current_user_id = request.current_user.id if request.current_user else None
-    
+
+    # Jumlah suka & komentar untuk seluruh halaman ini diambil sekaligus dalam
+    # beberapa query agregat, bukan per artikel. Lihat kumpulkan_statistik().
+    statistik = ArtikelService.kumpulkan_statistik(items, current_user_id)
+
     return paginated_response(
-        data=[item.to_dict(include_content=False, current_user_id=current_user_id) for item in items],
+        data=[
+            item.to_dict(include_content=False, current_user_id=current_user_id, statistik=statistik)
+            for item in items
+        ],
         total=total,
         page=params.get('page', 1),
         per_page=params.get('per_page', 20),
@@ -55,8 +62,12 @@ def get_one(item_id):
 def get_popular():
     items = ArtikelService.get_popular(limit=3)
     current_user_id = request.current_user.id if request.current_user else None
+    statistik = ArtikelService.kumpulkan_statistik(items, current_user_id)
     return success_response(
-        data=[item.to_dict(include_content=False, current_user_id=current_user_id) for item in items],
+        data=[
+            item.to_dict(include_content=False, current_user_id=current_user_id, statistik=statistik)
+            for item in items
+        ],
         message="Artikel populer berhasil diambil"
     )
 
@@ -93,8 +104,10 @@ def my_artikel():
         sort_order=params.get('sort_order', 'desc'),
     )
 
+    statistik = ArtikelService.kumpulkan_statistik(items)
+
     return paginated_response(
-        data=[item.to_dict(include_content=False) for item in items],
+        data=[item.to_dict(include_content=False, statistik=statistik) for item in items],
         total=total,
         page=page,
         per_page=per_page,

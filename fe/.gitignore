@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 
-package-lock.json
 
 # Editor directories and files
 .vscode/*
@@ -26,3 +25,7 @@ package-lock.json
 *.sw?
 
 .env
+# Cadangan kode mati hasil pembersihan. Disimpan lokal supaya bisa
+# dikembalikan kalau ternyata masih diperlukan, tapi tidak perlu ikut
+# masuk repositori.
+.deadcode-backup/

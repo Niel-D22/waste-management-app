@@ -50,7 +50,7 @@ export function DetailModal({ item, onClose, onStatusChange }) {
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-5 py-4">
           <h2 className="font-bold text-gray-800">Detail Barang</h2>
-          <button
+          <button aria-label="Tutup"
             onClick={onClose}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
           >

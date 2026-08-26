@@ -109,7 +109,7 @@ const ArtikelPublishModal = ({
                   : "Artikel akan langsung bisa dibaca semua orang"}
               </p>
             </div>
-            <button
+            <button aria-label="Tutup"
               onClick={handleClose}
               className="rounded-full p-1 text-gray-400 hover:bg-gray-100"
             >

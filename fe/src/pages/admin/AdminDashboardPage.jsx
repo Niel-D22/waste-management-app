@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { getAdminStats } from "../../services/api/routes/dashboard.route";
 import StatsCard from "../../components/ui/StatsCard";
-import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import StatusGroupCard from "../../components/features/admin/StatusGroupCard";
 import RecentActivityTable from "../../components/features/admin/RecentActivityTable";
 
@@ -50,11 +49,10 @@ const AdminDashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  // Diletakkan DI ATAS useEffect yang memanggilnya. Bukan sekadar soal
+  // gaya: kalau fungsinya dideklarasikan di bawah, efek di atas memakai
+  // nama yang saat itu belum terikat ke nilai terbaru.
+  async function fetchStats() {
     try {
       setLoading(true);
       const data = await getAdminStats();
@@ -66,7 +64,11 @@ const AdminDashboardPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   if (loading) {
     return <LoadingState />;

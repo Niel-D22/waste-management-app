@@ -275,17 +275,10 @@ function LeaderboardPage() {
   const [wilayahError, setWilayahError] = useState(null);
   const [wilayahFetched, setWilayahFetched] = useState(false);
 
-  useEffect(() => {
-    fetchLeaderboard();
-  }, []);
-
-  useEffect(() => {
-    if (tab === "wilayah" && !wilayahFetched) {
-      fetchWilayahLeaderboard();
-    }
-  }, [tab, wilayahFetched]);
-
-  const fetchLeaderboard = async () => {
+  // Diletakkan DI ATAS useEffect yang memanggilnya. Bukan sekadar soal
+  // gaya: kalau fungsinya dideklarasikan di bawah, efek di atas memakai
+  // nama yang saat itu belum terikat ke nilai terbaru.
+  async function fetchLeaderboard() {
     try {
       setLoading(true);
       setError(null);
@@ -296,9 +289,9 @@ function LeaderboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const fetchWilayahLeaderboard = async () => {
+  async function fetchWilayahLeaderboard() {
     try {
       setWilayahLoading(true);
       setWilayahError(null);
@@ -310,7 +303,17 @@ function LeaderboardPage() {
     } finally {
       setWilayahLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
+  useEffect(() => {
+    if (tab === "wilayah" && !wilayahFetched) {
+      fetchWilayahLeaderboard();
+    }
+  }, [tab, wilayahFetched]);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#FAFAFA]">

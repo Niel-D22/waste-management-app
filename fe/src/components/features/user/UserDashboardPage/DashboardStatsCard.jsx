@@ -13,7 +13,7 @@ import {
 } from "react-icons/ri";
 
 // ─── Big stat card ────────────────────────────────────────────────
-// eslint-disable-next-line no-unused-vars
+ 
 function BigStatCard({ icon: Icon, label, value, sub, accent, path }) {
   const navigate = useNavigate();
   return (
@@ -52,7 +52,7 @@ function BigStatCard({ icon: Icon, label, value, sub, accent, path }) {
 }
 
 // ─── Mini activity cell ───────────────────────────────────────────
-// eslint-disable-next-line no-unused-vars
+ 
 function MiniCell({ icon: Icon, label, value, accent }) {
   return (
     <div className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-gray-100 bg-white p-4 text-center shadow-sm">

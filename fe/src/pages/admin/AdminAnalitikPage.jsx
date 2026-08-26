@@ -62,11 +62,10 @@ const AdminAnalitikPage = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  // Diletakkan DI ATAS useEffect yang memanggilnya. Bukan sekadar soal
+  // gaya: kalau fungsinya dideklarasikan di bawah, efek di atas memakai
+  // nama yang saat itu belum terikat ke nilai terbaru.
+  async function fetchStats() {
     try {
       setLoading(true);
       const data = await getAdminAnalitikWilayah();
@@ -78,7 +77,11 @@ const AdminAnalitikPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   if (loading) {
     return <LoadingState />;
