@@ -20,7 +20,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
         if (len === 1) {
           return (
             <div
-              className="h-[300px] w-full cursor-pointer overflow-hidden rounded-3xl sm:h-[400px] md:h-[480px]"
+              className="h-[300px] w-full cursor-pointer overflow-hidden rounded-2xl sm:h-[400px] md:h-[480px]"
               onClick={() => openViewer(0)}
             >
               <img
@@ -33,9 +33,9 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
         }
         if (len === 2) {
           return (
-            <div className="flex h-[300px] w-full gap-2 overflow-hidden rounded-3xl sm:h-[400px] md:h-[480px]">
+            <div className="flex h-[300px] w-full gap-2 overflow-hidden rounded-2xl sm:h-[400px] md:h-[480px]">
               <div
-                className="relative w-1/2 cursor-pointer overflow-hidden bg-gray-100"
+                className="relative w-1/2 cursor-pointer overflow-hidden bg-(--surface-sky)"
                 onClick={() => openViewer(0)}
               >
                 <img
@@ -45,7 +45,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
                 />
               </div>
               <div
-                className="relative w-1/2 cursor-pointer overflow-hidden bg-gray-100"
+                className="relative w-1/2 cursor-pointer overflow-hidden bg-(--surface-sky)"
                 onClick={() => openViewer(1)}
               >
                 <img
@@ -59,9 +59,9 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
         }
         if (len === 3) {
           return (
-            <div className="flex h-[300px] w-full gap-2 overflow-hidden rounded-3xl sm:h-[400px] md:h-[480px]">
+            <div className="flex h-[300px] w-full gap-2 overflow-hidden rounded-2xl sm:h-[400px] md:h-[480px]">
               <div
-                className="relative w-1/2 cursor-pointer overflow-hidden bg-gray-100"
+                className="relative w-1/2 cursor-pointer overflow-hidden bg-(--surface-sky)"
                 onClick={() => openViewer(0)}
               >
                 <img
@@ -72,7 +72,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
               </div>
               <div className="grid w-1/2 grid-rows-2 gap-2">
                 <div
-                  className="relative cursor-pointer overflow-hidden bg-gray-100"
+                  className="relative cursor-pointer overflow-hidden bg-(--surface-sky)"
                   onClick={() => openViewer(1)}
                 >
                   <img
@@ -82,7 +82,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
                   />
                 </div>
                 <div
-                  className="relative cursor-pointer overflow-hidden bg-gray-100"
+                  className="relative cursor-pointer overflow-hidden bg-(--surface-sky)"
                   onClick={() => openViewer(2)}
                 >
                   <img
@@ -97,9 +97,9 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
         }
         if (len === 4) {
           return (
-            <div className="flex h-[300px] w-full gap-2 overflow-hidden rounded-3xl sm:h-[400px] md:h-[480px]">
+            <div className="flex h-[300px] w-full gap-2 overflow-hidden rounded-2xl sm:h-[400px] md:h-[480px]">
               <div
-                className="relative w-1/2 cursor-pointer overflow-hidden bg-gray-100"
+                className="relative w-1/2 cursor-pointer overflow-hidden bg-(--surface-sky)"
                 onClick={() => openViewer(0)}
               >
                 <img
@@ -110,7 +110,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
               </div>
               <div className="grid w-1/2 grid-cols-2 grid-rows-2 gap-2">
                 <div
-                  className="relative col-span-2 cursor-pointer overflow-hidden bg-gray-100"
+                  className="relative col-span-2 cursor-pointer overflow-hidden bg-(--surface-sky)"
                   onClick={() => openViewer(1)}
                 >
                   <img
@@ -120,7 +120,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
                   />
                 </div>
                 <div
-                  className="relative cursor-pointer overflow-hidden bg-gray-100"
+                  className="relative cursor-pointer overflow-hidden bg-(--surface-sky)"
                   onClick={() => openViewer(2)}
                 >
                   <img
@@ -130,7 +130,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
                   />
                 </div>
                 <div
-                  className="relative cursor-pointer overflow-hidden bg-gray-100"
+                  className="relative cursor-pointer overflow-hidden bg-(--surface-sky)"
                   onClick={() => openViewer(3)}
                 >
                   <img
@@ -146,9 +146,9 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
 
         // 5 or more
         return (
-          <div className="group relative flex h-[300px] w-full gap-2 overflow-hidden rounded-3xl sm:h-[400px] md:h-[480px]">
+          <div className="group relative flex h-[300px] w-full gap-2 overflow-hidden rounded-2xl sm:h-[400px] md:h-[480px]">
             <div
-              className="relative h-full w-full cursor-pointer overflow-hidden bg-gray-100 md:w-1/2"
+              className="relative h-full w-full cursor-pointer overflow-hidden bg-(--surface-sky) md:w-1/2"
               onClick={() => openViewer(0)}
             >
               <img
@@ -161,7 +161,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
               {fotoBuktiUrls.slice(1, 4).map((url, idx) => (
                 <div
                   key={idx}
-                  className="relative size-full cursor-pointer overflow-hidden bg-gray-100"
+                  className="relative size-full cursor-pointer overflow-hidden bg-(--surface-sky)"
                   onClick={() => openViewer(idx + 1)}
                 >
                   <img
@@ -173,7 +173,7 @@ const DetailLaporanGallery = ({ fotoBuktiUrls, laporanStatus }) => {
               ))}
               {/* Photo Thumbnail + N Count */}
               <div
-                className="relative size-full cursor-pointer overflow-hidden bg-gray-100"
+                className="relative size-full cursor-pointer overflow-hidden bg-(--surface-sky)"
                 onClick={() => openViewer(4)}
               >
                 <img

@@ -80,6 +80,28 @@ class ProductionConfig(Config):
     RATELIMIT_DEFAULT = "10000/day;1000/hour;100/minute"
     ENVIRONMENT = 'Production'
 
+    # Di Vercel (variabel VERCEL diisi otomatis oleh platformnya) setiap
+    # instans fungsi hidup sebentar lalu dibuang. Pool koneksi biasa akan
+    # menahan koneksi yang tidak pernah dipakai lagi, dan dengan puluhan
+    # instans sekaligus kuota koneksi Supabase habis dalam hitungan menit.
+    # NullPool membuka koneksi per permintaan lalu langsung menutupnya —
+    # pengelolaan pool diserahkan ke pooler Supabase di port 6543.
+    if os.environ.get('VERCEL'):
+        from sqlalchemy.pool import NullPool
+        SQLALCHEMY_ENGINE_OPTIONS = {'poolclass': NullPool}
+    else:
+        # Server yang terus hidup (Railway, VPS). Bawaan SQLAlchemy membuka
+        # hingga 15 koneksi per proses (pool 5 + luapan 10); dengan 2 worker
+        # gunicorn itu 30 koneksi — dua kali lipat kuota pooler Supabase paket
+        # gratis (15). Dibatasi 5 per worker: cukup untuk 4 thread per worker
+        # (lihat railway.json), dan totalnya 10 tetap di bawah kuota.
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'pool_pre_ping': True,
+            'pool_recycle': 300,
+            'pool_size': 3,
+            'max_overflow': 2,
+        }
+
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
@@ -96,6 +118,38 @@ config = {
 }
 
 
+def _pastikan_rahasia_layak_produksi(cfg):
+    """Menolak menyala dalam mode produksi kalau kunci rahasianya masih contoh.
+
+    SECRET_KEY dan JWT_SECRET_KEY adalah satu-satunya hal yang memisahkan token
+    login asli dari token palsu. Kalau nilainya masih kalimat contoh seperti
+    "your-secret-key-here" — yang tertulis di .env.example dan di repositori
+    publik — siapa pun bisa membuat token sendiri dan masuk sebagai admin tanpa
+    tahu kata sandi apa pun.
+
+    Lebih baik server gagal menyala dengan pesan yang jelas, daripada menyala
+    dengan pintu yang kuncinya dibagikan ke semua orang.
+    """
+    tanda_contoh = ('your', 'change', 'example', 'secret-key', 'here', 'dev-')
+    masalah = []
+    for nama in ('SECRET_KEY', 'JWT_SECRET_KEY'):
+        nilai = (getattr(cfg, nama, '') or '').lower()
+        if len(nilai) < 32 or any(t in nilai for t in tanda_contoh):
+            masalah.append(nama)
+    if masalah:
+        raise RuntimeError(
+            "\n\nMode produksi ditolak: " + ", ".join(masalah) +
+            " masih berupa nilai contoh atau terlalu pendek (< 32 karakter).\n"
+            "Buat nilai acak baru untuk masing-masing, lalu isi di be/.env:\n\n"
+            "    python -c \"import secrets; print(secrets.token_urlsafe(48))\"\n"
+        )
+
+
 def get_config():
     env = get_env('FLASK_ENV', 'development')
-    return config.get(env, config['default'])
+    cfg = config.get(env, config['default'])
+    # Hanya dijaga di produksi. Di mesin pengembang, nilai contoh tidak apa-apa
+    # dan memaksa semua anggota tim membuat kunci acak hanya memperlambat kerja.
+    if cfg is ProductionConfig:
+        _pastikan_rahasia_layak_produksi(cfg)
+    return cfg

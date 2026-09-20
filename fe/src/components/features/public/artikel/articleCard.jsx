@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaComment } from "react-icons/fa";
 import { AiTwotoneLike } from "react-icons/ai";
+import { amankanHtml } from "../../../../utils/amankanHtml";
 
 const ArticleCard = ({ article }) => {
   return (
@@ -32,7 +33,7 @@ const ArticleCard = ({ article }) => {
 
         <p
           className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-500 sm:text-base"
-          dangerouslySetInnerHTML={{ __html: article.excerpt }}
+          dangerouslySetInnerHTML={{ __html: amankanHtml(article.excerpt) }}
         />
 
         {/* Meta: Date, Like & Comment */}

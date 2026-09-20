@@ -143,7 +143,7 @@ const AdminLaporanDetailModal = ({
                                   src={url}
                                   alt={`Foto Sebelum ${i + 1}`}
                                   className="h-16 w-16 shrink-0 cursor-pointer rounded-lg object-cover ring-1 ring-gray-200 transition hover:opacity-80"
-                                  onClick={() => window.open(url, "_blank")}
+                                  onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
                                 />
                               ))}
                             </div>
@@ -165,7 +165,7 @@ const AdminLaporanDetailModal = ({
                                   src={url}
                                   alt={`Foto Setelah ${i + 1}`}
                                   className="h-16 w-16 shrink-0 cursor-pointer rounded-lg object-cover ring-1 ring-gray-200 transition hover:opacity-80"
-                                  onClick={() => window.open(url, "_blank")}
+                                  onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
                                 />
                               ))}
                             </div>

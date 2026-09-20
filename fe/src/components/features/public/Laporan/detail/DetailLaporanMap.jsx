@@ -20,14 +20,17 @@ const reportMarkerIcon = new L.divIcon({
 
 const DetailLaporanMap = ({ laporan }) => {
   return (
-    <div className="border-t border-gray-100 pt-8">
-      <h2 className="mb-4 text-xl font-extrabold text-gray-900">
-        Titik Koordinat Lokasi
+    <section>
+      <h2 className="font-display mb-1 text-xl font-extrabold text-(--primary)">
+        Titik Lokasi
       </h2>
-      <p className="mb-4 text-[15px] leading-relaxed font-medium text-pretty text-gray-600 italic">
-        {laporan.alamat_lokasi}
+      <p className="mb-5 max-w-[62ch] text-[0.95rem] leading-7 text-(--dark-text)/70">
+        {laporan.alamat_lokasi || "Alamat tidak dicatat"}
       </p>
-      <div className="relative z-0 h-[300px] w-full overflow-hidden rounded-3xl bg-gray-100 ring-1 ring-gray-900/5">
+      {/* Tinggi mengikuti lebar layar, dengan pagar atas dan bawah. Peta
+          setinggi tetap 300px terasa sempit di layar lebar dan justru terlalu
+          jangkung di ponsel. Radius 16px, sesuai aturan blok besar. */}
+      <div className="relative z-0 h-[clamp(280px,38vw,460px)] w-full overflow-hidden rounded-2xl bg-(--surface-sky) ring-1 ring-(--primary)/10">
         {laporan.latitude && laporan.longitude ? (
           <MapContainer
             center={[laporan.latitude, laporan.longitude]}
@@ -46,12 +49,12 @@ const DetailLaporanMap = ({ laporan }) => {
             </Marker>
           </MapContainer>
         ) : (
-          <div className="flex size-full items-center justify-center text-gray-400">
+          <div className="flex size-full items-center justify-center text-(--dark-text)/50">
             Koordinat tidak tersedia
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

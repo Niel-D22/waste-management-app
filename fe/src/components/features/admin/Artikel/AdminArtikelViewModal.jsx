@@ -2,6 +2,7 @@ import React from "react";
 import { RiCloseLine, RiCalendarLine, RiUser3Line, RiExternalLinkLine } from "react-icons/ri";
 import StatusBadge from "../../../ui/StatusBadge";
 import { formatDate, formatTime } from "../../../../utils/ArtikelHelpers";
+import { amankanHtml } from "../../../../utils/amankanHtml";
 
 export default function AdminArtikelViewModal({ isOpen, onClose, item, loading = false }) {
   if (!isOpen) return null;
@@ -100,7 +101,7 @@ export default function AdminArtikelViewModal({ isOpen, onClose, item, loading =
             <div className="prose max-w-none">
               <div 
                 className="text-gray-700 leading-relaxed text-lg"
-                dangerouslySetInnerHTML={{ __html: item.konten_teks }}
+                dangerouslySetInnerHTML={{ __html: amankanHtml(item.konten_teks) }}
               />
             </div>
 

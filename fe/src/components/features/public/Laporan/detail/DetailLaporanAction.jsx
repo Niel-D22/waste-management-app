@@ -1,66 +1,76 @@
-import React from "react";
+import { LuMapPin, LuCheck, LuArrowRight } from "react-icons/lu";
 import { useAuth } from "../../../../../contexts/AuthContext";
 
-const DetailLaporanAction = ({
+/**
+ * Tombol aksi di dasar panel pelacakan.
+ *
+ * Radiusnya 12px dan warnanya memakai token proyek, bukan bg-gray-900 dan
+ * ring-gray-200 seperti sebelumnya — hitam netral di tengah palet bernuansa
+ * langit terbaca sebagai elemen dari situs lain.
+ */
+function DetailLaporanAction({
   laporan,
   pelapor,
+  isAuthenticated,
   menyelesaikan,
   onActionClick,
   onSelesaikanLaporan,
   onGoToMap,
-}) => {
+}) {
   const { user } = useAuth();
+  const status = laporan.status_laporan?.toLowerCase();
+
+  const bolehTindakLanjut = status === "diterima" || status === "ditindak";
+  const bolehSelesaikan = status === "ditindak" && user?.id === pelapor?.id;
+  const adaKoordinat = Boolean(laporan.latitude && laporan.longitude);
+
   return (
-    <div className="mt-8 space-y-3">
-      {(laporan.status_laporan?.toLowerCase() === "diterima" ||
-        laporan.status_laporan?.toLowerCase() === "ditindak") && (
+    <div className="mt-7 flex flex-col gap-3 border-t border-(--primary)/10 pt-6">
+      {bolehTindakLanjut && (
         <button
           onClick={onActionClick}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-4 text-sm font-bold text-white shadow-lg transition-all hover:bg-gray-800 active:scale-95"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-(--primary) px-4 py-3.5 text-sm font-bold text-white transition hover:bg-(--primary-dark) motion-reduce:transition-none"
         >
-          Tindak Lanjuti Laporan
+          {/* Label berbeda untuk pengunjung yang belum masuk. Sebelumnya
+              tombolnya tetap berbunyi "Tindak Lanjuti Laporan" lalu diam-diam
+              melempar ke halaman masuk — janji yang tidak ditepati tombolnya
+              sendiri. */}
+          {isAuthenticated ? "Tindak Lanjuti Laporan" : "Masuk untuk Menindaklanjuti"}
+          <LuArrowRight aria-hidden="true" className="size-[1.05em]" />
         </button>
       )}
 
-      {laporan.status_laporan?.toLowerCase() === "ditindak" &&
-        user?.id === pelapor?.id && (
-          <button
-            onClick={onSelesaikanLaporan}
-            disabled={menyelesaikan}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-4 text-sm font-bold text-white shadow-lg transition-all hover:bg-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-75"
-          >
-            {menyelesaikan ? "Memproses..." : "Selesaikan Laporan"}
-          </button>
-        )}
+      {bolehSelesaikan && (
+        <button
+          onClick={onSelesaikanLaporan}
+          disabled={menyelesaikan}
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#15803D] px-4 py-3.5 text-sm font-bold text-white transition hover:bg-[#116632] disabled:cursor-not-allowed disabled:opacity-70 motion-reduce:transition-none"
+        >
+          {menyelesaikan ? (
+            "Memproses…"
+          ) : (
+            <>
+              <LuCheck aria-hidden="true" className="size-[1.05em]" />
+              Selesaikan Laporan
+            </>
+          )}
+        </button>
+      )}
 
-      {/* TOMBOL LIHAT LOKASI DI PETA (NAVIAGSI KE /PETA) */}
       <button
         onClick={onGoToMap}
-        disabled={!laporan.latitude || !laporan.longitude}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-4 text-sm font-bold text-gray-700 ring-1 ring-gray-200 transition-all ring-inset hover:bg-gray-50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={!adaKoordinat}
+        // title menjelaskan kenapa tombolnya mati. Tombol nonaktif tanpa
+        // keterangan apa pun adalah salah satu hal paling membingungkan di
+        // antarmuka — orang mengira aplikasinya rusak.
+        title={adaKoordinat ? undefined : "Laporan ini tidak mencatat koordinat"}
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-(--primary)/20 px-4 py-3.5 text-sm font-bold text-(--primary) transition hover:border-(--primary)/45 hover:bg-(--surface-sky) disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
       >
-        <svg
-          className="size-4"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
+        <LuMapPin aria-hidden="true" className="size-[1.05em]" />
         Lihat Lokasi di Peta
       </button>
     </div>
   );
-};
+}
 
 export default DetailLaporanAction;

@@ -66,7 +66,7 @@ const MapView = ({
   const handleStreetViewClick = (lat, lng) => {
     // Format URL Google Maps yang akan mengaktifkan mode Street View jika tersedia
     const googleMapsUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
-    window.open(googleMapsUrl, "_blank");
+    window.open(googleMapsUrl, "_blank", "noopener,noreferrer");
   };
 
   // Icon khusus untuk Lokasi User (Biru, berkedip)

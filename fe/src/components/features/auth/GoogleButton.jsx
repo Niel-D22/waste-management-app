@@ -3,6 +3,22 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { authAPI } from "../../../services/api/routes/auth.route";
 import GoogleIcon from "./GoogleIcon";
 
+// Kegagalan yang TIDAK datang dari Google, melainkan dari jendela popup-nya.
+//
+// Tanpa penanganan ini, galat seperti origin_mismatch tampil di dalam popup,
+// pengguna menutupnya, dan halaman login diam saja — tidak ada pesan, tidak ada
+// permintaan ke server. Dari luar terlihat seperti tombolnya rusak, padahal yang
+// terjadi bisa diterangkan dengan satu kalimat.
+function pesanGalatPopup({ type }) {
+  if (type === "popup_failed_to_open") {
+    return "Jendela login Google diblokir peramban. Izinkan popup untuk situs ini, lalu coba lagi.";
+  }
+  if (type === "popup_closed") {
+    return "Jendela login Google tertutup sebelum selesai. Kalau Google menampilkan galat di jendela itu, beri tahu admin situs.";
+  }
+  return "Login Google gagal dimulai. Muat ulang halaman lalu coba lagi.";
+}
+
 export function GoogleLoginButton({ onSuccess, onError, disabled = false }) {
   const { saveSession } = useAuth();
 
@@ -21,6 +37,7 @@ export function GoogleLoginButton({ onSuccess, onError, disabled = false }) {
       }
     },
     onError: () => onError?.({ message: "Masuk dengan Google dibatalkan" }),
+    onNonOAuthError: (galat) => onError?.({ message: pesanGalatPopup(galat) }),
   });
 
   return (
@@ -56,6 +73,7 @@ export function GoogleRegisterButton({ onSuccess, onError, disabled = false }) {
       }
     },
     onError: () => onError?.({ message: "Register Google dibatalkan" }),
+    onNonOAuthError: (galat) => onError?.({ message: pesanGalatPopup(galat) }),
   });
 
   return (

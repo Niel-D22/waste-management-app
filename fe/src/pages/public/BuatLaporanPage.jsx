@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toaster from "../../utils/toaster";
+import { useAuth } from "../../contexts/AuthContext";
 import { laporanAPI } from "../../services/api/routes/laporan.route";
 
 import StepFotoBukti from "../../components/features/public/Laporan/BuatLaporan/StepFotoBukti";
@@ -16,6 +17,7 @@ const steps = [
 
 const BuatLaporanPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
 
@@ -85,9 +87,14 @@ const BuatLaporanPage = () => {
       });
 
       toaster.success("Laporan berhasil dikirim! Terima kasih telah melapor.");
-      navigate("/:user/laporan");
+      // Dulu: navigate("/:user/laporan") — ":user" terkirim sebagai teks
+      // harfiah, bukan username. Sejak UserRoute memeriksa segmen alamat,
+      // pengguna yang baru BERHASIL melapor justru mendarat di halaman 404.
+      navigate(
+        user?.role === "admin" ? "/admin/laporan" : `/${user?.username}/laporan`,
+      );
     } catch (error) {
-      console.error("Failed to make laporan:", error.response.data.errors);
+      console.error("Failed to make laporan:", error.response?.data?.errors);
       toaster.error(
         error.response?.data?.message ||
           "Gagal mengirim laporan. Silakan coba lagi.",

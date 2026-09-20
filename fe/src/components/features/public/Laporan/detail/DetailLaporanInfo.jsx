@@ -1,78 +1,86 @@
-import React from "react";
 import { formatBeratLaporan } from "../../../../../utils/helpers";
 
-const DetailLaporanInfo = ({
-  laporan,
-  pelaporName,
-  pelapor,
-  namaJenisSampah,
-}) => {
+/**
+ * Informasi detail laporan.
+ *
+ * Disusun sebagai daftar definisi berpemisah garis rambut, bukan kisi kartu.
+ * Empat nilai pendek seperti ini kalau dibungkus kartu masing-masing akan
+ * terbaca sebagai empat hal setara yang penting sendiri-sendiri — padahal
+ * fungsinya sekadar keterangan pendukung foto di atasnya.
+ */
+function DetailLaporanInfo({ laporan, pelaporName, pelapor, namaJenisSampah }) {
+  const baris = [
+    { label: "Jenis Sampah", nilai: namaJenisSampah },
+    { label: "Estimasi Berat", nilai: formatBeratLaporan(laporan.estimasi_berat_kg) },
+    laporan.karakteristik && {
+      label: "Karakteristik",
+      nilai: laporan.karakteristik.replace(/_/g, " "),
+    },
+    laporan.bentuk_timbulan && {
+      label: "Bentuk Timbulan",
+      nilai: laporan.bentuk_timbulan,
+    },
+  ].filter(Boolean);
+
   return (
-    <div className="flex flex-col gap-10 pb-10">
-      <div className="flex items-center gap-4 border-b border-gray-100 pb-8">
-        <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-400 uppercase">
-          {pelapor?.avatar_url ? (
-            <img
-              src={pelapor.avatar_url}
-              alt={pelaporName}
-              className="size-full rounded-full object-cover"
-            />
-          ) : (
-            pelaporName.charAt(0)
-          )}
-        </div>
-        <div>
-          <p className="text-lg font-bold text-gray-900">{pelaporName}</p>
-          <p className="text-sm text-gray-500">
-            {pelapor?.role === "admin" ? "Admin" : "Pengguna"}
+    <div className="flex flex-col gap-9">
+      <section>
+        <h2 className="font-display mb-1 text-xl font-extrabold text-(--primary)">
+          Informasi Detail
+        </h2>
+        <dl className="mt-4">
+          {baris.map(({ label, nilai }) => (
+            <div
+              key={label}
+              className="flex items-baseline justify-between gap-6 border-b border-(--primary)/10 py-3.5"
+            >
+              <dt className="text-sm text-(--dark-text)/65">{label}</dt>
+              <dd className="text-right text-sm font-bold text-(--primary) capitalize">
+                {nilai}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section>
+        <h2 className="font-display mb-3 text-xl font-extrabold text-(--primary)">
+          Deskripsi
+        </h2>
+        <p className="max-w-[62ch] text-[0.95rem] leading-8 text-pretty whitespace-pre-line text-(--dark-text)/80">
+          {laporan.deskripsi_laporan || "Tidak ada deskripsi tambahan."}
+        </p>
+      </section>
+
+      {/* Pelapor diletakkan DI BAWAH, bukan di atas seperti versi sebelumnya.
+          Yang dicari orang saat membuka halaman ini adalah apa yang dilaporkan
+          dan di mana — siapa pelapornya baru relevan setelah itu terjawab. */}
+      <div className="flex items-center gap-4 rounded-xl bg-(--surface-sky) px-5 py-4">
+        {pelapor?.avatar_url ? (
+          <img
+            src={pelapor.avatar_url}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="size-12 shrink-0 rounded-full object-cover ring-2 ring-white"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white font-bold text-(--primary) uppercase ring-2 ring-white"
+          >
+            {pelaporName.charAt(0)}
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="truncate font-bold text-(--primary)">{pelaporName}</p>
+          <p className="text-sm text-(--dark-text)/65">
+            {pelapor?.role === "admin" ? "Admin" : "Pelapor"}
           </p>
         </div>
       </div>
-
-      <div>
-        <h2 className="mb-4 text-xl font-extrabold text-gray-900">
-          Informasi Detail
-        </h2>
-        <ul className="mb-6 grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
-          <li className="flex flex-col border-b border-gray-100 py-3">
-            <span className="mb-1 text-gray-500">Jenis Sampah</span>
-            <span className="font-bold text-gray-900">{namaJenisSampah}</span>
-          </li>
-          <li className="flex flex-col border-b border-gray-100 py-3">
-            <span className="mb-1 text-gray-500">Estimasi Berat</span>
-            <span className="font-bold text-gray-900">
-              {formatBeratLaporan(laporan.estimasi_berat_kg)}
-            </span>
-          </li>
-          {laporan.karakteristik && (
-            <li className="flex flex-col border-b border-gray-100 py-3">
-              <span className="mb-1 text-gray-500">Karakteristik</span>
-              <span className="font-bold text-gray-900 capitalize">
-                {laporan.karakteristik.replace(/_/g, " ")}
-              </span>
-            </li>
-          )}
-          {laporan.bentuk_timbulan && (
-            <li className="flex flex-col border-b border-gray-100 py-3">
-              <span className="mb-1 text-gray-500">Bentuk Timbulan</span>
-              <span className="font-bold text-gray-900 capitalize">
-                {laporan.bentuk_timbulan}
-              </span>
-            </li>
-          )}
-        </ul>
-      </div>
-
-      <div>
-        <h2 className="mb-4 text-xl font-extrabold text-gray-900">
-          Deskripsi Tambahan
-        </h2>
-        <p className="text-base leading-relaxed font-medium tracking-tight text-pretty whitespace-pre-line text-gray-600">
-          {laporan.deskripsi_laporan || "- Tidak ada deskripsi tambahan -"}
-        </p>
-      </div>
     </div>
   );
-};
+}
 
 export default DetailLaporanInfo;

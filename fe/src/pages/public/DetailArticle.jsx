@@ -5,6 +5,7 @@ import { artikelAPI } from "../../services/api/routes/artikel.route";
 import { useAuth } from "../../contexts/AuthContext";
 import toaster from "../../utils/toaster";
 import { ProseStyles } from "../../components/ui/ProsesStyles";
+import { amankanHtml } from "../../utils/amankanHtml";
 
 // Button "Buat Artikel" sticky di kanan bawah layar hanya di mobile/tablet, di atas tablet kembalikan ke tempat sebelumnya (sidebar kanan)
 
@@ -370,7 +371,7 @@ const DetailArticlePage = () => {
                 />
               )}
               <div
-                dangerouslySetInnerHTML={{ __html: artikel.konten_teks ?? "" }}
+                dangerouslySetInnerHTML={{ __html: amankanHtml(artikel.konten_teks) }}
               />
             </article>
 

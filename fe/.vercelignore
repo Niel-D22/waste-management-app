@@ -1,0 +1,18 @@
+# Tidak ikut diunggah ke Vercel — build di sana memasang ulang paket sendiri
+# dan hanya membutuhkan src/ serta public/.
+node_modules/
+dist/
+
+# 29,5 MB gambar asli (PNG/JPG). Kode hanya memakai versi .webp di public/,
+# jadi berkas ini tidak pernah dibutuhkan untuk membangun situs.
+assets-src/
+
+# Cadangan kode mati hasil pembersihan.
+.deadcode-backup/
+
+# Alamat localhost untuk pengembangan. Di Vercel, alamat API diisi lewat
+# Environment Variables proyek.
+.env
+
+# Berisi token akses Vercel (dibuat otomatis oleh `vercel link`).
+.env.local

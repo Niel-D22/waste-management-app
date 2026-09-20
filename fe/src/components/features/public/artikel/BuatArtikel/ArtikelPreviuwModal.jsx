@@ -7,6 +7,7 @@ import {
   RiHeartLine,
 } from "react-icons/ri";
 import { getKatStylePreview } from "./constant";
+import { amankanHtml } from "../../../../../utils/amankanHtml";
 
 const ArtikelPreviewModal = ({
   isOpen,
@@ -158,7 +159,7 @@ const ArtikelPreviewModal = ({
                   )}
                   {form.konten_teks ? (
                     <div
-                      dangerouslySetInnerHTML={{ __html: form.konten_teks }}
+                      dangerouslySetInnerHTML={{ __html: amankanHtml(form.konten_teks) }}
                     />
                   ) : (
                     <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 py-20 text-center">

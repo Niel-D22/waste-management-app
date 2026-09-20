@@ -29,6 +29,7 @@ import {
 } from "react-icons/ri";
 import toast from "react-hot-toast";
 import { ProseStyles } from "../../../../ui/ProsesStyles";
+import { amankanHtml } from "../../../../../utils/amankanHtml";
 // --- Remove unresolved import ---
 // import PromptModal from "../../../../common/PromptModal";
 
@@ -530,7 +531,7 @@ const ArtikelEditor = forwardRef(function ArtikelEditor(
         editorRef.current.innerHTML !== konten &&
         document.activeElement !== editorRef.current
       ) {
-        editorRef.current.innerHTML = konten || "";
+        editorRef.current.innerHTML = amankanHtml(konten);
       }
     }
   }, [konten]);

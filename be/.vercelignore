@@ -1,0 +1,21 @@
+# Tidak ikut diunggah ke Vercel.
+#
+# .venv yang paling penting: isinya ratusan MB paket yang sudah terpasang di
+# komputer ini (untuk Windows pula). Vercel memasang ulang semuanya sendiri dari
+# requirements.txt untuk Linux — mengunggah .venv hanya membengkakkan bundel
+# mendekati batas 500 MB dan bisa membuat penyebaran gagal.
+.venv/
+venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# .env TIDAK boleh ikut: di Vercel, isi rahasia lewat Project Settings →
+# Environment Variables. Berkas ini juga sudah ada di .gitignore.
+.env
+
+# Hanya dipakai di mesin pengembang.
+tests/
+bruno/
+migrations/
+scripts/

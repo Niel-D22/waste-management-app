@@ -51,4 +51,13 @@ export default defineConfig([
       ],
     },
   },
+  // Berkas yang berjalan di Node, bukan di peramban: konfigurasi build dan
+  // skrip pengolah gambar. Tanpa blok ini, `process` di vite.config.js
+  // dilaporkan tidak terdefinisi — padahal di Node ia selalu ada.
+  {
+    files: ["vite.config.js", "eslint.config.js", "scripts/**/*.{js,mjs}"],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ]);

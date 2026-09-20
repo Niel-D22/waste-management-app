@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate, useParams } from "react-router";
+import { LuCalendar, LuMapPin, LuChevronRight } from "react-icons/lu";
 
 import FormTindakLanjut from "../../components/features/public/Laporan/FormTindakLanjut";
 import DetailLaporanGallery from "../../components/features/public/Laporan/detail/DetailLaporanGallery";
@@ -7,7 +8,9 @@ import DetailLaporanInfo from "../../components/features/public/Laporan/detail/D
 import DetailLaporanMap from "../../components/features/public/Laporan/detail/DetailLaporanMap";
 import DetailLaporanTimeline from "../../components/features/public/Laporan/detail/DetailLaporanTimeline";
 import DetailLaporanAction from "../../components/features/public/Laporan/detail/DetailLaporanAction";
+import { statusLaporan } from "../../components/features/public/Laporan/detail/statusLaporan";
 
+import { useAuth } from "../../contexts/AuthContext";
 import { laporanAPI } from "../../services/api/routes/laporan.route";
 import toaster from "../../utils/toaster";
 
@@ -18,6 +21,12 @@ const DetailLaporan = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // Sebelumnya berkas ini memakai `const isAuthenticated = true` bertanda
+  // "MOCK AUTH STATE". Akibatnya tombol "Tindak Lanjuti Laporan" tampil untuk
+  // SEMUA pengunjung, termasuk yang belum masuk — dan baru gagal setelah
+  // ditekan. Sekarang dibaca dari konteks yang sama dengan seluruh aplikasi.
+  const { isAuthenticated } = useAuth();
+
   const [laporan, setLaporan] = useState(null);
   const [tindakLanjutList, setTindakLanjutList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,9 +34,6 @@ const DetailLaporan = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [menyelesaikan, setMenyelesaikan] = useState(false);
-
-  // MOCK AUTH STATE
-  const isAuthenticated = true;
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -51,7 +57,6 @@ const DetailLaporan = () => {
     fetchData();
   }, [fetchData]);
 
-  // FUNGSI NAVIGASI KE PETA PENUH
   const handleGoToMap = () => {
     if (!laporan) return;
     navigate("/peta", {
@@ -98,22 +103,27 @@ const DetailLaporan = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-white pt-30 pb-24">
-        <div className="size-10 animate-spin rounded-full border-4 border-gray-200 border-t-[#1e1f78]"></div>
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex min-h-dvh items-center justify-center bg-(--surface-sky)"
+      >
+        <div className="size-10 animate-spin rounded-full border-4 border-(--primary)/20 border-t-(--primary) motion-reduce:animate-none" />
+        <span className="sr-only">Memuat detail laporan…</span>
       </div>
     );
   }
 
   if (error || !laporan) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-white pt-30 pb-24">
-        <div className="mx-auto max-w-lg rounded-3xl bg-red-50 p-8 text-center text-red-600 ring-1 ring-red-100">
-          <p className="text-lg font-semibold">
+      <div className="flex min-h-dvh items-center justify-center bg-white px-6 pt-32 pb-24">
+        <div className="mx-auto max-w-lg rounded-xl bg-red-50 p-8 text-center text-red-700 ring-1 ring-red-100">
+          <p className="text-lg font-bold">
             {error || "Data tidak ditemukan."}
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="mt-4 text-sm font-bold underline hover:text-red-800"
+            className="mt-4 cursor-pointer text-sm font-bold underline underline-offset-4 hover:text-red-900"
           >
             Kembali
           </button>
@@ -122,38 +132,12 @@ const DetailLaporan = () => {
     );
   }
 
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case "menunggu":
-        return {
-          bg: "bg-red-50",
-          text: "text-red-700",
-          ring: "ring-red-600/20",
-          dot: "bg-red-500",
-        };
-      case "selesai":
-        return {
-          bg: "bg-emerald-50",
-          text: "text-emerald-700",
-          ring: "ring-emerald-600/20",
-          dot: "bg-emerald-500",
-        };
-      default:
-        return {
-          bg: "bg-gray-50",
-          text: "text-gray-700",
-          ring: "ring-gray-600/20",
-          dot: "bg-gray-500",
-        };
-    }
-  };
-  const statusColors = getStatusColor(laporan.status_laporan);
+  const status = statusLaporan(laporan.status_laporan);
 
   const formatTanggal = (isoString) => {
     if (!isoString) return "-";
-    const date = new Date(isoString);
     return (
-      date.toLocaleDateString("id-ID", {
+      new Date(isoString).toLocaleDateString("id-ID", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -166,98 +150,149 @@ const DetailLaporan = () => {
   const pelaporName = laporan.pelapor
     ? laporan.pelapor.full_name || laporan.pelapor.username
     : "Anonim";
-  const namaJenisSampah = laporan.jenis_sampah
-    ? laporan.jenis_sampah.nama
-    : "Tidak diketahui";
-  const fotoBuktiUrls =
-    laporan.foto_bukti_urls && laporan.foto_bukti_urls.length > 0
-      ? laporan.foto_bukti_urls
-      : [defaultImage];
+  const namaJenisSampah = laporan.jenis_sampah?.nama ?? "Tidak diketahui";
+  const fotoBuktiUrls = laporan.foto_bukti_urls?.length
+    ? laporan.foto_bukti_urls
+    : [defaultImage];
+
+  // Optional chaining pada split(): versi sebelumnya memanggil
+  // laporan.alamat_lokasi.split(",") langsung, sehingga satu laporan tanpa
+  // alamat cukup untuk membuat seluruh halaman gagal dirender.
+  const lokasiSingkat =
+    laporan.alamat_lokasi?.split(",")[0]?.trim() || "Lokasi tidak dicatat";
 
   return (
-    <div className="min-h-dvh bg-white pt-30 pb-24 selection:bg-[#1e1f78]/10 selection:text-[#1e1f78]">
-      <div className="mx-auto max-w-[1160px] px-4 sm:px-6 lg:px-8">
-        {/* HEADER SECTION */}
-        <div className="mb-8">
-          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-            <div className="flex-1">
-              <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-balance text-gray-900 md:text-4xl lg:text-[40px]">
-                Timbulan Sampah di{" "}
-                {laporan.alamat_lokasi.split(",")[0] || "Lokasi"}
-              </h1>
-              <div className="flex flex-wrap items-center gap-3 text-sm">
-                <span
-                  className={`flex items-center gap-1.5 rounded-full ${statusColors.bg} px-3 py-1 text-xs font-bold ${statusColors.text} ring-1 ring-inset ${statusColors.ring}`}
-                >
-                  <span
-                    className={`size-1.5 rounded-full ${statusColors.dot} ${laporan.status_laporan?.toLowerCase() === "menunggu" ? "animate-pulse" : ""}`}
-                  ></span>
-                  Status: {(laporan.status_laporan || "").toUpperCase()}
-                </span>
-                <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
-                  <svg
-                    className="size-4 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  Dilaporkan {formatTanggal(laporan.created_at)}
-                </span>
-              </div>
+    <div className="min-h-dvh bg-white">
+      {/* ═══════════ BAND KEPALA ═══════════
+          Latarnya potongan LANGIT dari BG-Hero halaman depan, bukan warna rata.
+          Berkasnya sudah dipotong di sumber (40% teratas BG-Hero) supaya bagian
+          gambar yang gelap — pepohonan, bangunan, perahu — tidak pernah bisa
+          muncul di belakang teks di lebar layar mana pun. Titik tergelap yang
+          tersisa #BADAFB, dan judul navy di atasnya mencapai 9,53:1.
+
+          Gambarnya ditambatkan ke DASAR band, dan ruang di atasnya diisi
+          #BCDDFC — warna baris piksel teratas berkas itu (rentang 12/765, jadi
+          praktis seragam). Di layar sempit gambarnya lebih pendek dari band,
+          dan sisa ruangnya menyatu tanpa terlihat sebagai pita. */}
+      <header className="relative isolate overflow-hidden bg-[#BCDDFC] pt-28 pb-10 lg:pt-32 lg:pb-12">
+        <img
+          src="/images/Detail/band-langit.webp"
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          width="1536"
+          height="410"
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full select-none"
+        />
+
+        <div className="mx-auto max-w-[1160px] px-4 sm:px-6 lg:px-8">
+          <nav
+            aria-label="Remah roti"
+            className="flex items-center gap-1.5 text-sm font-semibold text-(--primary)/70"
+          >
+            <Link to="/laporan" className="transition hover:text-(--primary)">
+              Laporan
+            </Link>
+            <LuChevronRight aria-hidden="true" className="size-4" />
+            <span className="text-(--primary)">Detail</span>
+          </nav>
+
+          <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+            {/* Chip status: blok warna pekat berteks putih, bukan tempelan
+                pucat berteks tipis. Status adalah informasi terpenting di
+                halaman ini — apakah laporan sudah ditangani atau belum — jadi
+                ia sengaja jadi elemen paling nyaring di band ini. */}
+            <span
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold tracking-wide text-white uppercase"
+              style={{ backgroundColor: status.warna }}
+            >
+              <span
+                aria-hidden="true"
+                className={`size-2 rounded-full bg-white ${status.denyut ? "animate-pulse motion-reduce:animate-none" : ""}`}
+              />
+              {status.label}
+            </span>
+
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-(--primary)/80">
+              <LuCalendar aria-hidden="true" className="size-4 shrink-0" />
+              {formatTanggal(laporan.created_at)}
+            </span>
+
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-(--primary)/80">
+              <LuMapPin aria-hidden="true" className="size-4 shrink-0" />
+              {lokasiSingkat}
+            </span>
+          </div>
+
+          <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_auto] lg:gap-12">
+            <h1 className="font-display max-w-[20ch] text-[clamp(1.7rem,4vw,2.75rem)] leading-[1.12] font-extrabold tracking-tight text-balance text-(--primary)">
+              Timbulan Sampah di {lokasiSingkat}
+            </h1>
+
+            {/* Kartu koordinat, BUKAN peta kedua. Memasang Leaflet dua kali di
+                satu halaman berarti mengunduh dan menjalankan seluruh pustaka
+                peta dua kali untuk satu titik yang sama — sementara peta
+                sungguhannya sudah ada selebar halaman di bawah. */}
+            <div className="w-full rounded-xl bg-white/90 p-5 ring-1 ring-(--primary)/10 backdrop-blur-sm lg:w-72">
+              <p className="font-display text-sm font-extrabold text-(--primary)">
+                Lokasi
+              </p>
+              <dl className="mt-3 flex flex-col gap-3 text-sm">
+                <div className="flex items-start gap-2">
+                  <LuMapPin
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-(--cyan)"
+                  />
+                  <div>
+                    <dt className="sr-only">Koordinat</dt>
+                    <dd className="font-medium text-(--dark-text)/80 tabular-nums">
+                      {laporan.latitude && laporan.longitude
+                        ? `${Number(laporan.latitude).toFixed(4)}° N, ${Number(laporan.longitude).toFixed(4)}° E`
+                        : "Koordinat tidak tersedia"}
+                    </dd>
+                  </div>
+                </div>
+                <div className="border-t border-(--primary)/10 pt-3">
+                  <dt className="sr-only">Alamat</dt>
+                  <dd className="leading-6 font-medium text-(--dark-text)/80">
+                    {laporan.alamat_lokasi || "Alamat tidak dicatat"}
+                  </dd>
+                </div>
+              </dl>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* GALLERY SECTION */}
-        <DetailLaporanGallery
-          fotoBuktiUrls={fotoBuktiUrls}
-          laporanStatus={laporan.status_laporan}
-        />
-
-        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
-          {/* LEFT COLUMN: INFO & MAP */}
-          <div className="flex flex-col gap-10 lg:col-span-7">
+      {/* ═══════════ ISI ═══════════ */}
+      <div className="mx-auto max-w-[1160px] px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
+        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="flex flex-col gap-8 lg:col-span-7">
+            <DetailLaporanGallery
+              fotoBuktiUrls={fotoBuktiUrls}
+              laporanStatus={laporan.status_laporan}
+            />
             <DetailLaporanInfo
               laporan={laporan}
               pelaporName={pelaporName}
               pelapor={laporan.pelapor}
               namaJenisSampah={namaJenisSampah}
             />
-            <DetailLaporanMap laporan={laporan} />
           </div>
 
-          {/* RIGHT COLUMN: ACTION & TRACKING */}
-          <div className="relative z-10 lg:col-span-5">
-            <div className="sticky top-28 rounded-3xl bg-white p-6 shadow-xl ring-1 shadow-gray-200/40 ring-gray-900/5 sm:p-8">
-              <h3 className="mb-6 text-xl font-extrabold text-gray-900">
+          <aside className="lg:col-span-5">
+            {/* Ring tipis, bukan bayangan tebal. Kedalaman di seluruh situs ini
+                datang dari blok warna dan garis rambut, bukan dari bayangan. */}
+            <div className="sticky top-28 rounded-xl bg-white p-6 ring-1 ring-(--primary)/10 sm:p-7">
+              <h2 className="font-display mb-6 text-lg font-extrabold text-(--primary)">
                 Pelacakan Laporan
-              </h3>
+              </h2>
 
-              <div className="relative ml-2 border-l-[3px] border-gray-100 pb-4">
-                <div className="relative pl-6">
-                  <span
-                    className={`absolute top-1 -left-[11px] flex size-5 items-center justify-center rounded-full ring-4 ring-white ${laporan.status_laporan?.toLowerCase() === "menunggu" ? "bg-red-50" : laporan.status_laporan?.toLowerCase() === "ditolak" ? "bg-gray-100" : "bg-emerald-50"}`}
-                  >
-                    <span
-                      className={`size-2.5 rounded-full ${laporan.status_laporan?.toLowerCase() === "menunggu" ? "animate-pulse bg-red-500" : laporan.status_laporan?.toLowerCase() === "ditolak" ? "bg-gray-500" : "bg-emerald-500"}`}
-                    ></span>
-                  </span>
+              <DetailLaporanTimeline
+                tindakLanjutList={tindakLanjutList}
+                laporanStatus={laporan.status_laporan}
+              />
 
-                  <DetailLaporanTimeline
-                    tindakLanjutList={tindakLanjutList}
-                    laporanStatus={laporan.status_laporan}
-                  />
-                </div>
-              </div>
-
-              {/* ACTION BUTTONS */}
               <DetailLaporanAction
                 laporan={laporan}
                 pelapor={laporan.pelapor}
@@ -268,15 +303,23 @@ const DetailLaporan = () => {
                 onGoToMap={handleGoToMap}
               />
             </div>
-          </div>
+          </aside>
         </div>
+      </div>
+
+      {/* ═══════════ PETA ═══════════
+          Selebar halaman, bukan terselip di kolom samping. Ini bukti lokasi —
+          bagian yang membuat laporan bisa ditindaklanjuti orang lain — jadi
+          ukurannya harus sepadan dengan perannya. */}
+      <div className="mx-auto max-w-[1160px] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-24">
+        <DetailLaporanMap laporan={laporan} />
       </div>
 
       <FormTindakLanjut
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          fetchData(); // Refresh data after tindak lanjut is created
+          fetchData();
         }}
         laporanId={laporan?.id}
       />
