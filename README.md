@@ -46,36 +46,37 @@
 
 **Torang Bersih** adalah platform web ekosistem pengelolaan sampah terpadu untuk wilayah Sulawesi Utara yang mengintegrasikan pemantauan geospasial (Web GIS), crowdsourcing pelaporan sampah liar dengan transparansi tindak lanjut, marketplace ekonomi sirkular barang daur ulang, gamifikasi kontributor, serta kecerdasan buatan (Gemini AI).
 
-Platform ini dirancang untuk menjembatani kesenjangan (*bridging the gap*) antara warga, komunitas lingkungan/Bank Sampah, pengepul daur ulang, dan pemerintah daerah melalui pendekatan teknologi inklusif, akuntabel, dan berkelanjutan. Kata *"Torang"* berasal dari dialek khas Sulawesi Utara yang berarti *"Kita"* — menegaskan filosofi bahwa krisis persampahan adalah tanggung jawab bersama (*"Urusan torang samua"*).
+Platform ini dirancang untuk menjembatani kesenjangan (_bridging the gap_) antara warga, komunitas lingkungan/Bank Sampah, pengepul daur ulang, dan pemerintah daerah melalui pendekatan teknologi inklusif, akuntabel, dan berkelanjutan. Kata _"Torang"_ berasal dari dialek khas Sulawesi Utara yang berarti _"Kita"_ — menegaskan filosofi bahwa krisis persampahan adalah tanggung jawab bersama (_"Urusan torang samua"_).
 
 ### Konteks Kompetisi
 
-| Komponen             | Keterangan                                                                                       |
-| -------------------- | ------------------------------------------------------------------------------------------------ |
-| **Kompetisi**        | INFINITERA 2.0 Web Development Competition                                                        |
-| **Penyelenggara**    | Universitas Islam Sultan Agung (UNISSULA)                                                        |
-| **Kategori**         | Web Development                                                                                  |
-| **Tema Utama**       | Bridging Innovation and Sustainability to Create Meaningful Impact for Future Generations        |
-| **Sub-Tema Pilihan** | SDG 11: Smart, Inclusive, and Sustainable Cities and Communities (didukung SDG 12 & SDG 13)       |
-| **Tim Pengusul**     | Lasalle Vibers                                                                                   |
-| **Institusi**        | Universitas Katolik De La Salle Manado                                                           |
-| **Tahun**            | 2026                                                                                             |
+| Komponen             | Keterangan                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| **Kompetisi**        | INFINITERA 2.0 Web Development Competition                                                  |
+| **Penyelenggara**    | Universitas Islam Sultan Agung (UNISSULA)                                                   |
+| **Kategori**         | Web Development                                                                             |
+| **Tema Utama**       | Bridging Innovation and Sustainability to Create Meaningful Impact for Future Generations   |
+| **Sub-Tema Pilihan** | SDG 11: Smart, Inclusive, and Sustainable Cities and Communities (didukung SDG 12 & SDG 13) |
+| **Tim Pengusul**     | Lasalle Vibers                                                                              |
+| **Institusi**        | Universitas Katolik De La Salle Manado                                                      |
+| **Tahun**            | 2026                                                                                        |
 
 ### Anggota Tim
 
-| Nama                               | Peran                | GitHub                                   |
-| ---------------------------------- | -------------------- | ---------------------------------------- |
-| Daniel Riky Warouw                 | Frontend Developer   | [@Niel-D22](https://github.com/Niel-D22) |
-| Ahmad Ridho Wael                   | Fullstack Developer  | [@AhmadRidho](https://github.com)        |
-| Marcois Soleman Benedictus Makalew | Backend Developer    | [@mrco23](https://github.com/mrco23)     |
+| Nama                               | Peran               | GitHub                                   |
+| ---------------------------------- | ------------------- | ---------------------------------------- |
+| Daniel Riky Warouw                 | Frontend Developer  | [@Niel-D22](https://github.com/Niel-D22) |
+| Ahmad Ridho Wael                   | Fullstack Developer | [@AhmadRidho](https://github.com)        |
+| Marcois Soleman Benedictus Makalew | Backend Developer   | [@mrco23](https://github.com/mrco23)     |
 
 ---
 
 ## Latar Belakang
 
-Produksi sampah di Kota Manado mencapai lebih dari 650 ton per hari, memberikan tekanan signifikan terhadap daya tampung Tempat Pemrosesan Akhir (TPA) Sumompow yang telah melampaui kapasitas (*overcapacity*). Selain itu, maraknya timbunan sampah liar di bantaran sungai dan pesisir Teluk Manado menjadi ancaman nyata bagi ekosistem maritim dan sektor pariwisata bahari.
+Produksi sampah di Kota Manado mencapai lebih dari 650 ton per hari, memberikan tekanan signifikan terhadap daya tampung Tempat Pemrosesan Akhir (TPA) Sumompow yang telah melampaui kapasitas (_overcapacity_). Selain itu, maraknya timbunan sampah liar di bantaran sungai dan pesisir Teluk Manado menjadi ancaman nyata bagi ekosistem maritim dan sektor pariwisata bahari.
 
 Tantangan utama di lapangan meliputi:
+
 1. **Rendahnya Transparansi:** Warga enggan melapor karena minimnya kejelasan apakah laporan sampah benar-benar ditindaklanjuti.
 2. **Keterpisahan Ekosistem (Silo):** Komunitas Bank Sampah dan pengepul sering kekurangan pasokan bahan daur ulang, sementara warga membuang barang bekas ke tempat sampah karena tidak tahu lokasi bank sampah terdekat.
 3. **Minimnya Insentif & Edukasi:** Kebiasaan memilah sampah sejak dari sumber belum membudaya tanpa adanya apresiasi nyata.
@@ -87,12 +88,12 @@ Torang Bersih hadir sebagai infrastruktur digital alternatif yang mengadopsi pri
 ## Fitur Utama
 
 - **Peta Interaktif Spasial (Web GIS 4-Layer)**: Visualisasi peta digital interaktif berbasis Leaflet dengan cluster marker yang memetakan 4 entitas sekaligus: Titik Sampah Liar, Mitra Kolaborator (LSM/Komunitas), Aset Fasilitas (Bank Sampah/TPS/TPST), serta Barang Daur Ulang. Dilengkapi filter dinamis dan integrasi GPS lokasi pengguna.
-- **Sistem Pelaporan Sampah Akuntabel**: Formulir pelaporan terpandu (Unggah Foto Bukti, Penentuan Titik Koordinat Peta, dan Detail Sampah). Mendukung pemantauan status secara transparan (*Menunggu &rarr; Diterima &rarr; Ditindak &rarr; Selesai*) lengkap dengan dokumentasi foto sebelum dan sesudah penanganan di lapangan.
+- **Sistem Pelaporan Sampah Akuntabel**: Formulir pelaporan terpandu (Unggah Foto Bukti, Penentuan Titik Koordinat Peta, dan Detail Sampah). Mendukung pemantauan status secara transparan (_Menunggu &rarr; Diterima &rarr; Ditindak &rarr; Selesai_) lengkap dengan dokumentasi foto sebelum dan sesudah penanganan di lapangan.
 - **Lapak Daur Ulang (Pasar Sirkular)**: Marketplace C2C dan B2C untuk mempertemukan warga dengan pembeli/pengepul barang bekas (layak pakai, butuh perbaikan, rongsokan) dengan sistem temu COD berbasis wilayah guna mereduksi volume sampah ke TPA.
 - **Katalog & Registrasi Mitra/Aset**: Pendaftaran dan direktori terverifikasi untuk Komunitas Lingkungan, Bank Sampah, fasilitas pengomposan, dan kendaraan pengangkut.
-- **Pusat Edukasi & Literasi**: Modul artikel informatif seputar pengelolaan lingkungan dengan sistem *Like* dan diskusi komentar bersarang (*threaded comments*).
-- **Gamifikasi & Papan Peringkat (Leaderboard)**: Sistem reputasi kontributor berbasis poin aksi nyata (lapor sampah, artikel, transaksi sirkular) dengan tingkatan lencana (*Pemula, Aktif, Pahlawan Lingkungan, Legenda Torang Bersih*).
-- **Asisten AI Edukasi Persampahan (Gemini AI)**: Chatbot interaktif ramah 24/7 bertenaga Google Gemini dengan *data-aware dynamic context injection*, memahami kondisi persampahan riil di Sulawesi Utara secara kontekstual.
+- **Pusat Edukasi & Literasi**: Modul artikel informatif seputar pengelolaan lingkungan dengan sistem _Like_ dan diskusi komentar bersarang (_threaded comments_).
+- **Gamifikasi & Papan Peringkat (Leaderboard)**: Sistem reputasi kontributor berbasis poin aksi nyata (lapor sampah, artikel, transaksi sirkular) dengan tingkatan lencana (_Pemula, Aktif, Pahlawan Lingkungan, Legenda Torang Bersih_).
+- **Asisten AI Edukasi Persampahan (Gemini AI)**: Chatbot interaktif ramah 24/7 bertenaga Google Gemini dengan _data-aware dynamic context injection_, memahami kondisi persampahan riil di Sulawesi Utara secara kontekstual.
 - **Admin Analytical Dashboard**: Panel kendali untuk verifikasi laporan, manajemen pengguna, dan analitik grafis sebaran timbulan sampah per kabupaten/kota.
 
 ---
@@ -100,16 +101,17 @@ Torang Bersih hadir sebagai infrastruktur digital alternatif yang mengadopsi pri
 ## Pendekatan Arsitektur
 
 - **Peta sebagai Pusat Interaksi (Map-Centric)**: Menempatkan peta geospasial sebagai bahasa universal visual agar seluruh lapisan masyarakat dapat memahami sebaran sampah dan fasilitas lingkungan tanpa hambatan teknis.
-- **Prinsip View-First, Action-Later**: Memberikan akses publik penuh untuk melihat peta dan informasi tanpa kewajiban registrasi di awal, meminimalisir *barrier to entry* partisipasi warga.
+- **Prinsip View-First, Action-Later**: Memberikan akses publik penuh untuk melihat peta dan informasi tanpa kewajiban registrasi di awal, meminimalisir _barrier to entry_ partisipasi warga.
 - **Transparansi Bukti Before-After**: Setiap laporan yang diselesaikan wajib menyertakan foto bukti pasca penanganan oleh petugas/tim lapangan untuk membangun kepercayaan publik.
-- **Optimasi Performa Bebas Bottleneck**: Implementasi React 19 *code splitting* (`lazy` & `Suspense`) pada frontend, serta peniadaan *N+1 query* di backend melalui SQLAlchemy `joinedload` dan query agregasi tunggal.
-- **Aksesibilitas Tinggi**: Mendukung mode `prefers-reduced-motion` bagi pengguna dengan gangguan vestibular, tautan pintas lewati konten (*skip-link*), serta *focus-visible styling* untuk navigasi papan ketik.
+- **Optimasi Performa Bebas Bottleneck**: Implementasi React 19 _code splitting_ (`lazy` & `Suspense`) pada frontend, serta peniadaan _N+1 query_ di backend melalui SQLAlchemy `joinedload` dan query agregasi tunggal.
+- **Aksesibilitas Tinggi**: Mendukung mode `prefers-reduced-motion` bagi pengguna dengan gangguan vestibular, tautan pintas lewati konten (_skip-link_), serta _focus-visible styling_ untuk navigasi papan ketik.
 
 ---
 
 ## Tech Stack
 
 ### Frontend
+
 - **Framework & Core:** React 19, Vite (Rolldown compiler)
 - **Styling:** Tailwind CSS v4, Font Plus Jakarta Sans & Raleway
 - **Routing & State:** React Router v7, Context API
@@ -118,12 +120,14 @@ Torang Bersih hadir sebagai infrastruktur digital alternatif yang mengadopsi pri
 - **HTTP Client:** Axios dengan interceptor JWT
 
 ### Backend
+
 - **Runtime & Framework:** Python 3.10+, Flask (Application Factory Architecture)
 - **ORM & Migrations:** SQLAlchemy, Flask-Migrate (Alembic)
 - **Autentikasi & Keamanan:** Flask-JWT-Extended (Access & Refresh Token), Flask-Limiter (Rate Limiting), Role-Based Access Control (Admin & User)
 - **Validasi Data:** Marshmallow Schema Validation
 
 ### Database & Cloud Services
+
 - **Database:** PostgreSQL (Supabase Tokyo Session Pooler)
 - **Kecerdasan Buatan:** Google Gemini AI API (`gemini-flash-lite-latest`)
 - **Media Storage & CDN:** Cloudinary API
@@ -134,17 +138,20 @@ Torang Bersih hadir sebagai infrastruktur digital alternatif yang mengadopsi pri
 ## Instalasi & Menjalankan Lokal
 
 ### Prasyarat
+
 - Node.js (v18 atau lebih baru)
 - Python (v3.10 atau lebih baru)
 - Git
 
 ### 1. Clone Repository
+
 ```bash
 git clone https://github.com/LasalleVibers/torang-bersih.git
 cd torang-bersih
 ```
 
 ### 2. Setup Backend (Flask)
+
 ```bash
 cd be
 python -m venv .venv
@@ -161,9 +168,11 @@ cp .env.example .env
 # Jalankan server development:
 python server.py
 ```
+
 > Backend berjalan di `http://localhost:5000` (Endpoint API: `http://localhost:5000/api`)
 
 ### 3. Setup Frontend (React + Vite)
+
 ```bash
 cd ../fe
 npm install
@@ -172,22 +181,24 @@ cp .env.example .env
 
 npm run dev
 ```
+
 > Frontend berjalan di `http://localhost:5173`
 
 ---
 
 ## Kredensial Akun Pengujian (Demo)
 
-| Peran | Email | Kata Sandi | Akses Utama |
-| :--- | :--- | :--- | :--- |
+| Peran     | Email               | Kata Sandi  | Akses Utama                                                 |
+| :-------- | :------------------ | :---------- | :---------------------------------------------------------- |
 | **Admin** | `admin@example.com` | `Admin123!` | Dashboard analitik, verifikasi laporan, kelola mitra & aset |
-| **Warga** | `user1@example.com` | `User123!` | Buat laporan sampah, jual barang daur ulang, tulis artikel |
+| **Warga** | `user1@example.com` | `User123!`  | Buat laporan sampah, jual barang daur ulang, tulis artikel  |
 
 ---
 
 ## Dokumentasi API
 
 Dokumentasi RESTful API lengkap dapat dilihat pada:
+
 - **Markdown:** `be/docs/API.md`
 - **Tampilan Interaktif:** Buka `http://localhost:5000/` saat backend berjalan.
 
@@ -207,15 +218,14 @@ Proyek ini dikembangkan oleh **Tim Lasalle Vibers** (Universitas Katolik De La S
 
 ## Referensi
 
-1. Dinas Lingkungan Hidup Kota Manado. (2023). *Laporan Kinerja Pengelolaan Sampah Kota Manado*.
-2. Legi, A. F., et al. (2023). *Strategi Dinas Lingkungan Hidup Kota Manado dalam Pengelolaan Sampah di Kota Manado Provinsi Sulawesi Utara*. Manado: Universitas Sam Ratulangi.
-3. Kereh, B. K., Effendy, K., Suprajogo, T., & Ernawati, D. P. (2024). *Transformasi Pengelolaan Sampah di Kota Manado Provinsi Sulawesi Utara*. Jurnal Ilmiah Platax, 12(1), 45-58.
-4. Pemerintah Republik Indonesia. (2008). *Undang-Undang Nomor 18 Tahun 2008 tentang Pengelolaan Sampah*.
-5. United Nations. (2015). *Sustainable Development Goal 11: Make cities and human settlements inclusive, safe, resilient and sustainable*.
+1. Dinas Lingkungan Hidup Kota Manado. (2023). _Laporan Kinerja Pengelolaan Sampah Kota Manado_.
+2. Legi, A. F., et al. (2023). _Strategi Dinas Lingkungan Hidup Kota Manado dalam Pengelolaan Sampah di Kota Manado Provinsi Sulawesi Utara_. Manado: Universitas Sam Ratulangi.
+3. Kereh, B. K., Effendy, K., Suprajogo, T., & Ernawati, D. P. (2024). _Transformasi Pengelolaan Sampah di Kota Manado Provinsi Sulawesi Utara_. Jurnal Ilmiah Platax, 12(1), 45-58.
+4. Pemerintah Republik Indonesia. (2008). _Undang-Undang Nomor 18 Tahun 2008 tentang Pengelolaan Sampah_.
+5. United Nations. (2015). _Sustainable Development Goal 11: Make cities and human settlements inclusive, safe, resilient and sustainable_.
 
 ---
 
 <p align="center">
   <strong>Torang Bersih — Dari Torang, Oleh Torang, untuk Sulawesi Utara yang Bersih dan Berkelanjutan 🌱</strong>
 </p>
-

@@ -12,6 +12,7 @@ import {
   LuHandHeart,
   LuMapPin,
   LuSearch,
+  LuInfo,
   LuSparkles,
   LuChevronDown,
   LuChevronUp,
@@ -59,12 +60,42 @@ const BADGE_CONFIG = {
 };
 
 const ATURAN_POIN = [
-  { icon: LuFileText, label: "Laporan Sampah Tervalidasi", poin: "+10 Poin", warna: "text-blue-600 bg-blue-50" },
-  { icon: LuHandHeart, label: "Tindak Lanjut Lapangan Selesai", poin: "+15 Poin", warna: "text-emerald-600 bg-emerald-50" },
-  { icon: LuUsers, label: "Pendaftaran Mitra Kolaborator", poin: "+20 Poin", warna: "text-indigo-600 bg-indigo-50" },
-  { icon: LuBuilding2, label: "Pendaftaran Aset Fasilitas (TPS/Bank Sampah)", poin: "+20 Poin", warna: "text-purple-600 bg-purple-50" },
-  { icon: LuNewspaper, label: "Publikasi Artikel Edukasi", poin: "+15 Poin", warna: "text-cyan-600 bg-cyan-50" },
-  { icon: LuArchive, label: "Posting Barang di Lapak Daur Ulang", poin: "+5 Poin", warna: "text-amber-600 bg-amber-50" },
+  {
+    icon: LuFileText,
+    label: "Laporan Sampah Tervalidasi",
+    poin: "+10 Poin",
+    warna: "text-blue-600 bg-blue-50",
+  },
+  {
+    icon: LuHandHeart,
+    label: "Tindak Lanjut Lapangan Selesai",
+    poin: "+15 Poin",
+    warna: "text-emerald-600 bg-emerald-50",
+  },
+  {
+    icon: LuUsers,
+    label: "Pendaftaran Mitra Kolaborator",
+    poin: "+20 Poin",
+    warna: "text-indigo-600 bg-indigo-50",
+  },
+  {
+    icon: LuBuilding2,
+    label: "Pendaftaran Aset Fasilitas (TPS/Bank Sampah)",
+    poin: "+20 Poin",
+    warna: "text-purple-600 bg-purple-50",
+  },
+  {
+    icon: LuNewspaper,
+    label: "Publikasi Artikel Edukasi",
+    poin: "+15 Poin",
+    warna: "text-cyan-600 bg-cyan-50",
+  },
+  {
+    icon: LuArchive,
+    label: "Posting Barang di Lapak Daur Ulang",
+    poin: "+5 Poin",
+    warna: "text-amber-600 bg-amber-50",
+  },
 ];
 
 const TABS = [
@@ -118,7 +149,11 @@ function WilayahIcon({ size = 44 }) {
 function Breakdown({ row, compact = false }) {
   const items = [
     { icon: LuFileText, label: "laporan", value: row.jumlah_laporan },
-    { icon: LuHandHeart, label: "tindak lanjut", value: row.jumlah_tindak_lanjut },
+    {
+      icon: LuHandHeart,
+      label: "tindak lanjut",
+      value: row.jumlah_tindak_lanjut,
+    },
     { icon: LuUsers, label: "kolaborator", value: row.jumlah_kolaborator },
     { icon: LuBuilding2, label: "aset", value: row.jumlah_aset },
     { icon: LuNewspaper, label: "artikel", value: row.jumlah_artikel },
@@ -128,9 +163,14 @@ function Breakdown({ row, compact = false }) {
   if (items.length === 0) return null;
 
   return (
-    <div className={`flex flex-wrap gap-x-3 gap-y-1 ${compact ? "justify-center text-[11px]" : "text-xs"} text-gray-500`}>
+    <div
+      className={`flex flex-wrap gap-x-3 gap-y-1 ${compact ? "justify-center text-[11px]" : "text-xs"} text-gray-500`}
+    >
       {items.map((item) => (
-        <span key={item.label} className="inline-flex items-center gap-1 rounded-md bg-gray-50 px-1.5 py-0.5 border border-gray-100">
+        <span
+          key={item.label}
+          className="inline-flex items-center gap-1 rounded-md border border-gray-100 bg-gray-50 px-1.5 py-0.5"
+        >
           <item.icon size={compact ? 11 : 12} className="text-(--primary)" />
           <span>{item.value}</span>
           <span className="text-gray-400">{item.label}</span>
@@ -145,7 +185,10 @@ function LoadingSkeleton() {
     <div className="space-y-6 py-8">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-64 animate-pulse rounded-2xl bg-gray-200/70" />
+          <div
+            key={i}
+            className="h-64 animate-pulse rounded-2xl bg-gray-200/70"
+          />
         ))}
       </div>
       <div className="space-y-3">
@@ -174,8 +217,12 @@ function PanduanPoinSection() {
             <LuSparkles size={18} />
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-900">Cara Mendapatkan Poin & Kenaikan Lencana</p>
-            <p className="text-xs text-gray-500">Pelajari aturan poin dan tingkatan badge kontributor Torang Bersih</p>
+            <p className="text-sm font-bold text-gray-900">
+              Cara Mendapatkan Poin & Kenaikan Lencana
+            </p>
+            <p className="text-xs text-gray-500">
+              Pelajari aturan poin dan tingkatan badge kontributor Torang Bersih
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-1 text-xs font-semibold text-(--primary)">
@@ -195,14 +242,21 @@ function PanduanPoinSection() {
               </h4>
               <div className="space-y-2">
                 {ATURAN_POIN.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between rounded-xl bg-white p-2.5 border border-gray-100 text-xs">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-2.5 text-xs"
+                  >
                     <div className="flex items-center gap-2.5">
-                      <div className={`p-1.5 rounded-lg ${item.warna}`}>
+                      <div className={`rounded-lg p-1.5 ${item.warna}`}>
                         <item.icon size={13} />
                       </div>
-                      <span className="font-medium text-gray-700">{item.label}</span>
+                      <span className="font-medium text-gray-700">
+                        {item.label}
+                      </span>
                     </div>
-                    <span className="font-bold text-(--primary)">{item.poin}</span>
+                    <span className="font-bold text-(--primary)">
+                      {item.poin}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -216,11 +270,18 @@ function PanduanPoinSection() {
               </h4>
               <div className="space-y-2">
                 {Object.entries(BADGE_CONFIG).map(([namaBadge, cfg]) => (
-                  <div key={namaBadge} className="flex items-center justify-between rounded-xl bg-white p-2.5 border border-gray-100 text-xs">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 font-bold border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+                  <div
+                    key={namaBadge}
+                    className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-2.5 text-xs"
+                  >
+                    <span
+                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-bold ${cfg.bg} ${cfg.text} ${cfg.border}`}
+                    >
                       {namaBadge}
                     </span>
-                    <span className="text-gray-500 font-medium">{cfg.range}</span>
+                    <span className="font-medium text-gray-500">
+                      {cfg.range}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -263,16 +324,30 @@ function UserPersonalRankCard({ currentUserId, items, currentUser }) {
     <div className="mb-8 overflow-hidden rounded-2xl border-2 border-(--primary)/20 bg-linear-to-r from-[#1e1f78]/5 via-white to-blue-50/40 p-5 shadow-sm">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <Avatar name={currentUser.full_name || currentUser.username} url={currentUser.avatar_url} size={54} ring="ring-2 ring-(--primary)/40" />
+          <Avatar
+            name={currentUser.full_name || currentUser.username}
+            url={currentUser.avatar_url}
+            size={54}
+            ring="ring-2 ring-(--primary)/40"
+          />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-(--primary) uppercase tracking-wider">Status Kontribusi Kamu</span>
-              <span className="rounded-full bg-(--primary) px-2 py-0.5 text-[10px] font-bold text-white">Akun Aktif</span>
+              <span className="text-xs font-bold tracking-wider text-(--primary) uppercase">
+                Status Kontribusi Kamu
+              </span>
+              <span className="rounded-full bg-(--primary) px-2 py-0.5 text-[10px] font-bold text-white">
+                Akun Aktif
+              </span>
             </div>
-            <h3 className="text-lg font-bold text-gray-900">{currentUser.full_name || currentUser.username}</h3>
+            <h3 className="text-lg font-bold text-gray-900">
+              {currentUser.full_name || currentUser.username}
+            </h3>
             <p className="text-xs text-gray-500">
               {myData ? (
-                <>Peringkat <strong>#{myRank}</strong> dari {items.length} kontributor terdaftar</>
+                <>
+                  Peringkat <strong>#{myRank}</strong> dari {items.length}{" "}
+                  kontributor terdaftar
+                </>
               ) : (
                 "Belum tercatat di papan peringkat. Mulai kontribusi pertamamu!"
               )}
@@ -282,12 +357,20 @@ function UserPersonalRankCard({ currentUserId, items, currentUser }) {
 
         <div className="flex flex-wrap items-center gap-3 sm:justify-end">
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-center shadow-xs">
-            <p className="text-[10px] font-medium text-gray-400 uppercase">Total Poin</p>
-            <p className="text-xl font-extrabold text-(--primary)">{totalPoin}</p>
+            <p className="text-[10px] font-medium text-gray-400 uppercase">
+              Total Poin
+            </p>
+            <p className="text-xl font-extrabold text-(--primary)">
+              {totalPoin}
+            </p>
           </div>
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-center shadow-xs">
-            <p className="text-[10px] font-medium text-gray-400 uppercase">Lencana Saat Ini</p>
-            <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold border ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}>
+            <p className="text-[10px] font-medium text-gray-400 uppercase">
+              Lencana Saat Ini
+            </p>
+            <span
+              className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-bold ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}
+            >
               {myBadge}
             </span>
           </div>
@@ -304,7 +387,8 @@ function UserPersonalRankCard({ currentUserId, items, currentUser }) {
       {totalPoin < 300 && (
         <div className="mt-4 border-t border-gray-100 pt-3">
           <p className="text-xs text-gray-500">
-            💡 Kumpulkan <strong>{selisih} poin lagi</strong> untuk meraih lencana <strong>{targetBadge}</strong>!
+            💡 Kumpulkan <strong>{selisih} poin lagi</strong> untuk meraih
+            lencana <strong>{targetBadge}</strong>!
           </p>
         </div>
       )}
@@ -323,7 +407,9 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
   if (error) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50/50 p-8 text-center">
-        <p className="font-bold text-red-600">Gagal Memuat Peringkat Kontributor</p>
+        <p className="font-bold text-red-600">
+          Gagal Memuat Peringkat Kontributor
+        </p>
         <p className="mt-1 text-sm text-red-500">{error}</p>
       </div>
     );
@@ -335,9 +421,12 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
         <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-gray-100 text-gray-400">
           <LuTrophy size={24} />
         </div>
-        <h3 className="font-bold text-gray-800">Belum Ada Poin Kontributor Tercatat</h3>
-        <p className="mt-1 text-sm text-gray-500 max-w-md mx-auto">
-          Jadilah orang pertama yang melaporkan tumpukan sampah, mendaftarkan aset, atau membagikan artikel daur ulang!
+        <h3 className="font-bold text-gray-800">
+          Belum Ada Poin Kontributor Tercatat
+        </h3>
+        <p className="mx-auto mt-1 max-w-md text-sm text-gray-500">
+          Jadilah orang pertama yang melaporkan tumpukan sampah, mendaftarkan
+          aset, atau membagikan artikel daur ulang!
         </p>
         <Link
           to="/laporan/buat"
@@ -366,40 +455,54 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
 
   return (
     <>
-      <UserPersonalRankCard currentUserId={currentUserId} items={items} currentUser={currentUser} />
+      <UserPersonalRankCard
+        currentUserId={currentUserId}
+        items={items}
+        currentUser={currentUser}
+      />
 
       {/* Bar Pencarian & Info Total */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Daftar Pahlawan Lingkungan</h2>
-          <p className="text-xs text-gray-500">Total {items.length} kontributor aktif tercatat di sistem</p>
+          <h2 className="text-lg font-bold text-gray-900">
+            Daftar Pahlawan Lingkungan
+          </h2>
+          <p className="text-xs text-gray-500">
+            Total {items.length} kontributor aktif tercatat di sistem
+          </p>
         </div>
 
         <div className="relative w-full sm:w-72">
-          <LuSearch className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
+          <LuSearch
+            className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-400"
+            size={15}
+          />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari nama atau username..."
-            className="w-full rounded-xl border border-gray-200 bg-white py-2 pr-3.5 pl-9 text-xs text-gray-900 shadow-2xs outline-none transition focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20"
+            className="w-full rounded-xl border border-gray-200 bg-white py-2 pr-3.5 pl-9 text-xs text-gray-900 shadow-2xs transition outline-none focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20"
           />
         </div>
       </div>
 
       {/* Podium Top 3 (Hanya tampil saat tidak sedang mencari) */}
       {!isFiltering && top3.length > 0 && (
-        <div className={`mb-10 grid grid-cols-1 gap-4 ${
-          top3.length === 1
-            ? "sm:grid-cols-1 max-w-sm mx-auto"
-            : top3.length === 2
-            ? "sm:grid-cols-2 max-w-xl mx-auto"
-            : "sm:grid-cols-3"
-        }`}>
+        <div
+          className={`mb-10 grid grid-cols-1 gap-4 ${
+            top3.length === 1
+              ? "mx-auto max-w-sm sm:grid-cols-1"
+              : top3.length === 2
+                ? "mx-auto max-w-xl sm:grid-cols-2"
+                : "sm:grid-cols-3"
+          }`}
+        >
           {top3.map((row, idx) => {
             const isMe = currentUserId === row.user_id;
             const badgeStyle = BADGE_CONFIG[row.badge] || BADGE_CONFIG.Pemula;
 
+            // Pengaturan podium: Juara 1 (tengah), Juara 2 (kiri), Juara 3 (kanan)
             let orderClass = "";
             let cardAccent = "border-gray-200";
             let trophyBg = "bg-gray-100 text-gray-600";
@@ -407,20 +510,24 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
             let RankIcon = LuTrophy;
 
             if (idx === 0) {
-              orderClass = top3.length === 3 ? "sm:order-2 sm:-translate-y-3" : "";
-              cardAccent = "border-amber-300 shadow-md bg-linear-to-b from-amber-50/50 via-white to-white";
+              orderClass =
+                top3.length === 3 ? "sm:order-2 sm:-translate-y-3" : "";
+              cardAccent =
+                "border-amber-300 shadow-md bg-linear-to-b from-amber-50/50 via-white to-white";
               trophyBg = "bg-amber-400 text-amber-950 shadow-sm";
               ringColor = "ring-amber-400";
               RankIcon = LuCrown;
             } else if (idx === 1) {
               orderClass = top3.length === 3 ? "sm:order-1" : "";
-              cardAccent = "border-slate-300 shadow-xs bg-linear-to-b from-slate-50/60 via-white to-white";
+              cardAccent =
+                "border-slate-300 shadow-xs bg-linear-to-b from-slate-50/60 via-white to-white";
               trophyBg = "bg-slate-300 text-slate-800";
               ringColor = "ring-slate-300";
               RankIcon = LuTrophy;
             } else if (idx === 2) {
               orderClass = top3.length === 3 ? "sm:order-3" : "";
-              cardAccent = "border-amber-200/80 shadow-xs bg-linear-to-b from-orange-50/40 via-white to-white";
+              cardAccent =
+                "border-amber-200/80 shadow-xs bg-linear-to-b from-orange-50/40 via-white to-white";
               trophyBg = "bg-amber-600 text-white";
               ringColor = "ring-amber-500/40";
               RankIcon = LuMedal;
@@ -443,7 +550,9 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
                 )}
 
                 <div>
-                  <div className={`mx-auto mb-3 flex size-11 items-center justify-center rounded-full ${trophyBg}`}>
+                  <div
+                    className={`mx-auto mb-3 flex size-11 items-center justify-center rounded-full ${trophyBg}`}
+                  >
                     <RankIcon size={22} />
                   </div>
 
@@ -456,17 +565,26 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
                     />
                   </div>
 
-                  <h3 className="truncate font-bold text-gray-900" title={row.full_name || row.username}>
+                  <h3
+                    className="truncate font-bold text-gray-900"
+                    title={row.full_name || row.username}
+                  >
                     {row.full_name || row.username}
                   </h3>
                   <p className="text-xs text-gray-400">@{row.username}</p>
 
                   <div className="my-3">
-                    <p className="text-3xl font-extrabold tracking-tight text-(--primary)">{row.total_poin}</p>
-                    <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Poin Terkumpul</p>
+                    <p className="text-3xl font-extrabold tracking-tight text-(--primary)">
+                      {row.total_poin}
+                    </p>
+                    <p className="text-[11px] font-semibold tracking-wider text-gray-400 uppercase">
+                      Poin Terkumpul
+                    </p>
                   </div>
 
-                  <span className={`inline-block rounded-full px-3 py-1 text-xs font-bold border ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}>
+                  <span
+                    className={`inline-block rounded-full border px-3 py-1 text-xs font-bold ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}
+                  >
                     {row.badge}
                   </span>
                 </div>
@@ -483,10 +601,12 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
       {/* Tabel Sisa Peringkat / Hasil Pencarian */}
       {rest.length > 0 ? (
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xs">
-          <div className="border-b border-gray-100 bg-slate-50/70 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-4">
+          <div className="flex items-center gap-4 border-b border-gray-100 bg-slate-50/70 px-5 py-3 text-[11px] font-bold tracking-wider text-gray-400 uppercase">
             <span className="w-8 text-center">Rank</span>
             <span className="flex-1">Kontributor</span>
-            <span className="hidden sm:inline-block w-40 text-center">Lencana</span>
+            <span className="hidden w-40 text-center sm:inline-block">
+              Lencana
+            </span>
             <span className="w-20 text-right">Poin</span>
           </div>
 
@@ -506,13 +626,19 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
                     #{row.rank}
                   </span>
 
-                  <Avatar name={row.full_name || row.username} url={row.avatar_url} size={42} />
+                  <Avatar
+                    name={row.full_name || row.username}
+                    url={row.avatar_url}
+                    size={42}
+                  />
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="truncate font-bold text-gray-800 text-sm">{row.full_name || row.username}</p>
+                      <p className="truncate text-sm font-bold text-gray-800">
+                        {row.full_name || row.username}
+                      </p>
                       {isMe && (
-                        <span className="rounded-full bg-(--primary) px-2 py-0.2 text-[9px] font-bold text-white">
+                        <span className="py-0.2 rounded-full bg-(--primary) px-2 text-[9px] font-bold text-white">
                           Kamu
                         </span>
                       )}
@@ -521,8 +647,10 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
                     <Breakdown row={row} />
                   </div>
 
-                  <div className="hidden sm:flex shrink-0 w-40 justify-center">
-                    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold border ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}>
+                  <div className="hidden w-40 shrink-0 justify-center sm:flex">
+                    <span
+                      className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-bold ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}
+                    >
                       {row.badge}
                     </span>
                   </div>
@@ -537,7 +665,8 @@ function IndividuTab({ items, loading, error, currentUserId, currentUser }) {
         </div>
       ) : isFiltering ? (
         <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-500">
-          Tidak ada kontributor yang cocok dengan pencarian &quot;{search}&quot;.
+          Tidak ada kontributor yang cocok dengan pencarian &quot;{search}
+          &quot;.
         </div>
       ) : null}
     </>
@@ -566,7 +695,9 @@ function WilayahTab({ data, loading, error }) {
           <LuMapPin size={24} />
         </div>
         <h3 className="font-bold text-gray-800">Belum Ada Laporan Wilayah</h3>
-        <p className="mt-1 text-sm text-gray-500">Belum ada titik laporan sampah dengan lokasi terverifikasi.</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Belum ada titik laporan sampah dengan lokasi terverifikasi.
+        </p>
       </div>
     );
   }
@@ -580,50 +711,72 @@ function WilayahTab({ data, loading, error }) {
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50/60 to-white p-5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-800">Total Laporan Se-Sulut</span>
+            <span className="text-xs font-bold tracking-wider text-blue-800 uppercase">
+              Total Laporan Se-Sulut
+            </span>
             <div className="rounded-xl bg-blue-100 p-2 text-blue-700">
               <LuBarChart3 size={18} />
             </div>
           </div>
-          <p className="mt-3 text-3xl font-extrabold text-gray-900">{data?.total_laporan || 0}</p>
-          <p className="mt-1 text-xs text-gray-500">Titik sampah terlapor di seluruh wilayah</p>
+          <p className="mt-3 text-3xl font-extrabold text-gray-900">
+            {data?.total_laporan || 0}
+          </p>
+          <p className="mt-1 text-xs text-gray-500">
+            Titik sampah terlapor di seluruh wilayah
+          </p>
         </div>
 
         <div className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50/60 to-white p-5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Wilayah Paling Aktif</span>
+            <span className="text-xs font-bold tracking-wider text-emerald-800 uppercase">
+              Wilayah Paling Aktif
+            </span>
             <div className="rounded-xl bg-emerald-100 p-2 text-emerald-700">
               <LuMapPin size={18} />
             </div>
           </div>
-          <p className="mt-3 text-2xl font-extrabold text-gray-900 truncate" title={data?.wilayah_teraktif || "-"}>
+          <p
+            className="mt-3 truncate text-2xl font-extrabold text-gray-900"
+            title={data?.wilayah_teraktif || "-"}
+          >
             {data?.wilayah_teraktif || "-"}
           </p>
-          <p className="mt-1 text-xs text-gray-500">Tingkat pelaporan & aksi warga tertinggi</p>
+          <p className="mt-1 text-xs text-gray-500">
+            Tingkat pelaporan & aksi warga tertinggi
+          </p>
         </div>
 
         <div className="rounded-2xl border border-amber-100 bg-linear-to-br from-amber-50/60 to-white p-5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-800">Jenis Sampah Dominan</span>
+            <span className="text-xs font-bold tracking-wider text-amber-800 uppercase">
+              Jenis Sampah Dominan
+            </span>
             <div className="rounded-xl bg-amber-100 p-2 text-amber-700">
               <LuTrash2 size={18} />
             </div>
           </div>
-          <p className="mt-3 text-2xl font-extrabold text-gray-900 truncate" title={data?.jenis_sampah_dominan_keseluruhan || "-"}>
+          <p
+            className="mt-3 truncate text-2xl font-extrabold text-gray-900"
+            title={data?.jenis_sampah_dominan_keseluruhan || "-"}
+          >
             {data?.jenis_sampah_dominan_keseluruhan || "-"}
           </p>
-          <p className="mt-1 text-xs text-gray-500">Kategori sampah yang paling sering dilaporkan</p>
+          <p className="mt-1 text-xs text-gray-500">
+            Kategori sampah yang paling sering dilaporkan
+          </p>
         </div>
       </div>
 
       {/* Podium Wilayah */}
-      <div className={`mb-10 grid grid-cols-1 gap-4 ${
-        top3.length === 1
-          ? "sm:grid-cols-1 max-w-sm mx-auto"
-          : top3.length === 2
-          ? "sm:grid-cols-2 max-w-xl mx-auto"
-          : "sm:grid-cols-3"
-      }`}>
+      <div
+        className={`mb-10 grid grid-cols-1 gap-4 ${
+          top3.length === 1
+            ? "mx-auto max-w-sm sm:grid-cols-1"
+            : top3.length === 2
+              ? "mx-auto max-w-xl sm:grid-cols-2"
+              : "sm:grid-cols-3"
+        }`}
+      >
         {top3.map((row, idx) => {
           let orderClass = "";
           let cardAccent = "border-gray-200";
@@ -631,8 +784,10 @@ function WilayahTab({ data, loading, error }) {
           let RankIcon = LuTrophy;
 
           if (idx === 0) {
-            orderClass = top3.length === 3 ? "sm:order-2 sm:-translate-y-3" : "";
-            cardAccent = "border-amber-300 shadow-md bg-linear-to-b from-amber-50/40 via-white to-white";
+            orderClass =
+              top3.length === 3 ? "sm:order-2 sm:-translate-y-3" : "";
+            cardAccent =
+              "border-amber-300 shadow-md bg-linear-to-b from-amber-50/40 via-white to-white";
             chipBg = "bg-amber-400 text-amber-950";
             RankIcon = LuCrown;
           } else if (idx === 1) {
@@ -652,20 +807,31 @@ function WilayahTab({ data, loading, error }) {
               key={row.kabupaten_kota}
               className={`relative rounded-2xl border p-6 text-center transition hover:shadow-md ${cardAccent} ${orderClass}`}
             >
-              <div className={`mx-auto mb-3 flex size-10 items-center justify-center rounded-full ${chipBg}`}>
+              <div
+                className={`mx-auto mb-3 flex size-10 items-center justify-center rounded-full ${chipBg}`}
+              >
                 <RankIcon size={20} />
               </div>
               <div className="mx-auto mb-3 flex justify-center">
                 <WilayahIcon size={64} />
               </div>
-              <h3 className="truncate font-bold text-gray-900 text-lg">{row.kabupaten_kota}</h3>
+              <h3 className="truncate text-lg font-bold text-gray-900">
+                {row.kabupaten_kota}
+              </h3>
               <p className="mt-1 text-xs text-gray-500">
-                Sampah dominan: <span className="font-semibold text-gray-700">{row.jenis_sampah_dominan}</span>
+                Sampah dominan:{" "}
+                <span className="font-semibold text-gray-700">
+                  {row.jenis_sampah_dominan}
+                </span>
               </p>
 
               <div className="mt-4 border-t border-gray-100 pt-3">
-                <p className="text-3xl font-extrabold text-(--primary)">{row.jumlah_laporan}</p>
-                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">Laporan Ditindak</p>
+                <p className="text-3xl font-extrabold text-(--primary)">
+                  {row.jumlah_laporan}
+                </p>
+                <p className="text-xs font-medium tracking-wider text-gray-400 uppercase">
+                  Laporan Ditindak
+                </p>
               </div>
             </div>
           );
@@ -675,7 +841,7 @@ function WilayahTab({ data, loading, error }) {
       {/* Tabel Sisa Wilayah */}
       {rest.length > 0 && (
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xs">
-          <div className="border-b border-gray-100 bg-slate-50/70 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-4">
+          <div className="flex items-center gap-4 border-b border-gray-100 bg-slate-50/70 px-5 py-3 text-[11px] font-bold tracking-wider text-gray-400 uppercase">
             <span className="w-8 text-center">Rank</span>
             <span className="flex-1">Kabupaten / Kota</span>
             <span className="w-24 text-right">Jumlah Laporan</span>
@@ -692,10 +858,18 @@ function WilayahTab({ data, loading, error }) {
                 </span>
                 <WilayahIcon size={40} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-bold text-gray-800 text-sm">{row.kabupaten_kota}</p>
+                  <p className="truncate text-sm font-bold text-gray-800">
+                    {row.kabupaten_kota}
+                  </p>
                   <p className="mt-0.5 text-xs text-gray-500">
-                    Sampah dominan: <span className="font-semibold text-gray-600">{row.jenis_sampah_dominan}</span> · Status terbanyak:{" "}
-                    <span className="font-semibold text-gray-600">{row.status_terbanyak}</span>
+                    Sampah dominan:{" "}
+                    <span className="font-semibold text-gray-600">
+                      {row.jenis_sampah_dominan}
+                    </span>{" "}
+                    · Status terbanyak:{" "}
+                    <span className="font-semibold text-gray-600">
+                      {row.status_terbanyak}
+                    </span>
                   </p>
                 </div>
                 <span className="w-24 shrink-0 text-right text-lg font-bold text-(--primary)">
@@ -726,71 +900,44 @@ function LeaderboardPage() {
   const [wilayahError, setWilayahError] = useState(null);
   const [wilayahFetched, setWilayahFetched] = useState(false);
 
-  // Muat data awal peringkat individu
-  useEffect(() => {
-    let aktif = true;
-    getLeaderboard()
-      .then((res) => {
-        if (aktif) {
-          setItems(res.data || []);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (aktif) {
-          setError(err.response?.data?.message || "Gagal memuat papan peringkat.");
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      aktif = false;
-    };
-  }, []);
-
-  // Muat data peringkat wilayah saat tab wilayah dibuka pertama kali
-  useEffect(() => {
-    if (tab !== "wilayah" || wilayahFetched) return;
-
-    let aktif = true;
-    getWilayahLeaderboard()
-      .then((res) => {
-        if (aktif) {
-          setWilayahData(res.data || null);
-          setWilayahFetched(true);
-          setWilayahLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (aktif) {
-          setWilayahError(err.response?.data?.message || "Gagal memuat papan peringkat wilayah.");
-          setWilayahLoading(false);
-        }
-      });
-
-    return () => {
-      aktif = false;
-    };
-  }, [tab, wilayahFetched]);
-
-  // Tombol Muat Ulang Manual
-  const handleRefresh = () => {
-    if (tab === "individu") {
+  async function fetchLeaderboard() {
+    try {
       setLoading(true);
       setError(null);
-      getLeaderboard()
-        .then((res) => setItems(res.data || []))
-        .catch((err) => setError(err.response?.data?.message || "Gagal memuat papan peringkat."))
-        .finally(() => setLoading(false));
-    } else {
+      const res = await getLeaderboard();
+      setItems(res.data || []);
+    } catch (err) {
+      setError(err.response?.data?.message || "Gagal memuat papan peringkat.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchWilayahLeaderboard() {
+    try {
       setWilayahLoading(true);
       setWilayahError(null);
-      getWilayahLeaderboard()
-        .then((res) => setWilayahData(res.data || null))
-        .catch((err) => setWilayahError(err.response?.data?.message || "Gagal memuat papan peringkat wilayah."))
-        .finally(() => setWilayahLoading(false));
+      const res = await getWilayahLeaderboard();
+      setWilayahData(res.data || null);
+      setWilayahFetched(true);
+    } catch (err) {
+      setWilayahError(
+        err.response?.data?.message || "Gagal memuat papan peringkat wilayah.",
+      );
+    } finally {
+      setWilayahLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
+  useEffect(() => {
+    if (tab === "wilayah" && !wilayahFetched) {
+      fetchWilayahLeaderboard();
+    }
+  }, [tab, wilayahFetched]);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#FAFAFA] pb-20">
@@ -812,7 +959,7 @@ function LeaderboardPage() {
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className={`cursor-pointer rounded-xl px-5 py-2 text-xs md:text-sm font-bold transition-all ${
+                className={`cursor-pointer rounded-xl px-5 py-2 text-xs font-bold transition-all md:text-sm ${
                   tab === t.key
                     ? "bg-(--primary) text-white shadow-sm"
                     : "text-gray-500 hover:text-gray-900"
@@ -824,8 +971,11 @@ function LeaderboardPage() {
           </div>
 
           <button
-            onClick={handleRefresh}
-            className="cursor-pointer text-xs font-semibold text-(--primary) hover:underline"
+            onClick={() => {
+              if (tab === "individu") fetchLeaderboard();
+              else fetchWilayahLeaderboard();
+            }}
+            className="text-xs font-semibold text-(--primary) hover:underline"
           >
             Muat Ulang
           </button>
