@@ -5,6 +5,7 @@
 </p>
 
 <p align="center">
+  <a href="#coba-langsung">Coba Langsung</a> •
   <a href="#tentang">Tentang</a> •
   <a href="#fitur-utama">Fitur</a> •
   <a href="#tech-stack">Tech Stack</a> •
@@ -39,6 +40,42 @@
     <img src="https://img.shields.io/badge/Google%20Gemini-AI%20Chatbot-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Gemini AI"/>
   </a>
 </p>
+
+
+<p align="center">
+  <a href="https://torangbersih.vercel.app">
+    <img src="https://img.shields.io/badge/Buka%20Situs-torangbersih.vercel.app-1e1f78?style=for-the-badge&logo=vercel&logoColor=white" alt="Buka situs"/>
+  </a>
+  <a href="https://api-production-003f6.up.railway.app/health">
+    <img src="https://img.shields.io/badge/Status%20API-aktif-15803D?style=for-the-badge&logo=railway&logoColor=white" alt="Status API"/>
+  </a>
+</p>
+
+---
+
+## Coba Langsung
+
+| | Alamat |
+| :--- | :--- |
+| **Situs** | **https://torangbersih.vercel.app** |
+| **API** | https://api-production-003f6.up.railway.app |
+| **Cek kesehatan API** | https://api-production-003f6.up.railway.app/health |
+
+Masuk lewat halaman [`/login`](https://torangbersih.vercel.app/login) dengan salah satu akun di bawah. Kedua akun ini **sudah diuji langsung pada server produksi**, bukan hanya di komputer pengembang.
+
+| Peran | Email | Kata Sandi | Yang bisa dicoba |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@example.com` | `Admin123!` | Dashboard analitik, verifikasi laporan warga, kelola mitra dan aset, kelola artikel |
+| **Warga** | `user1@example.com` | `User123!` | Kirim laporan sampah berikut foto dan titik peta, jual barang daur ulang, tulis artikel |
+
+Tersedia pula `user2@example.com` sampai `user5@example.com` dengan kata sandi yang sama, `User123!`, untuk menguji papan peringkat dengan banyak kontributor.
+
+Login dengan Google juga tersedia dan memakai akun Google Anda sendiri.
+
+> **Catatan untuk penguji.** Situs ini terhubung ke basis data sungguhan, jadi
+> data yang Anda ubah akan benar-benar berubah bagi pengunjung lain. Silakan
+> menambah laporan atau artikel; mohon hindari menghapus data yang sudah ada
+> agar penguji berikutnya masih melihat isi yang utuh.
 
 ---
 
@@ -183,15 +220,6 @@ npm run dev
 ```
 
 > Frontend berjalan di `http://localhost:5173`
-
----
-
-## Kredensial Akun Pengujian (Demo)
-
-| Peran     | Email               | Kata Sandi  | Akses Utama                                                 |
-| :-------- | :------------------ | :---------- | :---------------------------------------------------------- |
-| **Admin** | `admin@example.com` | `Admin123!` | Dashboard analitik, verifikasi laporan, kelola mitra & aset |
-| **Warga** | `user1@example.com` | `User123!`  | Buat laporan sampah, jual barang daur ulang, tulis artikel  |
 
 ---
 

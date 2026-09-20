@@ -17,9 +17,9 @@ import {
   LuChevronDown,
   LuChevronUp,
   LuArrowUpRight,
-  LuCheckCircle2,
+  LuCircleCheckBig,
   LuTrash2,
-  LuBarChart3,
+  LuChartColumn,
 } from "react-icons/lu";
 import { motion, useReducedMotion } from "motion/react";
 import FiturHero from "../../components/shared/FiturHero";
@@ -237,7 +237,7 @@ function PanduanPoinSection() {
             {/* Bagian Poin */}
             <div>
               <h4 className="mb-3 flex items-center gap-2 text-xs font-bold tracking-wider text-gray-500 uppercase">
-                <LuCheckCircle2 className="text-emerald-600" size={14} />
+                <LuCircleCheckBig className="text-emerald-600" size={14} />
                 Poin per Aksi Nyata
               </h4>
               <div className="space-y-2">
@@ -715,7 +715,7 @@ function WilayahTab({ data, loading, error }) {
               Total Laporan Se-Sulut
             </span>
             <div className="rounded-xl bg-blue-100 p-2 text-blue-700">
-              <LuBarChart3 size={18} />
+              <LuChartColumn size={18} />
             </div>
           </div>
           <p className="mt-3 text-3xl font-extrabold text-gray-900">

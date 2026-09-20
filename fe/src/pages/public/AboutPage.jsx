@@ -7,7 +7,7 @@ import { pramuat, saatMendekat } from "../../utils/pramuatRute";
    Halaman Tentang Kami.
 
    Susunannya mengikuti mockup yang disetujui: band pembuka → cerita →
-   tiga pilar → tim → ajakan. Lima bagian, satu grid kartu saja.
+   tiga pilar → ajakan. Empat bagian.
 
    Dua bagian sengaja TIDAK ada di sini:
    - "Empat pihak, satu meja" — itu grid kartu ketiga yang bentuknya sama
@@ -96,63 +96,6 @@ const PILAR = [
     isi: "Panduan memilah dan artikel yang membuat kebiasaan baik lebih mudah dimulai dan diteruskan.",
   },
 ];
-
-/* ── Tim ──────────────────────────────────────────────────────────────────
-   `foto` dibiarkan null sampai foto asli tersedia. Selama null, yang tampil
-   penampung abu-abu — bukan ilustrasi karakter. Ini disengaja: begitu foto
-   asli masuk, cukup isi path-nya di sini dan tidak ada satu pun kelas yang
-   perlu diubah.
-
-   Ganti nama dan peran di bawah dengan pembagian tim yang sebenarnya. */
-const TIM = [
-  {
-    nama: "Nama Anggota 1",
-    peran: "Frontend & UI/UX",
-    ringkas: "Merancang tampilan, peta interaktif, dan alur laporan warga.",
-    foto: null,
-  },
-  {
-    nama: "Nama Anggota 2",
-    peran: "Backend & Basis Data",
-    ringkas: "Membangun API, struktur data, dan pengamanan akun pengguna.",
-    foto: null,
-  },
-  {
-    nama: "Nama Anggota 3",
-    peran: "Riset & Proposal",
-    ringkas: "Menyusun proposal, data pendukung, dan materi edukasi.",
-    foto: null,
-  },
-];
-
-function FotoAnggota({ foto, nama }) {
-  if (foto) {
-    return (
-      <img
-        src={foto}
-        alt={`Foto ${nama}`}
-        loading="lazy"
-        width="160"
-        height="160"
-        className="size-32 rounded-full object-cover ring-4 ring-white sm:size-36"
-      />
-    );
-  }
-
-  return (
-    // aria-hidden karena penampung ini tidak menyampaikan informasi apa pun —
-    // nama orangnya sudah tertulis sebagai teks tepat di bawahnya.
-    <div
-      aria-hidden="true"
-      className="flex size-32 items-center justify-center rounded-full bg-white ring-4 ring-white sm:size-36"
-    >
-      <svg viewBox="0 0 64 64" className="size-16 text-(--primary)/25">
-        <circle cx="32" cy="23" r="12" fill="currentColor" />
-        <path d="M8 60 a24 22 0 0 1 48 0 z" fill="currentColor" />
-      </svg>
-    </div>
-  );
-}
 
 export default function AboutPage() {
   const kurangiGerakan = useReducedMotion();
@@ -364,48 +307,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ═══════════════ 4. TIM ═══════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-24">
-        <motion.h2
-          {...munculKeAtas}
-          className="font-display max-w-[22ch] text-[clamp(1.35rem,3vw,2rem)] leading-tight font-extrabold text-(--primary)"
-        >
-          Tiga orang di balik Torang Bersih
-        </motion.h2>
-        <motion.p
-          {...munculKeAtas}
-          className="mt-4 max-w-[58ch] text-[0.98rem] leading-8 text-(--dark-text)/75"
-        >
-          Tim <strong className="text-(--primary)">Lasalle Vibers</strong> —
-          mahasiswa Universitas Katolik De La Salle Manado. Platform ini
-          dikerjakan untuk Infinitera 2.0, tetapi masalah yang dituju ada di kota
-          kami sendiri.
-        </motion.p>
-
-        <ul className="mt-12 grid gap-5 md:grid-cols-3">
-          {TIM.map(({ nama, peran, ringkas, foto }, i) => (
-            <motion.li
-              key={nama}
-              {...munculKeAtas}
-              transition={{ ...munculKeAtas.transition, delay: i * 0.08 }}
-              className="flex flex-col items-center gap-1 rounded-xl bg-(--surface-sky) px-6 pt-9 pb-7 text-center"
-            >
-              <FotoAnggota foto={foto} nama={nama} />
-              <p className="mt-6 text-[0.72rem] font-bold tracking-[0.14em] text-(--cyan) uppercase">
-                {peran}
-              </p>
-              <h3 className="font-display mt-1 text-lg font-extrabold text-(--primary)">
-                {nama}
-              </h3>
-              <p className="mt-2 max-w-[32ch] text-sm leading-7 text-(--dark-text)/70">
-                {ringkas}
-              </p>
-            </motion.li>
-          ))}
-        </ul>
-      </section>
-
-      {/* ═══════════════ 5. AJAKAN ═══════════════ */}
+      {/* ═══════════════ 4. AJAKAN ═══════════════ */}
       <section className="px-6 pb-20 sm:pb-28">
         <motion.div
           {...munculKeAtas}

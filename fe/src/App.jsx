@@ -7,6 +7,7 @@ import {
   UserRoute,
 } from "./components/common/ProtectedRoute";
 import RouteFallback from "./components/common/RouteFallback";
+import PenangkapGalat from "./components/common/PenangkapGalat";
 
 /* ────────────────────────────────────────────────────────────────────────
    Pemuatan per halaman (code splitting).
@@ -111,7 +112,12 @@ function App() {
     // terlihat selagi berkas halaman baru diunduh. Penampung ini praktis hanya
     // muncul kalau seseorang membuka tautan dalam ke halaman berat langsung
     // dari luar situs.
-    <Suspense fallback={<RouteFallback />}>
+    // Pembatas galat membungkus SELURUH rute. Tanpa ini, satu galat di satu
+    // halaman membongkar seluruh aplikasi dan menyisakan layar putih tanpa
+    // pesan — persis yang terjadi saat satu nama ikon tidak ada lagi di
+    // pustakanya.
+    <PenangkapGalat>
+      <Suspense fallback={<RouteFallback />}>
       <Routes>
         {/* Standalone pages (no layout) */}
         <Route element={<GuestRoute />}>
@@ -187,7 +193,8 @@ function App() {
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </Suspense>
+      </Suspense>
+    </PenangkapGalat>
   );
 }
 
