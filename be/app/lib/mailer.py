@@ -1,65 +1,90 @@
 import resend
 from threading import Thread
-from flask import current_app, render_template_string, copy_current_request_context
-from flask_mail import Message
 
-from app.config.extensions import mail
+from flask import current_app, render_template_string
+
 from app.utils.logger import logger
 
 
-def send_email(to, subject, html_body, text_body=None):
-    try:
-        resend_api_key = current_app.config.get('RESEND_API_KEY')
-        
-        if resend_api_key:
-            resend.api_key = resend_api_key
-            
-            @copy_current_request_context
-            def send_resend():
-                try:
-                    params = {
-                        "from": current_app.config.get('MAIL_FROM', 'onboarding@resend.dev'),
-                        "to": [to],
-                        "subject": subject,
-                        "html": html_body,
-                    }
-                    if text_body:
-                        params["text"] = text_body
-                        
-                    resend.Emails.send(params)
-                    logger.info(f"Email sent via Resend to {to}: {subject}")
-                except Exception as e:
-                    logger.error(f"Failed to send email via Resend to {to}: {e}")
+class GalatKonfigurasiEmail(RuntimeError):
+    """Kunci Resend atau alamat pengirim tidak tersedia."""
 
-            thread = Thread(target=send_resend)
-            thread.start()
-            logger.info(f"Resend email task started in background for {to}")
-            return True
 
-        # Fallback to Flask-Mail if Resend is not configured
-        msg = Message(
-            subject=subject,
-            recipients=[to],
-            html=html_body,
-            body=text_body or "Silakan buka email ini di aplikasi yang mendukung HTML."
+def _baca_konfigurasi():
+    """
+    Mengambil nilai konfigurasi SELAGI masih di dalam konteks permintaan.
+
+    Ini yang membuat pengiriman di latar belakang tidak lagi perlu menyalin
+    konteks permintaan Flask. Sebelumnya thread pengirim memanggil
+    current_app.config dari dalam dirinya sendiri, sehingga harus dibungkus
+    @copy_current_request_context — padahal thread itu sengaja hidup lebih lama
+    daripada permintaannya. Dengan nilainya dibaca lebih dulu, thread hanya
+    memegang dua string biasa dan tidak bergantung pada konteks apa pun.
+    """
+    kunci = current_app.config.get("RESEND_API_KEY")
+    pengirim = current_app.config.get("MAIL_FROM")
+
+    if not kunci:
+        raise GalatKonfigurasiEmail(
+            "RESEND_API_KEY belum diisi. Tidak ada email yang bisa dikirim."
         )
-        
-        @copy_current_request_context
-        def send_msg(message):
-            try:
-                mail.send(message)
-                logger.info(f"Background email sent via Flask-Mail to {to}: {subject}")
-            except Exception as e:
-                logger.error(f"Failed to send email via Flask-Mail to {to}: {e}")
+    if not pengirim:
+        raise GalatKonfigurasiEmail(
+            "MAIL_FROM belum diisi. Resend menolak pengiriman tanpa alamat "
+            "pengirim dari domain yang sudah diverifikasi."
+        )
+    return kunci, pengirim
 
-        thread = Thread(target=send_msg, args=(msg,))
-        thread.start()
-        
-        logger.info(f"Flask-Mail task started in background for {to}")
-        return True
-    except Exception as e:
-        logger.error(f"Failed to start background email task for {to}: {e}")
+
+def send_email(to, subject, html_body, text_body=None):
+    """
+    Mengirim satu email lewat Resend.
+
+    SMTP sudah dihapus sepenuhnya, bukan disimpan sebagai cadangan. Dulu fungsi
+    ini diam-diam jatuh ke Gmail SMTP begitu RESEND_API_KEY kosong, dan karena
+    pengirimannya berjalan di thread terpisah, kegagalannya tidak pernah sampai
+    ke pemanggil maupun ke respons API. Akibatnya konfigurasi yang salah di
+    server tampak persis sama seperti pengiriman yang berhasil: endpoint tetap
+    menjawab 200, tapi emailnya tidak pernah ada.
+
+    Sekarang konfigurasi yang kurang langsung mengembalikan False dan tercatat
+    sebagai galat, sehingga bisa dibedakan dari pengiriman yang benar-benar
+    jalan.
+
+    Nilai balik True berarti "permintaan kirim berhasil dititipkan", BUKAN
+    "email sudah sampai" — panggilan ke Resend sengaja dijalankan di latar
+    belakang supaya pengguna tidak menunggu. Hasil akhirnya hanya muncul di log.
+    """
+    try:
+        kunci, pengirim = _baca_konfigurasi()
+    except GalatKonfigurasiEmail as galat:
+        logger.error(f"Email ke {to} TIDAK dikirim: {galat}")
         return False
+
+    muatan = {
+        "from": pengirim,
+        "to": [to],
+        "subject": subject,
+        "html": html_body,
+    }
+    if text_body:
+        muatan["text"] = text_body
+
+    def kirim():
+        try:
+            resend.api_key = kunci
+            hasil = resend.Emails.send(muatan)
+            logger.info(f"Email terkirim via Resend ke {to} (id={hasil.get('id')}): {subject}")
+        except Exception as galat:
+            # Sengaja menyebut nama pengirim di pesannya: penyebab paling sering
+            # adalah domain MAIL_FROM belum diverifikasi di akun Resend, dan
+            # tanpa alamatnya tercatat, galat 403 dari Resend sulit ditelusuri.
+            logger.error(
+                f"Gagal mengirim email via Resend ke {to} dari {pengirim}: {galat}"
+            )
+
+    Thread(target=kirim, daemon=True).start()
+    return True
 
 
 VERIFICATION_EMAIL_TEMPLATE = """

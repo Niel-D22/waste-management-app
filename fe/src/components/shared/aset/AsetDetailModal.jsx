@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import StatusBadge from "../kolaborator/StatusBadge";
 import { markerIcon } from "../kolaborator/mapUtils";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../../utils/peta";
 
 /**
  * Shared read-only detail modal for aset data.
@@ -123,7 +124,7 @@ function AsetDetailModal({ data, onClose, footerActions }) {
                       zoomControl={false}
                       style={{ height: "100%", width: "100%", zIndex: 0 }}
                     >
-                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
                       <Marker
                         position={[data.latitude, data.longitude]}
                         icon={markerIcon}

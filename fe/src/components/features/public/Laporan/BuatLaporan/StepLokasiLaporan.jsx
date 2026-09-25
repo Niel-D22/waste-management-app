@@ -8,6 +8,9 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { pesanGalatLokasi } from "../../../../../utils/lokasi";
+import toaster from "../../../../../utils/toaster";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../../../../utils/peta";
 
 // Custom marker icon (Red pulse for Laporan)
 const markerIcon = new L.divIcon({
@@ -179,7 +182,12 @@ export default function StepLokasiLaporan({ formData, setFormData, handleChange 
 
   // ── GPS → geolocation + reverse geocode ──────────────────────────
   const handleGPS = () => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      toaster.error(
+        "Peramban ini tidak mendukung deteksi lokasi. Tandai titiknya langsung di peta.",
+      );
+      return;
+    }
     setGpsLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -198,8 +206,9 @@ export default function StepLokasiLaporan({ formData, setFormData, handleChange 
         setGeocoding(false);
         setGpsLoading(false);
       },
-      () => {
+      (galat) => {
         setGpsLoading(false);
+        toaster.error(pesanGalatLokasi(galat));
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -280,7 +289,7 @@ export default function StepLokasiLaporan({ formData, setFormData, handleChange 
             scrollWheelZoom={true}
             style={{ height: "100%", width: "100%", zIndex: 0 }}
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
             <MapClickHandler onMapClick={handleMapClick} />
             {mapCenter && <MapCenterUpdater center={mapCenter} />}
             {hasMarker && (

@@ -14,6 +14,9 @@ import {
   reverseGeocode,
   forwardGeocode,
 } from "./mapUtils";
+import { pesanGalatLokasi } from "../../../utils/lokasi";
+import toaster from "../../../utils/toaster";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../../utils/peta";
 
 // ── Map sub-components ─────────────────────────────────────────────
 function MapClickHandler({ onMapClick }) {
@@ -122,7 +125,12 @@ function KolaboratorEditModal({
   };
 
   const handleGps = () => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      toaster.error(
+        "Peramban ini tidak mendukung deteksi lokasi. Tandai titiknya langsung di peta.",
+      );
+      return;
+    }
     setGpsLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -135,7 +143,10 @@ function KolaboratorEditModal({
         setGeocoding(false);
         setGpsLoading(false);
       },
-      () => setGpsLoading(false),
+      (galat) => {
+        setGpsLoading(false);
+        toaster.error(pesanGalatLokasi(galat));
+      },
       { enableHighAccuracy: true, timeout: 10000 },
     );
   };
@@ -297,7 +308,7 @@ function KolaboratorEditModal({
                   scrollWheelZoom={true}
                   style={{ height: "100%", width: "100%", zIndex: 0 }}
                 >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
                   <MapClickHandler onMapClick={handleMapClick} />
                   {mapCenter && <MapCenterUpdater center={mapCenter} />}
                   {form.latitude && form.longitude && (

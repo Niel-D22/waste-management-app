@@ -8,6 +8,7 @@ import {
   KONDISI_LABELS,
   formatHarga,
 } from "../barangbekas/InputBarang/Constant";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../../../utils/peta";
 
 // Custom Marker Icon
 const customMarkerIcon = new L.divIcon({
@@ -204,7 +205,7 @@ const BarangBekasDetailPage = () => {
                     scrollWheelZoom={false}
                     style={{ height: "100%", width: "100%" }}
                   >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
                     <Marker
                       position={[product.latitude, product.longitude]}
                       icon={customMarkerIcon}

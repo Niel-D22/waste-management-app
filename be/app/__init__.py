@@ -3,7 +3,7 @@ import os
 from flask import Flask, jsonify, send_from_directory
 
 from app.config.environment import get_config
-from app.config.extensions import db, migrate, jwt, mail, cors, limiter
+from app.config.extensions import db, migrate, jwt, cors, limiter
 from app.config.utilities_setup import register_error_handlers, register_jwt_callbacks, register_request_logger
 
 
@@ -37,7 +37,6 @@ def _init_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    mail.init_app(app)
     limiter.init_app(app)
     
     cors.init_app(app, resources={

@@ -8,6 +8,7 @@ import "leaflet/dist/leaflet.css";
 
 // PENTING: Sesuaikan path import ini dengan lokasi file MapIcons.js Anda
 import { getCustomIcon } from "../../../../components/features/public/peta/MapIcons";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../../../utils/peta";
 
 const Peta = () => {
   const navigate = useNavigate();
@@ -90,8 +91,8 @@ const Peta = () => {
           >
             {/* Menggunakan Tema CartoDB yang Bersih agar terlihat elegan di Landing Page */}
             <TileLayer
-              attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              attribution={ATRIBUSI_PETA}
+              url={UBIN_PETA}
             />
 
             {/* Render Data Lokasi */}

@@ -2,6 +2,7 @@ import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../../../../utils/peta";
 
 const reportMarkerIcon = new L.divIcon({
   className: "bg-transparent",
@@ -38,7 +39,7 @@ const DetailLaporanMap = ({ laporan }) => {
             scrollWheelZoom={false}
             style={{ height: "100%", width: "100%", zIndex: 0 }}
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
             <Marker
               position={[laporan.latitude, laporan.longitude]}
               icon={reportMarkerIcon}

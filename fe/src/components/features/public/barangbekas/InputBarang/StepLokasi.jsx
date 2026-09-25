@@ -10,6 +10,9 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { RiWhatsappLine } from "react-icons/ri";
 import { inputCls } from "./Constant";
+import { pesanGalatLokasi } from "../../../../../utils/lokasi";
+import toaster from "../../../../../utils/toaster";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../../../../utils/peta";
 
 // Custom marker icon
 const markerIcon = new L.divIcon({
@@ -117,7 +120,12 @@ export const StepLokasi = ({ form, setForm }) => {
   };
 
   const handleGPS = () => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      toaster.error(
+        "Peramban ini tidak mendukung deteksi lokasi. Tandai titiknya langsung di peta.",
+      );
+      return;
+    }
     setGpsLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -137,8 +145,9 @@ export const StepLokasi = ({ form, setForm }) => {
         setGeocoding(false);
         setGpsLoading(false);
       },
-      () => {
+      (galat) => {
         setGpsLoading(false);
+        toaster.error(pesanGalatLokasi(galat));
       },
       { enableHighAccuracy: true, timeout: 10000 },
     );
@@ -204,7 +213,7 @@ export const StepLokasi = ({ form, setForm }) => {
           <div className="flex h-full flex-1 flex-col overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm">
             <div className="relative flex-1 z-0">
               <MapContainer center={[form.latitude || 1.4748, form.longitude || 124.8421]} zoom={13} scrollWheelZoom={true} style={{ height: "100%", width: "100%", zIndex: 0 }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
                 <MapClickHandler onMapClick={handleMapClick} />
                 {mapCenter && <MapCenterUpdater center={mapCenter} />}
                 {hasMarker && <Marker position={[form.latitude, form.longitude]} icon={markerIcon} />}

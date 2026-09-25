@@ -41,13 +41,6 @@ class Config:
     CORS_ORIGINS = get_env('CORS_ORIGINS', 'http://localhost:5173,http://localhost:3000').split(',')
     
     # Mail
-    MAIL_SERVER = get_env('MAIL_SERVER', 'smtp.gmail.com')
-    MAIL_PORT = get_env('MAIL_PORT', 587, int)
-    MAIL_USE_TLS = get_env('MAIL_USE_TLS', 'True', bool)
-    MAIL_USE_SSL = get_env('MAIL_USE_SSL', 'False', bool)
-    MAIL_USERNAME = get_env('MAIL_USERNAME')
-    MAIL_PASSWORD = get_env('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = get_env('MAIL_DEFAULT_SENDER')
 
     # Resend
     RESEND_API_KEY = get_env('RESEND_API_KEY')

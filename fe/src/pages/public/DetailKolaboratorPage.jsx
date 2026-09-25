@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { kolaboratorAPI } from "../../services/api/routes/kolaborator.route";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../utils/peta";
 
 // Custom Marker Icon Leaflet
 const customMarkerIcon = new L.divIcon({
@@ -291,7 +292,7 @@ const DetailKolaboratorPage = () => {
                       scrollWheelZoom={false}
                       style={{ height: "100%", width: "100%", zIndex: 0 }}
                     >
-                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
                       <Marker
                         position={[kolaborator.latitude, kolaborator.longitude]}
                         icon={customMarkerIcon}

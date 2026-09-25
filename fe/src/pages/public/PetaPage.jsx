@@ -4,6 +4,7 @@ import SidebarPeta from "../../components/features/public/peta/SidebarPeta";
 import MapView from "../../components/features/public/peta/MapView";
 import { petaAPI } from "../../services/api/routes/peta.route";
 import toaster from "../../utils/toaster";
+import { pesanGalatLokasi } from "../../utils/lokasi";
 
 const PetaPage = () => {
   const location = useLocation();
@@ -86,11 +87,7 @@ const PetaPage = () => {
       },
       (error) => {
         setIsLocating(false);
-        let errorMsg = "Gagal mendapatkan lokasi.";
-        if (error.code === 1) errorMsg = "Izin akses lokasi ditolak.";
-        else if (error.code === 2) errorMsg = "Posisi lokasi tidak tersedia.";
-        else if (error.code === 3) errorMsg = "Waktu pencarian lokasi habis.";
-        toaster.error(errorMsg);
+        toaster.error(pesanGalatLokasi(error));
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
     );

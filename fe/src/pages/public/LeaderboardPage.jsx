@@ -12,7 +12,6 @@ import {
   LuHandHeart,
   LuMapPin,
   LuSearch,
-  LuInfo,
   LuSparkles,
   LuChevronDown,
   LuChevronUp,

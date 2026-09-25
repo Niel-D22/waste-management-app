@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { asetAPI } from "../../services/api/routes/aset.route";
 import toaster from "../../utils/toaster";
+import { UBIN_PETA, ATRIBUSI_PETA } from "../../utils/peta";
 
 /* ─── Custom Marker Icon ─── */
 const customMarkerIcon = new L.divIcon({
@@ -439,7 +440,7 @@ const DetailAset = () => {
                   scrollWheelZoom={false}
                   style={{ height: "100%", width: "100%", zIndex: 0 }}
                 >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <TileLayer url={UBIN_PETA} attribution={ATRIBUSI_PETA} />
                   <Marker
                     position={[aset.latitude, aset.longitude]}
                     icon={customMarkerIcon}

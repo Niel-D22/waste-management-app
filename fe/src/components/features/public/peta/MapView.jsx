@@ -16,6 +16,12 @@ import {
 } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { getCustomIcon } from "./MapIcons";
+import {
+  UBIN_PETA,
+  ATRIBUSI_PETA,
+  ATRIBUSI_GOOGLE,
+  ATRIBUSI_ESRI,
+} from "../../../../utils/peta";
 
 // Komponen untuk menerbangkan Peta ke koordinat baru
 const MapUpdater = ({ centerLocation }) => {
@@ -104,8 +110,8 @@ const MapView = ({
             <TileLayer
               maxZoom={20}
               className="map-tiles-vivid"
-              attribution="© CARTO"
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              attribution={ATRIBUSI_PETA}
+              url={UBIN_PETA}
             />
           </LayersControl.BaseLayer>
           {/* Lapisan yang aktif saat halaman dibuka. Tidak diberi filter
@@ -114,14 +120,14 @@ const MapView = ({
           <LayersControl.BaseLayer checked name="Mode Jalan (Detail)">
             <TileLayer
               maxZoom={21}
-              attribution="© Google Maps"
+              attribution={ATRIBUSI_GOOGLE}
               url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
             />
           </LayersControl.BaseLayer>
           <LayersControl.BaseLayer name="Mode Satelit (Udara)">
             <TileLayer
               maxZoom={20}
-              attribution="© Esri"
+              attribution={ATRIBUSI_ESRI}
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             />
           </LayersControl.BaseLayer>
