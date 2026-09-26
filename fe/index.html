@@ -6,7 +6,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="referrer" content="no-referrer" />
+    <!-- JANGAN diganti "no-referrer". Server ubin peta OpenStreetMap mewajibkan
+         header Referer pada setiap permintaan dan MEMBLOKIR yang tidak
+         menyertakannya: peta berubah jadi gambar "Access blocked" (403).
+         Itulah bug peta yang ditemukan juri. Nilai di bawah hanya mengirim
+         nama situs ke pihak luar, tanpa path dan query, jadi token di URL
+         reset-password dan verify-email tidak ikut bocor. -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <title>Torang Bersih — Platform Pengelolaan Sampah Sulawesi Utara</title>
     <meta

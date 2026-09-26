@@ -141,19 +141,6 @@ button {
   display: none !important;
 }
 
-/* Menghidupkan warna basemap CARTO Voyager.
-   Voyager sengaja dirancang pucat & rendah kontras supaya penanda di atasnya
-   menonjol. Penanda kita sudah punya outline putih + bayangan sendiri, jadi
-   kepucatan itu tidak diperlukan dan bikin petanya terasa mati.
-   saturate menaikkan kepekatan warna (air jadi biru, taman jadi hijau),
-   contrast sedikit menegaskan garis jalan, brightness diturunkan tipis supaya
-   kenaikan saturasi tidak membuat area terang jadi menyilaukan.
-   Cara ini dipilih daripada mengganti penyedia tile karena tidak menambah
-   dependensi, tidak butuh API key, dan geometri petanya tetap sama. */
-.map-tiles-vivid {
-  filter: saturate(1.45) contrast(1.06) brightness(0.99);
-}
-
 /* Mencegah halaman tersentak ke samping saat berpindah rute.
    Beranda cukup panjang sehingga memunculkan scrollbar, sedangkan /peta memakai
    h-dvh + overflow-hidden sehingga tidak. Saat scrollbar hilang, lebar viewport

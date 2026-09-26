@@ -1,47 +1,49 @@
 /**
  * Sumber ubin (tile) peta untuk SELURUH aplikasi.
  *
- * Kenapa bukan tile.openstreetmap.org, padahal itu yang paling gampang dipakai:
+ * Kenapa OpenStreetMap, dan kenapa itu sempat rusak:
  *
- * Server ubin OpenStreetMap dijalankan sukarelawan dan punya kebijakan pemakaian
- * yang ketat. Situs ini sempat melanggarnya, dan OSM memblokir kita — petanya
- * berubah jadi kotak-kotak kuning bertuliskan "Access blocked" dengan galat 403
- * di halaman detail laporan, aset, dan kolaborator. Juri lomba menemukannya.
+ * Juri lomba menemukan bug: di halaman detail laporan, aset, dan kolaborator,
+ * peta berubah jadi kotak kuning bertuliskan "Access blocked" (403). Penyebabnya
+ * baru ketemu belakangan, dan sederhana: index.html memasang
+ * <meta name="referrer" content="no-referrer">, sehingga peramban tidak
+ * mengirim header Referer sama sekali. Kebijakan pemakaian OpenStreetMap
+ * mewajibkan Referer dan memblokir permintaan yang tidak punya. Diuji langsung:
+ * ubin yang sama mengembalikan peta asli DENGAN Referer dan gambar
+ * "Access blocked" TANPA Referer.
  *
- * Penyebab pastinya tidak bisa dipastikan dari luar — OSM memblokir tanpa
- * pemberitahuan dan tidak menyebutkan alasannya. Yang jelas melanggar dan bisa
- * diperbaiki: tidak satu pun dari 12 peta itu mencantumkan atribusi, padahal
- * kebijakan OSM mewajibkannya.
+ * Perbaikan sesungguhnya ada di index.html (kebijakan referrer). Jangan
+ * dikembalikan ke "no-referrer" — semua peta di situs ini akan rusak lagi.
  *
- * CARTO menyediakan ubin turunan OSM yang memang ditujukan untuk dipakai
- * aplikasi web. Halaman peta utama sudah memakainya sejak awal dan tidak pernah
- * diblokir — itulah sebabnya hanya sebagian halaman yang bermasalah.
+ * Catatan sejarah supaya tidak diulang: sempat dicoba pindah ke ubin CARTO
+ * (basemaps.cartocdn.com) sebagai penyelamat. Per 26 September 2026 CARTO
+ * mengembalikan watermark "API KEY REQUIRED" untuk semua ubin rasternya tanpa
+ * kunci, jadi tidak bisa dipakai. Kode HTTP-nya tetap 200, sehingga pemeriksaan
+ * yang hanya melihat status akan salah menyimpulkan "berfungsi" — periksa
+ * isi gambarnya.
  *
- * Ditaruh di satu berkas supaya tidak ada lagi 12 salinan URL yang bisa
+ * Ditaruh di satu berkas supaya tidak ada lagi belasan salinan URL yang bisa
  * menyimpang sendiri-sendiri.
  */
 
-// {r} diisi Leaflet dengan "@2x" di layar beresolusi tinggi, sehingga petanya
-// tidak buram di ponsel modern dan layar Retina.
-export const UBIN_PETA =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+// Tanpa subdomain {s}: OpenStreetMap sudah tidak menganjurkan a/b/c.
+// Zoom maksimum asli 19; lapisan yang memakai zoom lebih tinggi harus
+// menyetel maxNativeZoom={19} supaya ubinnya diperbesar, bukan diminta ke
+// server (yang akan menjawab galat).
+export const UBIN_PETA = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 /**
- * Atribusi WAJIB ditampilkan, bukan hiasan.
- *
- * Data petanya berasal dari OpenStreetMap yang berlisensi ODbL, dan lisensi itu
- * mensyaratkan penyebutan kontributornya. CARTO sebagai penyedia ubin juga
- * mensyaratkan penyebutan. Sebelumnya hanya 2 dari 15 peta di situs ini yang
- * mencantumkan atribusi, dan tidak satu pun menyebut OpenStreetMap.
+ * Atribusi WAJIB ditampilkan, bukan hiasan. Data petanya berlisensi ODbL, dan
+ * lisensi itu mensyaratkan penyebutan kontributornya.
  */
 export const ATRIBUSI_PETA =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 /**
  * Atribusi lapisan alternatif di halaman peta utama (MapView).
  *
- * Dipisah karena ubinnya bukan dari CARTO maupun OpenStreetMap: menyebut
- * sumber yang salah sama saja dengan tidak menyebut sumber sama sekali.
+ * Dipisah karena ubinnya bukan dari OpenStreetMap: menyebut sumber yang salah
+ * sama saja dengan tidak menyebut sumber sama sekali.
  */
 export const ATRIBUSI_GOOGLE =
   '&copy; <a href="https://www.google.com/intl/id/help/terms_maps/">Google</a>';

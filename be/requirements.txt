@@ -1,5 +1,11 @@
 Flask==3.1.2
 Flask-SQLAlchemy==3.1.1
+# WAJIB dikunci. SQLAlchemy hanya dipasang sebagai turunan Flask-SQLAlchemy,
+# jadi tanpa baris ini setiap build baru mengambil versi TERBARU. SQLAlchemy
+# 2.1 (dirilis 24 Sep 2026) mengganti driver bawaan postgresql:// dari
+# psycopg2 ke psycopg v3, sehingga backend crash saat start:
+# "No module named 'psycopg'". Naikkan versinya hanya sambil menguji ulang.
+SQLAlchemy==2.0.51
 Flask-Migrate==4.1.0
 Flask-JWT-Extended==4.7.1
 Flask-Cors==6.0.2

@@ -89,7 +89,7 @@ const Peta = () => {
             scrollWheelZoom={false} // MATIKAN AGAR TIDAK MENGGANGGU SCROLL HALAMAN
             className="z-0 h-full w-full bg-[#e5e3df]"
           >
-            {/* Menggunakan Tema CartoDB yang Bersih agar terlihat elegan di Landing Page */}
+            {/* Peta dasar OpenStreetMap (lihat utils/peta.js) */}
             <TileLayer
               attribution={ATRIBUSI_PETA}
               url={UBIN_PETA}

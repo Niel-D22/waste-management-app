@@ -101,22 +101,18 @@ const MapView = ({
         {/* Layer Control untuk Tema Peta */}
         <LayersControl position="bottomleft">
           <LayersControl.BaseLayer name="Mode Peta (Bersih)">
-            {/* Tile CARTO Voyager memang sengaja dibuat pucat supaya penanda di
-                atasnya menonjol. Karena penanda kita sudah punya outline putih
-                dan bayangan sendiri, kepucatan itu tidak dibutuhkan dan malah
-                bikin petanya terasa mati. Warnanya dihidupkan lewat CSS filter
-                di kelas .map-tiles-vivid (lihat index.css) — jauh lebih ringan
-                daripada mengganti penyedia tile atau menghosting style sendiri. */}
+            {/* OpenStreetMap punya ubin sampai zoom 19. maxZoom 20 dipertahankan
+                supaya kontrol zoom tidak berhenti lebih awal dibanding lapisan
+                lain; maxNativeZoom membuat zoom 20 memperbesar ubin zoom 19,
+                bukan meminta ubin yang tidak ada ke server. */}
             <TileLayer
               maxZoom={20}
-              className="map-tiles-vivid"
+              maxNativeZoom={19}
               attribution={ATRIBUSI_PETA}
               url={UBIN_PETA}
             />
           </LayersControl.BaseLayer>
-          {/* Lapisan yang aktif saat halaman dibuka. Tidak diberi filter
-              .map-tiles-vivid seperti lapisan Voyager, karena tile ini memang
-              sudah pekat warnanya — menambah saturasi lagi malah menyilaukan. */}
+          {/* Lapisan yang aktif saat halaman dibuka. */}
           <LayersControl.BaseLayer checked name="Mode Jalan (Detail)">
             <TileLayer
               maxZoom={21}

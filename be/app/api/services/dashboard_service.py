@@ -1,7 +1,8 @@
 """Dashboard service - Statistics for admin and user dashboards"""
 from collections import Counter, defaultdict
 
-from sqlalchemy import func
+from sqlalchemy import func, select
+from sqlalchemy.orm import joinedload
 
 from app.config.extensions import db
 from app.database.models import (
@@ -15,75 +16,88 @@ from app.database.models import (
     RefJenisSampah,
 )
 from app.database.models.user import User
+from app.api.services.artikel_service import ArtikelService
 
 
 class DashboardService:
 
     @staticmethod
     def get_admin_stats():
-        # ── Totals ──
-        total_users = db.session.query(func.count(User.id)).scalar()
-        total_kolaborator = db.session.query(func.count(Kolaborator.id)).scalar()
-        total_aset = db.session.query(func.count(Aset.id)).scalar()
-        total_laporan = db.session.query(func.count(LaporanSampahIlegal.id)).scalar()
-        total_tindak_lanjut = db.session.query(func.count(TindakLanjutLaporan.id)).scalar()
-        total_marketplace = db.session.query(func.count(MarketplaceDaurUlang.id)).scalar()
-        total_artikel = db.session.query(func.count(Artikel.id)).scalar()
-        total_artikel_likes = db.session.query(func.count(ArtikelLike.id)).scalar()
-        total_artikel_komentar = db.session.query(func.count(ArtikelKomentar.id)).scalar()
+        # Dasbor ini dulu menembakkan 56 query berurutan dan butuh ±7 detik di
+        # produksi. Basis datanya ada di Tokyo, jadi setiap query membayar
+        # bolak-balik jaringan ±120 ms — yang mahal adalah JUMLAH query, bukan
+        # isinya. Tiga sumber pemborosannya, semuanya sudah diringkas di bawah.
 
-        # ── Laporan per status ──
-        laporan_per_status = {}
-        for status in StatusLaporan:
-            count = db.session.query(func.count(LaporanSampahIlegal.id)).filter(
-                LaporanSampahIlegal.status_laporan == status
-            ).scalar()
-            laporan_per_status[status.value] = count
+        # ── Totals: SATU query, bukan sembilan ──
+        # Sembilan hitungan tabel yang saling lepas digabung sebagai subquery
+        # skalar dalam satu SELECT.
+        (
+            total_users, total_kolaborator, total_aset, total_laporan,
+            total_tindak_lanjut, total_marketplace, total_artikel,
+            total_artikel_likes, total_artikel_komentar,
+        ) = db.session.query(
+            select(func.count(User.id)).scalar_subquery(),
+            select(func.count(Kolaborator.id)).scalar_subquery(),
+            select(func.count(Aset.id)).scalar_subquery(),
+            select(func.count(LaporanSampahIlegal.id)).scalar_subquery(),
+            select(func.count(TindakLanjutLaporan.id)).scalar_subquery(),
+            select(func.count(MarketplaceDaurUlang.id)).scalar_subquery(),
+            select(func.count(Artikel.id)).scalar_subquery(),
+            select(func.count(ArtikelLike.id)).scalar_subquery(),
+            select(func.count(ArtikelKomentar.id)).scalar_subquery(),
+        ).one()
 
-        # ── Kolaborator per status verifikasi ──
-        kolaborator_per_status = {}
-        for status in StatusVerifikasiKolaborator:
-            count = db.session.query(func.count(Kolaborator.id)).filter(
-                Kolaborator.status_verifikasi == status
-            ).scalar()
-            kolaborator_per_status[status.value] = count
+        # ── Rekap per status: SATU GROUP BY per tabel, bukan satu per status ──
+        # Dulu perulangan `for status in Enum` menembakkan satu COUNT untuk
+        # setiap nilai status (17 query). GROUP BY mengembalikan semuanya
+        # sekaligus. Status yang belum punya baris tetap harus tampil sebagai
+        # 0 — jadi kerangkanya tetap dibangun dari daftar enum, bukan dari
+        # hasil query, dan urutan kuncinya sama seperti sebelumnya.
+        def rekap(model, kolom, enum_cls):
+            baris = dict(
+                db.session.query(kolom, func.count(model.id)).group_by(kolom).all()
+            )
+            return {status.value: baris.get(status, 0) for status in enum_cls}
 
-        # ── Aset per status verifikasi ──
-        aset_per_status = {}
-        for status in StatusVerifikasiAset:
-            count = db.session.query(func.count(Aset.id)).filter(
-                Aset.status_verifikasi == status
-            ).scalar()
-            aset_per_status[status.value] = count
+        laporan_per_status = rekap(
+            LaporanSampahIlegal, LaporanSampahIlegal.status_laporan, StatusLaporan)
+        kolaborator_per_status = rekap(
+            Kolaborator, Kolaborator.status_verifikasi, StatusVerifikasiKolaborator)
+        aset_per_status = rekap(
+            Aset, Aset.status_verifikasi, StatusVerifikasiAset)
+        marketplace_per_status = rekap(
+            MarketplaceDaurUlang, MarketplaceDaurUlang.status_ketersediaan, StatusKetersediaan)
+        artikel_per_status = rekap(
+            Artikel, Artikel.status_publikasi, StatusPublikasi)
 
-        # ── Marketplace per status ketersediaan ──
-        marketplace_per_status = {}
-        for status in StatusKetersediaan:
-            count = db.session.query(func.count(MarketplaceDaurUlang.id)).filter(
-                MarketplaceDaurUlang.status_ketersediaan == status
-            ).scalar()
-            marketplace_per_status[status.value] = count
+        # ── Item terbaru: relasi ikut dimuat, bukan dicicil satu per satu ──
+        # Tanpa joinedload, to_dict() mengakses pemilik dan tabel referensi
+        # dan memicu query terpisah untuk SETIAP baris (17 query untuk 15 baris).
+        # Pola yang sama dipakai daftar laporan/kolaborator/artikel.
+        #
+        # order_by memakai DUA kolom: created_at lalu id. Data awal (seed) berisi
+        # banyak baris dengan created_at yang persis sama; dengan satu kolom saja,
+        # baris mana yang masuk lima teratas tidak pasti dan bisa berganti dari
+        # satu permintaan ke permintaan berikutnya. id hanya berperan sebagai
+        # penentu bila waktunya kembar.
+        recent_laporan = LaporanSampahIlegal.query.options(
+            joinedload(LaporanSampahIlegal.pelapor),
+            joinedload(LaporanSampahIlegal.jenis_sampah_ref),
+        ).order_by(LaporanSampahIlegal.created_at.desc(), LaporanSampahIlegal.id.desc()).limit(5).all()
 
-        # ── Artikel per status publikasi ──
-        artikel_per_status = {}
-        for status in StatusPublikasi:
-            count = db.session.query(func.count(Artikel.id)).filter(
-                Artikel.status_publikasi == status
-            ).scalar()
-            artikel_per_status[status.value] = count
+        recent_kolaborator = Kolaborator.query.options(
+            joinedload(Kolaborator.user),
+            joinedload(Kolaborator.jenis_ref),
+        ).order_by(Kolaborator.created_at.desc(), Kolaborator.id.desc()).limit(5).all()
 
-        # ── Recent items ──
-        recent_laporan = LaporanSampahIlegal.query.order_by(
-            LaporanSampahIlegal.created_at.desc()
-        ).limit(5).all()
+        recent_artikel = Artikel.query.options(
+            joinedload(Artikel.penulis),
+            joinedload(Artikel.kategori_ref),
+        ).order_by(Artikel.created_at.desc(), Artikel.id.desc()).limit(5).all()
 
-        recent_kolaborator = Kolaborator.query.order_by(
-            Kolaborator.created_at.desc()
-        ).limit(5).all()
-
-        recent_artikel = Artikel.query.order_by(
-            Artikel.created_at.desc()
-        ).limit(5).all()
+        # Jumlah suka & komentar kelima artikel dihitung sekaligus, bukan dua
+        # COUNT per artikel di dalam to_dict().
+        statistik_artikel = ArtikelService.kumpulkan_statistik(recent_artikel)
 
         return {
             'total_users': total_users,
@@ -102,7 +116,7 @@ class DashboardService:
             'artikel_per_status': artikel_per_status,
             'recent_laporan': [item.to_dict() for item in recent_laporan],
             'recent_kolaborator': [item.to_dict() for item in recent_kolaborator],
-            'recent_artikel': [item.to_dict() for item in recent_artikel],
+            'recent_artikel': [item.to_dict(statistik=statistik_artikel) for item in recent_artikel],
         }
 
     @staticmethod
